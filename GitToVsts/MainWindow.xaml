@@ -1,0 +1,188 @@
+﻿<controls:MetroWindow x:Class="GitToVsts.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      mc:Ignorable="d" TitleCaps="False" GlowBrush="{DynamicResource AccentColorBrush}"
+                      Title="Git to VisualStudio TeamServices" Height="500" Width="500">
+    <!--  RightWindowCommands  -->
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <!--  Settings  -->
+            <Button Click="ToggleSettingsFlyoutClick">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20"
+                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Settings" />
+                </StackPanel>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+    <!-- TaskbarItemInfo -->
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
+    <Grid>
+        <TabControl>
+            <!-- Git Settings -->
+            <TabItem Name="GitTab" Header="Git Settings">
+                <Grid>
+                    <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
+                    <TextBox x:Name="GitUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
+                    <PasswordBox x:Name="GitPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
+                    <TextBox x:Name="GitSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="name of the user or organization you try to access" />
+                    <controls:ToggleSwitch Name="SourceSwitch" Margin="0,90,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="SourceType"
+                                           OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Org" OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="User" />
+                    <!-- Login -->
+                    <Button Name="GitLogin" Width="100" Height="70" Margin="0,10,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="GitLoginOnClick"
+                            Visibility="Visible">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_github}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="login" />
+                        </StackPanel>
+                    </Button>
+                    <Image Width="70" Height="70" Margin="0,10,25,0" HorizontalAlignment="Right" VerticalAlignment="Top" Name="GitAvatar" Visibility="Hidden" />
+
+                    <!--<StackPanel Margin="0,130,0,0" Orientation="Vertical">
+                        <Rectangle Width="450" VerticalAlignment="Stretch" Stroke="{DynamicResource AccentColorBrush}" />
+                    </StackPanel>-->
+                </Grid>
+            </TabItem>
+            <!-- Git Repository -->
+            <TabItem Name="RepoTab" Header="Repositories" IsEnabled="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Label Content="Choose repositories to migrate" Name="RepoLabel" Grid.Row="0" />
+                    <ListBox Name="GitRepositoryObservableCollectionBox" Margin="10" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding MigrateToVsTs}" Click="MigrateToVsTsOnClick">
+                                    <CheckBox.Content>
+                                        <TextBlock Text="{Binding Displayname}" />
+                                    </CheckBox.Content>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            <TabItem Name="VsTab" Header="VsTs" IsEnabled="False">
+                <Grid>
+                    <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
+                    <TextBox x:Name="VsUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="alternative credentials are needed" />
+                    <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
+                    <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
+                    <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
+                    <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed">
+                        <ComboBoxItem Content="one project per repo (default)" IsSelected="True" />
+                    </ComboBox>
+                    <Label Width="60" Height="30" Margin="10,170,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Template" />
+                    <ComboBox Name="VsTemplates" Height="30" Margin="75,170,115,0" VerticalAlignment="Top" DropDownClosed="VsTemplatesOnDropDownClosed"/>
+                    <Button Name="VsLogin" Width="100" Height="70" Margin="0,10,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="VsLoginOnClick"
+                            Visibility="Visible">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_social_microsoft}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="login" />
+                        </StackPanel>
+                    </Button>
+                    <!--<Image Width="70" Height="70" Margin="0,10,25,0" HorizontalAlignment="Right" VerticalAlignment="Top" Name="GitAvatar" Visibility="Hidden" />-->
+                </Grid>
+            </TabItem>
+            <TabItem Name="RunTab" Header="Run" IsEnabled="False">
+                <Grid>
+                    <Button Content="Start Migration" Margin="10" Name="RunMigration" Click="RunMigrationOnClick" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+    <!--  Flyouts  -->
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <!--  Settings Flyout  -->
+            <controls:Flyout Name="SettingsFlyout" Width="400" AnimateOnPositionChange="True" AnimateOpacity="True"
+                             Header="Settings" Position="Right" Theme="Accent">
+                <StackPanel>
+                    <StackPanel>
+                        <!-- Logging -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <!--Label-->
+                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logging" />
+
+                            <!--TextBox-->
+                            <TextBox Name="LoggingPath" Height="30" Width="200" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                     LostFocus="LoggingPathOnLostFocus" />
+                            <!--Button-->
+                            <Button Name="BrowseLoggingPath" Width="95" Margin="10,5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="BrowseLoggingPathClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="20" Height="20"
+                                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Line -->
+                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
+                        <Rectangle Width="370" VerticalAlignment="Stretch" Stroke="{DynamicResource AccentColorBrush}" />
+                    </StackPanel>
+                    <!--Application Style-->
+                    <StackPanel>
+                        <!-- Theme -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" Content="Theme" />
+                            <controls:ToggleSwitch Name="ThemeSwitch" Margin="10,1,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="Theme"
+                                                   OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
+                                                   OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
+                        </StackPanel>
+                        <!-- Accent -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Accent" />
+                            <ComboBox Name="Accent" Width="305" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
+                        </StackPanel>
+                        <!-- Save Style -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <Button Name="SaveStyle" Width="305" Margin="70,5,0,0" Click="SaveStyleClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="16" Height="16"
+                                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_save}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+</controls:MetroWindow>
