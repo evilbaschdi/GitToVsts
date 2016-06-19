@@ -24,7 +24,7 @@ namespace GitToVsts.Internal.Models
         ///     Project the repository belongs to.
         /// </summary>
         [DataMember]
-        public Project Project { get; set; }
+        public VsTsProject Project { get; set; }
 
         /// <summary>
         ///     RemoteUrl for pushing / pulling.

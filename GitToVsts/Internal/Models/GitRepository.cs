@@ -17,7 +17,7 @@ namespace GitToVsts.Internal.Models
         public string Full_Name { get; set; }
 
         [DataMember]
-        public Owner Owner { get; set; }
+        public GitOwner Owner { get; set; }
 
         [DataMember]
         public bool @private { get; set; }
@@ -212,6 +212,6 @@ namespace GitToVsts.Internal.Models
         public string Default_Branch { get; set; }
 
         [DataMember]
-        public Permissions Permissions { get; set; }
+        public GitPermissions Permissions { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace GitToVsts.Internal.TeamServices
             _applicationSettings = applicationSettings;
         }
 
-        public Projects Value
+        public VsTsProjects Value
         {
             get
             {
@@ -31,7 +31,7 @@ namespace GitToVsts.Internal.TeamServices
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
                 var response = client.Execute(request);
-                var projects = JsonConvert.DeserializeObject<Projects>(response.Content);
+                var projects = JsonConvert.DeserializeObject<VsTsProjects>(response.Content);
                 return projects;
             }
         }

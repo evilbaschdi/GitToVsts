@@ -11,10 +11,10 @@ namespace GitToVsts.Internal.TeamServices
     {
         private readonly IApplicationSettings _applicationSettings;
         private readonly GitRepository _repository;
-        private readonly ProcessTemplate _processTemplate;
+        private readonly VsTsProcessTemplate _vsTsProcessTemplate;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, ProcessTemplate processTemplate)
+        public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, VsTsProcessTemplate vsTsProcessTemplate)
         {
             if (applicationSettings == null)
             {
@@ -24,16 +24,16 @@ namespace GitToVsts.Internal.TeamServices
             {
                 throw new ArgumentNullException(nameof(repository));
             }
-            if (processTemplate == null)
+            if (vsTsProcessTemplate == null)
             {
-                throw new ArgumentNullException(nameof(processTemplate));
+                throw new ArgumentNullException(nameof(vsTsProcessTemplate));
             }
             _applicationSettings = applicationSettings;
             _repository = repository;
-            _processTemplate = processTemplate;
+            _vsTsProcessTemplate = vsTsProcessTemplate;
         }
 
-        public Response Value
+        public VsTsCreateResponse Value
         {
             get
             {
@@ -43,19 +43,19 @@ namespace GitToVsts.Internal.TeamServices
                 var json = new StringBuilder();
                 json.Append($@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ");
                 json.Append($@"""capabilities"": {{    ""versioncontrol"": {{      ""sourceControlType"": ""Git""    }},    ");
-                json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_processTemplate.Id}""      }}}}");
+                json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_vsTsProcessTemplate.Id}""      }}}}");
 
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("projecttocreate", $@"""{_repository.Name}""");
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
                 //request.AddParameter("application/json",
-                //    $@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ""capabilities"": {{    ""versioncontrol"": {{      ""sourceControlType"": ""Git""    }},    ""processTemplate"": {{      ""templateTypeId"": ""{_processTemplate
+                //    $@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ""capabilities"": {{    ""versioncontrol"": {{      ""sourceControlType"": ""Git""    }},    ""processTemplate"": {{      ""templateTypeId"": ""{_vsTsProcessTemplate
                 //        .Id}""      }}}}", ParameterType.RequestBody);
                 request.AddParameter("application/json", json.ToString(), ParameterType.RequestBody);
 
                 var response = client.Execute(request);
-                var responseItem = JsonConvert.DeserializeObject<Response>(response.Content);
+                var responseItem = JsonConvert.DeserializeObject<VsTsCreateResponse>(response.Content);
                 return responseItem;
             }
         }

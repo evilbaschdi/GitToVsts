@@ -3,15 +3,15 @@ using System.Runtime.Serialization;
 namespace GitToVsts.Internal.Models
 {
     [DataContract]
-    public class Permissions
+    public class VsTsCreateResponse
     {
         [DataMember]
-        public bool Admin { get; set; }
+        public string Id { get; set; }
 
         [DataMember]
-        public bool Push { get; set; }
+        public string Status { get; set; }
 
         [DataMember]
-        public bool Pull { get; set; }
+        public string Url { get; set; }
     }
 }

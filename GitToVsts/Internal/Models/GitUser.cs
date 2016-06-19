@@ -113,6 +113,6 @@ namespace GitToVsts.Internal.Models
         public int Collaborators { get; set; }
 
         [DataMember]
-        public Plan Plan { get; set; }
+        public GitPlan Plan { get; set; }
     }
 }

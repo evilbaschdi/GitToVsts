@@ -7,32 +7,28 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
-    public class GetTemplates : ITemplates
+    public class GetRepositories : IRepositories
     {
         private readonly IApplicationSettings _applicationSettings;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        public GetTemplates(IApplicationSettings applicationSettings)
+        public GetRepositories(IApplicationSettings applicationSettings)
         {
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
             _applicationSettings = applicationSettings;
         }
 
-        public VsTsProcessTemplates Value
+        public VsTsRepositories Value
         {
             get
             {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}.visualstudio.com/DefaultCollection/_apis/process/processes?api-version=1");
+                var client = new RestClient($"https://{_applicationSettings.VsSource}.visualstudio.com/DefaultCollection/_apis/git/repositories?api-version=1.0");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
                 var response = client.Execute(request);
-                var processTemplates = JsonConvert.DeserializeObject<VsTsProcessTemplates>(response.Content);
-                return processTemplates;
+                var repositories = JsonConvert.DeserializeObject<VsTsRepositories>(response.Content);
+                return repositories;
             }
         }
     }

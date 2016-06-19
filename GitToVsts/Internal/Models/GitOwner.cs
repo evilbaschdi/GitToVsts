@@ -5,7 +5,7 @@ namespace GitToVsts.Internal.Models
 {
     [DataContract]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class Owner
+    public class GitOwner
     {
         [DataMember]
         public string Login { get; set; }

@@ -159,6 +159,9 @@ namespace GitToVsts
             _applicationSettings.VsSource = VsSource.Text;
             _applicationSettings.VsProject = VsProjects.Text;
 
+            VsProjects.IsEnabled = true;
+            VsTemplates.IsEnabled = true;
+
             _projects = new GetProjects(_applicationSettings);
             foreach (var project in _projects.Value.Value)
             {
@@ -222,7 +225,7 @@ namespace GitToVsts
                 var reset = new GetGitProcess(gitInfo);
                 reset.Run(commands.Reset, workingDir);
 
-                Project project;
+                VsTsProject vsTsProject;
                 if (VsProjects.Text.Contains("(default)"))
                 {
                     var createProject = new CreateProject(_applicationSettings, checkedItem.Repository, _templates.Value.Value.First(item => item.Name == VsTemplates.Text));
@@ -236,19 +239,36 @@ namespace GitToVsts
                     }
 
 
-                    project = projects.First(item => string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                    vsTsProject = projects.First(item => string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
                 }
                 else
                 {
-                    project = _projects.Value.Value.First(item => item.Name == VsProjects.Text);
+                    vsTsProject = _projects.Value.Value.First(item => item.Name == VsProjects.Text);
                 }
 
-                var createRespository = new CreateRepository(_applicationSettings, project, checkedItem.Repository.Name);
-                var createdRepository = createRespository.Value;
+                var createRespository = new CreateRepository(_applicationSettings, vsTsProject, checkedItem.Repository.Name);
+                Console.Write(createRespository.Value.Id);
+
+                var repositories = new GetRepositories(_applicationSettings).Value.Value;
+
+                while (
+                    !repositories.Any(
+                        item =>
+                            string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    repositories = new GetRepositories(_applicationSettings).Value.Value;
+                }
+
+                var currentRepository =
+                    repositories.First(
+                        item =>
+                            string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
                 var addRemote = new GetGitProcess(gitInfo);
-                addRemote.Run($"{commands.RemoteAdd} {createdRepository.RemoteUrl}", workingDir);
-                MessageBox.Show(createdRepository.RemoteUrl);
+                addRemote.Run($"{commands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
+                MessageBox.Show(currentRepository.RemoteUrl);
 
                 var pushAll = new GetGitProcess(gitInfo);
                 pushAll.Run(commands.PushAll, workingDir);

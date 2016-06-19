@@ -4,12 +4,12 @@ using System.Runtime.Serialization;
 namespace GitToVsts.Internal.Models
 {
     [DataContract]
-    public class ProcessTemplates
+    public class VsTsRepositories
     {
         [DataMember]
         public int Count { get; set; }
 
         [DataMember]
-        public List<ProcessTemplate> Value { get; set; }
+        public List<VsTsRepository> Value { get; set; }
     }
 }

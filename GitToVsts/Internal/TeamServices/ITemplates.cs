@@ -3,5 +3,5 @@ using GitToVsts.Internal.Models;
 
 namespace GitToVsts.Internal.TeamServices
 {
-    public interface ITemplates : IValue<ProcessTemplates> { }
+    public interface ITemplates : IValue<VsTsProcessTemplates> { }
 }

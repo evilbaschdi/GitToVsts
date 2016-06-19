@@ -91,11 +91,11 @@
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
                     <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
                     <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
-                    <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed">
+                    <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed" IsEnabled="False">
                         <ComboBoxItem Content="one project per repo (default)" IsSelected="True" />
                     </ComboBox>
                     <Label Width="60" Height="30" Margin="10,170,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Template" />
-                    <ComboBox Name="VsTemplates" Height="30" Margin="75,170,115,0" VerticalAlignment="Top" DropDownClosed="VsTemplatesOnDropDownClosed"/>
+                    <ComboBox Name="VsTemplates" Height="30" Margin="75,170,115,0" VerticalAlignment="Top" DropDownClosed="VsTemplatesOnDropDownClosed" IsEnabled="False" />
                     <Button Name="VsLogin" Width="100" Height="70" Margin="0,10,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="VsLoginOnClick"
                             Visibility="Visible">
                         <StackPanel Orientation="Horizontal">

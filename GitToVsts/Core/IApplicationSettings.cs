@@ -55,7 +55,7 @@ namespace GitToVsts.Core
             get
             {
                 return string.IsNullOrWhiteSpace(Properties.Settings.Default.GitSourceType)
-                    ? "User"
+                    ? "users"
                     : Properties.Settings.Default.GitSourceType;
             }
             set

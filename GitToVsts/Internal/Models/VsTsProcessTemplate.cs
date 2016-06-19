@@ -3,7 +3,7 @@
 namespace GitToVsts.Internal.Models
 {
     [DataContract]
-    public class ProcessTemplate
+    public class VsTsProcessTemplate
     {
         [DataMember]
         public string Id { get; set; }

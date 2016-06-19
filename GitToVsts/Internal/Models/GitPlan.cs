@@ -5,7 +5,7 @@ namespace GitToVsts.Internal.Models
 {
     [DataContract]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class Plan
+    public class GitPlan
     {
         [DataMember]
         public string Name { get; set; }
@@ -18,18 +18,5 @@ namespace GitToVsts.Internal.Models
 
         [DataMember]
         public int Private_Repos { get; set; }
-    }
-
-    [DataContract]
-    public class Response
-    {
-        [DataMember]
-        public string Id { get; set; }
-
-        [DataMember]
-        public string Status { get; set; }
-
-        [DataMember]
-        public string Url { get; set; }
     }
 }

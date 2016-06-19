@@ -6,7 +6,7 @@ namespace GitToVsts.Internal.Models
     ///     Visual Studio Team Services project.
     /// </summary>
     [DataContract]
-    public class Project
+    public class VsTsProject
     {
         /// <summary>
         ///     Id of the project.
