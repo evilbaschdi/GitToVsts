@@ -3,7 +3,7 @@ using GitToVsts.Internal.Models;
 
 namespace GitToVsts.Internal.TeamServices
 {
-    public interface IProject : IValue<VsTsCreateResponse>
+    public interface ICreateProject : IValue<VsTsCreateResponse>
     {
     }
 }

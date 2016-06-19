@@ -1,5 +1,8 @@
-# early version with the following bugs: #
+# early version with the following open items: #
 
-- creating repositories is not available at the moment because of problems with the response.
 - logging is not implemented
-- temp path could not be chosen 
+- no parallel work
+- git windows are showing up (debug purposes)
+- temporary cloned repos are not getting deleted (debug purposes)
+- settings sometimes don't get stored - but who cares
+- cleanup code

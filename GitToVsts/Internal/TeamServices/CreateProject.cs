@@ -7,7 +7,7 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
-    public class CreateProject : IProject
+    public class CreateProject : ICreateProject
     {
         private readonly IApplicationSettings _applicationSettings;
         private readonly GitRepository _repository;

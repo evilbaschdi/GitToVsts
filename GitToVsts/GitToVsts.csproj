@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>baschdi.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MahApps.Metro, Version=1.2.4.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -83,17 +86,28 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Core\ApplicationSettings.cs">
+      <DependentUpon>IApplicationSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\IApplicationSettings.cs" />
     <Compile Include="Core\CoreSettings.cs" />
     <Compile Include="Core\IValue.cs" />
-    <Compile Include="Internal\Git\GetGitProcess.cs" />
-    <Compile Include="Internal\Git\GetGitUser.cs" />
+    <Compile Include="Internal\Git\GetGitProcess.cs">
+      <DependentUpon>IGitProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\Git\GetGitProcessInfo.cs">
+      <DependentUpon>IGitProcessInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\Git\GetGitRepositories.cs">
+      <DependentUpon>IGitRepositories.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\Git\GetGitUser.cs">
+      <DependentUpon>IGitUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Internal\Git\GitCommands.cs" />
-    <Compile Include="Internal\Git\GetGitProcessInfo.cs" />
     <Compile Include="Internal\Git\IGitProcess.cs" />
     <Compile Include="Internal\Git\IGitProcessInfo.cs" />
     <Compile Include="Internal\Git\IGitRepositories.cs" />
-    <Compile Include="Internal\Git\GetGitRepositories.cs" />
     <Compile Include="Internal\Git\IGitUser.cs" />
     <Compile Include="Internal\Models\GitUser.cs" />
     <Compile Include="Internal\Models\GitPlan.cs" />
@@ -108,13 +122,23 @@
     <Compile Include="Internal\Models\VsTsCreateResponse.cs" />
     <Compile Include="Internal\Models\VsTsRepositories.cs" />
     <Compile Include="Internal\Models\VsTsRepository.cs" />
-    <Compile Include="Internal\TeamServices\CreateProject.cs" />
-    <Compile Include="Internal\TeamServices\GetProjects.cs" />
-    <Compile Include="Internal\TeamServices\GetRepositories.cs" />
-    <Compile Include="Internal\TeamServices\GetTemplates.cs" />
+    <Compile Include="Internal\TeamServices\CreateProject.cs">
+      <DependentUpon>ICreateProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\TeamServices\CreateRepository.cs">
+      <DependentUpon>ICreateRepository.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\TeamServices\GetProjects.cs">
+      <DependentUpon>IProjects.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\TeamServices\GetRepositories.cs">
+      <DependentUpon>IRepositories.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\TeamServices\GetTemplates.cs">
+      <DependentUpon>ITemplates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
-    <Compile Include="Internal\TeamServices\CreateRepository.cs" />
-    <Compile Include="Internal\TeamServices\IProject.cs" />
+    <Compile Include="Internal\TeamServices\ICreateProject.cs" />
     <Compile Include="Internal\TeamServices\IProjects.cs" />
     <Compile Include="Internal\TeamServices\IRepositories.cs" />
     <Compile Include="Internal\TeamServices\ITemplates.cs" />
@@ -172,6 +196,9 @@
       <Project>{8a06a423-244f-404f-aad8-53de2ee2aed7}</Project>
       <Name>EvilBaschdi.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="baschdi.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

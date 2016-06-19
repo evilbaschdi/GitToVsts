@@ -3,7 +3,7 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls" Icon="baschdi.ico"
                       mc:Ignorable="d" TitleCaps="False" GlowBrush="{DynamicResource AccentColorBrush}"
                       Title="Git to VisualStudio TeamServices" Height="500" Width="500">
     <!--  RightWindowCommands  -->
@@ -32,8 +32,10 @@
             <!-- Git Settings -->
             <TabItem Name="GitTab" Header="Git Settings">
                 <Grid>
+                    <!-- Git Settings -->
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
-                    <TextBox x:Name="GitUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <TextBox x:Name="GitUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="username or mail address" />
                     <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
                     <PasswordBox x:Name="GitPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
@@ -54,10 +56,40 @@
                         </StackPanel>
                     </Button>
                     <Image Width="70" Height="70" Margin="0,10,25,0" HorizontalAlignment="Right" VerticalAlignment="Top" Name="GitAvatar" Visibility="Hidden" />
-
-                    <!--<StackPanel Margin="0,130,0,0" Orientation="Vertical">
+                    <StackPanel Margin="0,130,0,0" Orientation="Vertical">
                         <Rectangle Width="450" VerticalAlignment="Stretch" Stroke="{DynamicResource AccentColorBrush}" />
-                    </StackPanel>-->
+                    </StackPanel>
+                    <!-- TempPath -->
+                    <Label Width="60" Height="30" Margin="10,140,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Working" />
+                    <TextBox x:Name="TempPath" Height="30" Margin="75,140,115,0" VerticalAlignment="Top" LostFocus="TempPathOnLostFocus" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="temporary repositories clone path (lenght!!!)" />
+                    <Button Name="TempPathBrowse" Width="100" Margin="0,140,10,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Click="BrowseTempPathClick">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20"
+                                       Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
+                        </StackPanel>
+                    </Button>
+                    <!-- GitPath -->
+                    <Label Width="60" Height="30" Margin="10,180,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Git Path" />
+                    <TextBox x:Name="GitBinPath" Height="30" Margin="75,180,115,0" VerticalAlignment="Top" LostFocus="GitPathOnLostFocus" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="bin path of you git installation" />
+                    <Button Name="GitPathBrowse" Width="100" Margin="0,180,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="BrowseGitPathClick">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20"
+                                       Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </TabItem>
             <!-- Git Repository -->
@@ -81,6 +113,7 @@
                     </ListBox>
                 </Grid>
             </TabItem>
+            <!-- Visual Studio Team Services Settings -->
             <TabItem Name="VsTab" Header="VsTs" IsEnabled="False">
                 <Grid>
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
@@ -89,7 +122,8 @@
                     <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
                     <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
-                    <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                             controls:TextBoxHelper.Watermark="https://{source}.visualstudio.com" />
                     <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
                     <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed" IsEnabled="False">
                         <ComboBoxItem Content="one project per repo (default)" IsSelected="True" />
@@ -107,12 +141,34 @@
                             <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="login" />
                         </StackPanel>
                     </Button>
-                    <!--<Image Width="70" Height="70" Margin="0,10,25,0" HorizontalAlignment="Right" VerticalAlignment="Top" Name="GitAvatar" Visibility="Hidden" />-->
                 </Grid>
             </TabItem>
+            <!-- Do all the magic -->
             <TabItem Name="RunTab" Header="Run" IsEnabled="False">
                 <Grid>
-                    <Button Content="Start Migration" Margin="10" Name="RunMigration" Click="RunMigrationOnClick" />
+                    <Button Name="RunMigration" Click="RunMigrationOnClick" Margin="10">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Rectangle Width="128" Height="128" Margin="5" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_github}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle Width="128" Height="128" Margin="5" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_right}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Rectangle Width="128" Height="128" Margin="5" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_social_microsoft}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </StackPanel>
+                            <TextBlock Name="RenameFoldersContent" Margin="10,10,0,0" VerticalAlignment="Center"
+                                       Text="Click to migrate chosen git repositories to visual studio team services" />
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </TabItem>
         </TabControl>

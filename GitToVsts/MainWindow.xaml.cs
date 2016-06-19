@@ -268,7 +268,6 @@ namespace GitToVsts
 
                 var addRemote = new GetGitProcess(gitInfo);
                 addRemote.Run($"{commands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
-                MessageBox.Show(currentRepository.RemoteUrl);
 
                 var pushAll = new GetGitProcess(gitInfo);
                 pushAll.Run(commands.PushAll, workingDir);
@@ -288,6 +287,8 @@ namespace GitToVsts
         private void Load()
         {
             LoggingPath.Text = _applicationSettings.LoggingPath;
+            TempPath.Text = _applicationSettings.TempPath;
+            GitBinPath.Text = _applicationSettings.GitBinPath;
             GitUsername.Text = _applicationSettings.GitUser;
             GitPassword.Password = _applicationSettings.GitPassword;
             GitSource.Text = _applicationSettings.GitSource;
@@ -329,6 +330,58 @@ namespace GitToVsts
                 Load();
             }
         }
+
+        private void BrowseTempPathClick(object sender, RoutedEventArgs e)
+        {
+            var browser = new ExplorerFolderBrower
+                          {
+                              SelectedPath = _applicationSettings.TempPath
+                          };
+            browser.ShowDialog();
+            _applicationSettings.TempPath = browser.SelectedPath;
+            Load();
+        }
+
+        private void TempPathOnLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(TempPath.Text))
+            {
+                _applicationSettings.TempPath = TempPath.Text;
+                Load();
+            }
+        }
+
+        private void BrowseGitPathClick(object sender, RoutedEventArgs e)
+        {
+            var browser = new ExplorerFolderBrower
+                          {
+                              SelectedPath = _applicationSettings.GitBinPath
+                          };
+            browser.ShowDialog();
+            if (File.Exists(browser.SelectedPath + "\\git.exe"))
+            {
+                _applicationSettings.GitBinPath = browser.SelectedPath;
+                Load();
+            }
+            else
+            {
+                ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+            }
+        }
+
+        private void GitPathOnLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(GitBinPath.Text) && File.Exists(GitBinPath.Text + "\\git.exe"))
+            {
+                _applicationSettings.GitBinPath = GitBinPath.Text;
+                Load();
+            }
+            else
+            {
+                ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+            }
+        }
+
 
         /// <summary>
         /// </summary>
