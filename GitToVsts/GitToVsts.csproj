@@ -107,6 +107,7 @@
       <DependentUpon>IGitUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Internal\Git\GitCommands.cs" />
+    <Compile Include="Internal\Git\IGitCommands.cs" />
     <Compile Include="Internal\Git\IGitProcess.cs" />
     <Compile Include="Internal\Git\IGitProcessInfo.cs" />
     <Compile Include="Internal\Git\IGitRepositories.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Internal\Models\VsTsCreateResponse.cs" />
     <Compile Include="Internal\Models\VsTsRepositories.cs" />
     <Compile Include="Internal\Models\VsTsRepository.cs" />
+    <Compile Include="Internal\TeamServices\MigrateRepository.cs" />
     <Compile Include="Internal\TeamServices\CreateProject.cs">
       <DependentUpon>ICreateProject.cs</DependentUpon>
     </Compile>
@@ -141,6 +143,7 @@
     </Compile>
     <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
     <Compile Include="Internal\TeamServices\ICreateProject.cs" />
+    <Compile Include="Internal\TeamServices\IMigrateRepository.cs" />
     <Compile Include="Internal\TeamServices\IProjects.cs" />
     <Compile Include="Internal\TeamServices\IRepositories.cs" />
     <Compile Include="Internal\TeamServices\ITemplates.cs" />

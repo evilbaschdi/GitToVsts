@@ -26,18 +26,26 @@ namespace GitToVsts.Internal.Git
         {
             get
             {
-                var api = "https://api.github.com";
-                //https://api.github.com/orgs/globalconcepts/repos
-                var url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos";
-                var client = new RestClient(url);
+                try
+                {
+                    var api = "https://api.github.com";
+                    //https://api.github.com/orgs/globalconcepts/repos
+                    var url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos";
+                    var client = new RestClient(url);
 
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
+                    var request = new RestRequest(Method.GET);
+                    request.AddHeader("cache-control", "no-cache");
+                    request.AddHeader("authorization",
+                        $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
 
-                var response = client.Execute(request);
-                var gitRepositories = JsonConvert.DeserializeObject<List<GitRepository>>(response.Content);
-                return gitRepositories;
+                    var response = client.Execute(request);
+                    var gitRepositories = JsonConvert.DeserializeObject<List<GitRepository>>(response.Content);
+                    return gitRepositories;
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception(exception.Message);
+                }
             }
         }
     }

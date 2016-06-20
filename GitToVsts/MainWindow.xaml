@@ -99,7 +99,10 @@
                         <RowDefinition Height="30" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Label Content="Choose repositories to migrate" Name="RepoLabel" Grid.Row="0" />
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Content="Choose repositories to migrate" Name="RepoLabel"  />
+                        <Button Name="MigrateAll" Content="Check all" Click="MigrateAllOnClick"></Button>
+                    </StackPanel>
                     <ListBox Name="GitRepositoryObservableCollectionBox" Margin="10" Grid.Row="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -121,9 +124,9 @@
                              controls:TextBoxHelper.Watermark="alternative credentials are needed" />
                     <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
                     <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
-                    <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
+                    <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Target" />
                     <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="https://{source}.visualstudio.com" />
+                             controls:TextBoxHelper.Watermark="https://{target}.visualstudio.com" />
                     <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
                     <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed" IsEnabled="False">
                         <ComboBoxItem Content="one project per repo (default)" IsSelected="True" />

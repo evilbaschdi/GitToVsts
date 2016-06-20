@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Browsers;
-using EvilBaschdi.Core.DirectoryExtensions;
 using EvilBaschdi.Core.Wpf;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
@@ -110,6 +111,23 @@ namespace GitToVsts
 
         private void MigrateToVsTsOnClick(object sender, RoutedEventArgs e)
         {
+            SetRepoLabelContent();
+        }
+
+        private void MigrateAllOnClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var gitRepositoryObservableCollectionItem in GitRepositoryObservableCollection)
+            {
+                gitRepositoryObservableCollectionItem.MigrateToVsTs = true;
+            }
+            GitRepositoryObservableCollectionBox.ItemsSource = null;
+            GitRepositoryObservableCollectionBox.ItemsSource = GitRepositoryObservableCollection;
+
+            SetRepoLabelContent();
+        }
+
+        private void SetRepoLabelContent()
+        {
             var checkedItemsCount = GitRepositoryObservableCollection.Count(attribute => attribute.MigrateToVsTs);
             RepoLabel.Content = $"Repositories chosen to migrate: {checkedItemsCount}";
             VsTab.IsEnabled = checkedItemsCount != 0;
@@ -171,78 +189,20 @@ namespace GitToVsts
         private void Run()
         {
             var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
-            //todo grundsätzliches auslagern möglich; evtl. nach dem foreach, wobei das dann eigentlich auch schon egal ist.
-            foreach (var checkedItem in checkedItems)
-            {
-                var workingDir = $@"{_applicationSettings.TempPath}\{checkedItem.Repository.Name}";
-                Directory.CreateDirectory(workingDir);
-                var cloneDir = $@"{workingDir}\{checkedItem.Repository.Name}.git";
-                var commands = new GitCommands();
-                var gitInfo = new GetGitProcessInfo(_applicationSettings);
+            var gitCommands = new GitCommands();
+            var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, VsTemplates.Text, VsProjects.Text);
 
-                var getGitProcess = new GetGitProcess(gitInfo);
-                //clone --mirror
-                getGitProcess.Run($"{commands.Clone} {checkedItem.Repository.Clone_Url}", workingDir);
+            var repositoriesToMigrate = checkedItems as IList<GitRepositoryObservableCollectionItem> ?? checkedItems.ToList();
+            Parallel.ForEach(repositoriesToMigrate, checkedItem =>
+                                                    {
+                                                        var response = migrate.For(checkedItem.Repository);
+                                                        if (response != 200)
+                                                        {
+                                                            //todo errorhandling
+                                                        }
+                                                    });
 
-                var dirInfo = new DirectoryInfo(cloneDir);
-                dirInfo.RenameTo(".git");
-                //config --local --bool core.bare false
-                getGitProcess.Run(commands.Config, workingDir);
-                //reset --hard HEAD
-                getGitProcess.Run(commands.Reset, workingDir);
-
-                VsTsProject vsTsProject;
-                if (VsProjects.Text.Contains("(default)"))
-                {
-                    var createProject = new CreateProject(_applicationSettings, checkedItem.Repository, _templates.Value.Value.First(item => item.Name == VsTemplates.Text));
-                    Console.Write(createProject.Value.Id);
-
-                    var projects = new GetProjects(_applicationSettings).Value.Value;
-
-                    while (!projects.Any(item => string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        projects = new GetProjects(_applicationSettings).Value.Value;
-                    }
-
-
-                    vsTsProject = projects.First(item => string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
-                }
-                else
-                {
-                    vsTsProject = _projects.Value.Value.First(item => item.Name == VsProjects.Text);
-                }
-
-                var createRespository = new CreateRepository(_applicationSettings, vsTsProject, checkedItem.Repository.Name);
-                Console.Write(createRespository.Value.Id);
-
-                var repositories = new GetRepositories(_applicationSettings).Value.Value;
-
-                while (
-                    !repositories.Any(
-                        item =>
-                            string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    repositories = new GetRepositories(_applicationSettings).Value.Value;
-                }
-
-                var currentRepository =
-                    repositories.First(
-                        item =>
-                            string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
-
-                //add remote vsts {currentRepository.RemoteUrl}
-                getGitProcess.Run($"{commands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
-
-                //push --all vsts
-                getGitProcess.Run(commands.PushAll, workingDir);
-
-                //push --tags vsts
-                getGitProcess.Run(commands.PushTags, workingDir);
-            }
-            //todo untill here
-            ShowMessage("Finished", "All repositories where migrated.");
+            ShowMessage("Finished", $"All {repositoriesToMigrate.Count()} repositories were migrated.");
         }
 
         #endregion RunTab
@@ -251,9 +211,6 @@ namespace GitToVsts
 
         private void Load()
         {
-            LoggingPath.Text = _applicationSettings.LoggingPath;
-            TempPath.Text = _applicationSettings.TempPath;
-            GitBinPath.Text = _applicationSettings.GitBinPath;
             GitUsername.Text = _applicationSettings.GitUser;
             GitPassword.Password = _applicationSettings.GitPassword;
             GitSource.Text = _applicationSettings.GitSource;
@@ -261,6 +218,9 @@ namespace GitToVsts
             VsPassword.Password = _applicationSettings.VsPassword;
             VsSource.Text = _applicationSettings.VsSource;
             VsProjects.Text = _applicationSettings.VsProject;
+            LoggingPath.Text = _applicationSettings.LoggingPath;
+            TempPath.Text = _applicationSettings.TempPath;
+            GitBinPath.Text = _applicationSettings.GitBinPath;
 
             switch (_applicationSettings.GitSourceType)
             {
@@ -284,7 +244,7 @@ namespace GitToVsts
                           };
             browser.ShowDialog();
             _applicationSettings.LoggingPath = browser.SelectedPath;
-            Load();
+            LoggingPath.Text = _applicationSettings.LoggingPath;
         }
 
         private void LoggingPathOnLostFocus(object sender, RoutedEventArgs e)
@@ -292,7 +252,6 @@ namespace GitToVsts
             if (Directory.Exists(LoggingPath.Text))
             {
                 _applicationSettings.LoggingPath = LoggingPath.Text;
-                Load();
             }
         }
 
@@ -304,7 +263,7 @@ namespace GitToVsts
                           };
             browser.ShowDialog();
             _applicationSettings.TempPath = browser.SelectedPath;
-            Load();
+            TempPath.Text = _applicationSettings.TempPath;
         }
 
         private void TempPathOnLostFocus(object sender, RoutedEventArgs e)
@@ -312,7 +271,6 @@ namespace GitToVsts
             if (Directory.Exists(TempPath.Text))
             {
                 _applicationSettings.TempPath = TempPath.Text;
-                Load();
             }
         }
 
@@ -326,7 +284,7 @@ namespace GitToVsts
             if (File.Exists(browser.SelectedPath + "\\git.exe"))
             {
                 _applicationSettings.GitBinPath = browser.SelectedPath;
-                Load();
+                GitBinPath.Text = _applicationSettings.GitBinPath;
             }
             else
             {
@@ -339,7 +297,6 @@ namespace GitToVsts
             if (Directory.Exists(GitBinPath.Text) && File.Exists(GitBinPath.Text + "\\git.exe"))
             {
                 _applicationSettings.GitBinPath = GitBinPath.Text;
-                Load();
             }
             else
             {
