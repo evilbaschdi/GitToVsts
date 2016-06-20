@@ -180,17 +180,16 @@ namespace GitToVsts
                 var commands = new GitCommands();
                 var gitInfo = new GetGitProcessInfo(_applicationSettings);
 
-                var clone = new GetGitProcess(gitInfo);
-                clone.Run($"{commands.Clone} {checkedItem.Repository.Clone_Url}", workingDir);
+                var getGitProcess = new GetGitProcess(gitInfo);
+                //clone --mirror
+                getGitProcess.Run($"{commands.Clone} {checkedItem.Repository.Clone_Url}", workingDir);
 
                 var dirInfo = new DirectoryInfo(cloneDir);
                 dirInfo.RenameTo(".git");
-
-                var config = new GetGitProcess(gitInfo);
-                config.Run(commands.Config, workingDir);
-
-                var reset = new GetGitProcess(gitInfo);
-                reset.Run(commands.Reset, workingDir);
+                //config --local --bool core.bare false
+                getGitProcess.Run(commands.Config, workingDir);
+                //reset --hard HEAD
+                getGitProcess.Run(commands.Reset, workingDir);
 
                 VsTsProject vsTsProject;
                 if (VsProjects.Text.Contains("(default)"))
@@ -233,14 +232,14 @@ namespace GitToVsts
                             string.Equals(item.Name.Trim(), checkedItem.Repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
                             string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
-                var addRemote = new GetGitProcess(gitInfo);
-                addRemote.Run($"{commands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
+                //add remote vsts {currentRepository.RemoteUrl}
+                getGitProcess.Run($"{commands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
 
-                var pushAll = new GetGitProcess(gitInfo);
-                pushAll.Run(commands.PushAll, workingDir);
+                //push --all vsts
+                getGitProcess.Run(commands.PushAll, workingDir);
 
-                var pushTags = new GetGitProcess(gitInfo);
-                pushTags.Run(commands.PushTags, workingDir);
+                //push --tags vsts
+                getGitProcess.Run(commands.PushTags, workingDir);
             }
             //todo untill here
             ShowMessage("Finished", "All repositories where migrated.");
