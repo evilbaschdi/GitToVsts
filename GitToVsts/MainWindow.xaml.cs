@@ -2,10 +2,8 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Browsers;
 using EvilBaschdi.Core.DirectoryExtensions;
@@ -46,6 +44,7 @@ namespace GitToVsts
 
         #region GitTab
 
+        //todo: auslagern
         private void LoadGitRepositoryList()
         {
             GitRepositoryObservableCollection = GetGitRepositoryObservableCollection();
@@ -79,7 +78,11 @@ namespace GitToVsts
                 _applicationSettings.GitSource = GitSource.Text;
                 _gitRepositories = new GetGitRepositories(_applicationSettings);
                 LoadGitRepositoryList();
-                SetPicture(getGitUser.Value);
+                var convertGitAvatar = new ConvertGitAvatart();
+                GitAvatar.Source = convertGitAvatar.For(getGitUser.Value);
+                GitAvatar.Visibility = Visibility.Visible;
+                GitLogin.Visibility = Visibility.Hidden;
+
                 ShowMessage("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
             }
@@ -99,42 +102,6 @@ namespace GitToVsts
             }
             var toggleSwitch = (ToggleSwitch) sender;
             _applicationSettings.GitSourceType = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value ? "orgs" : "users";
-        }
-
-        private void SetPicture(GitUser gitUser)
-        {
-            var image = new BitmapImage();
-            int BytesToRead = 100;
-
-            if (!string.IsNullOrWhiteSpace(gitUser.Avatar_Url))
-            {
-                var pictureUri = new Uri(gitUser.Avatar_Url, UriKind.Absolute);
-                WebRequest request = WebRequest.Create(pictureUri);
-                request.Timeout = -1;
-                WebResponse response = request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                BinaryReader reader = new BinaryReader(responseStream);
-                MemoryStream memoryStream = new MemoryStream();
-
-                byte[] bytebuffer = new byte[BytesToRead];
-                int bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
-
-                while (bytesRead > 0)
-                {
-                    memoryStream.Write(bytebuffer, 0, bytesRead);
-                    bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
-                }
-
-                image.BeginInit();
-                memoryStream.Seek(0, SeekOrigin.Begin);
-
-                image.StreamSource = memoryStream;
-                image.EndInit();
-
-                GitAvatar.Source = image;
-                GitAvatar.Visibility = Visibility.Visible;
-                GitLogin.Visibility = Visibility.Hidden;
-            }
         }
 
         #endregion GitTab
@@ -204,7 +171,7 @@ namespace GitToVsts
         private void Run()
         {
             var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
-
+            //todo grundsätzliches auslagern möglich; evtl. nach dem foreach, wobei das dann eigentlich auch schon egal ist.
             foreach (var checkedItem in checkedItems)
             {
                 var workingDir = $@"{_applicationSettings.TempPath}\{checkedItem.Repository.Name}";
@@ -274,10 +241,9 @@ namespace GitToVsts
 
                 var pushTags = new GetGitProcess(gitInfo);
                 pushTags.Run(commands.PushTags, workingDir);
-
-
-                ShowMessage("Finished", "All repositories where migrated.");
             }
+            //todo untill here
+            ShowMessage("Finished", "All repositories where migrated.");
         }
 
         #endregion RunTab

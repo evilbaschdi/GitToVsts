@@ -92,6 +92,8 @@
     <Compile Include="Core\IApplicationSettings.cs" />
     <Compile Include="Core\CoreSettings.cs" />
     <Compile Include="Core\IValue.cs" />
+    <Compile Include="Internal\Git\IGitAvatar.cs" />
+    <Compile Include="Internal\Git\ConvertGitAvatart.cs" />
     <Compile Include="Internal\Git\GetGitProcess.cs">
       <DependentUpon>IGitProcess.cs</DependentUpon>
     </Compile>
