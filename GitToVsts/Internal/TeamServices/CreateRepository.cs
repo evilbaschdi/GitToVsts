@@ -2,7 +2,6 @@
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Internal.Models;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
@@ -45,8 +44,7 @@ namespace GitToVsts.Internal.TeamServices
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
                 request.AddParameter("application/json", $@"{{  ""name"": ""{_name}"",  ""project"": {{    ""id"": ""{_vsTsProject.Id}""  }}}}", ParameterType.RequestBody);
 
-                var response = client.Execute(request);
-                var responseItem = JsonConvert.DeserializeObject<VsTsRepository>(response.Content);
+                var responseItem = client.Execute<VsTsRepository>(request).Data;
                 return responseItem;
             }
         }

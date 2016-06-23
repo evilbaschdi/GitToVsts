@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Internal.Models;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace GitToVsts.Internal.Git
@@ -29,17 +28,14 @@ namespace GitToVsts.Internal.Git
                 try
                 {
                     var api = "https://api.github.com";
-                    //https://api.github.com/orgs/globalconcepts/repos
                     var url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos";
                     var client = new RestClient(url);
-
                     var request = new RestRequest(Method.GET);
                     request.AddHeader("cache-control", "no-cache");
                     request.AddHeader("authorization",
                         $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
 
-                    var response = client.Execute(request);
-                    var gitRepositories = JsonConvert.DeserializeObject<List<GitRepository>>(response.Content);
+                    var gitRepositories = client.Execute<List<GitRepository>>(request).Data;
                     return gitRepositories;
                 }
                 catch (Exception exception)

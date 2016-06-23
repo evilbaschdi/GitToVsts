@@ -122,16 +122,6 @@ namespace GitToVsts.Core
             }
         }
 
-        public bool VsNewProject
-        {
-            get { return Properties.Settings.Default.VsNewProject; }
-            set
-            {
-                Properties.Settings.Default.VsNewProject = value;
-                Properties.Settings.Default.Save();
-            }
-        }
-
         public string VsProject
         {
             get

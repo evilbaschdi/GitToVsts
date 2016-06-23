@@ -14,8 +14,6 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,10 +42,6 @@
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
       <Private>True</Private>
@@ -55,7 +49,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -89,11 +82,12 @@
     <Compile Include="Core\ApplicationSettings.cs">
       <DependentUpon>IApplicationSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\IApplicationSettings.cs" />
     <Compile Include="Core\CoreSettings.cs" />
+    <Compile Include="Core\IApplicationSettings.cs" />
     <Compile Include="Core\IValue.cs" />
-    <Compile Include="Internal\Git\IGitAvatar.cs" />
-    <Compile Include="Internal\Git\ConvertGitAvatart.cs" />
+    <Compile Include="Internal\Git\ConvertGitAvatart.cs">
+      <DependentUpon>IGitAvatar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Internal\Git\GetGitProcess.cs">
       <DependentUpon>IGitProcess.cs</DependentUpon>
     </Compile>
@@ -106,26 +100,28 @@
     <Compile Include="Internal\Git\GetGitUser.cs">
       <DependentUpon>IGitUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Internal\Git\GitCommands.cs" />
+    <Compile Include="Internal\Git\GitCommands.cs">
+      <DependentUpon>IGitCommands.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\Git\IGitAvatar.cs" />
     <Compile Include="Internal\Git\IGitCommands.cs" />
     <Compile Include="Internal\Git\IGitProcess.cs" />
     <Compile Include="Internal\Git\IGitProcessInfo.cs" />
     <Compile Include="Internal\Git\IGitRepositories.cs" />
     <Compile Include="Internal\Git\IGitUser.cs" />
-    <Compile Include="Internal\Models\GitUser.cs" />
+    <Compile Include="Internal\Models\GitOwner.cs" />
+    <Compile Include="Internal\Models\GitPermissions.cs" />
     <Compile Include="Internal\Models\GitPlan.cs" />
+    <Compile Include="Internal\Models\GitRepository.cs" />
+    <Compile Include="Internal\Models\GitRepositoryObservableCollectionItem.cs" />
+    <Compile Include="Internal\Models\GitUser.cs" />
+    <Compile Include="Internal\Models\VsTsCreateResponse.cs" />
     <Compile Include="Internal\Models\VsTsProcessTemplate.cs" />
     <Compile Include="Internal\Models\VsTsProcessTemplates.cs" />
     <Compile Include="Internal\Models\VsTsProject.cs" />
-    <Compile Include="Internal\Models\GitRepository.cs" />
-    <Compile Include="Internal\Models\GitRepositoryObservableCollectionItem.cs" />
-    <Compile Include="Internal\Models\GitOwner.cs" />
-    <Compile Include="Internal\Models\GitPermissions.cs" />
     <Compile Include="Internal\Models\VsTsProjects.cs" />
-    <Compile Include="Internal\Models\VsTsCreateResponse.cs" />
     <Compile Include="Internal\Models\VsTsRepositories.cs" />
     <Compile Include="Internal\Models\VsTsRepository.cs" />
-    <Compile Include="Internal\TeamServices\MigrateRepository.cs" />
     <Compile Include="Internal\TeamServices\CreateProject.cs">
       <DependentUpon>ICreateProject.cs</DependentUpon>
     </Compile>
@@ -141,12 +137,15 @@
     <Compile Include="Internal\TeamServices\GetTemplates.cs">
       <DependentUpon>ITemplates.cs</DependentUpon>
     </Compile>
-    <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
     <Compile Include="Internal\TeamServices\ICreateProject.cs" />
+    <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
     <Compile Include="Internal\TeamServices\IMigrateRepository.cs" />
     <Compile Include="Internal\TeamServices\IProjects.cs" />
     <Compile Include="Internal\TeamServices\IRepositories.cs" />
     <Compile Include="Internal\TeamServices\ITemplates.cs" />
+    <Compile Include="Internal\TeamServices\MigrateRepository.cs">
+      <DependentUpon>IMigrateRepository.cs</DependentUpon>
+    </Compile>
     <Compile Include="Internal\Utils\RestClientExtensions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -191,10 +190,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\WindowsIcons-license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Entypo-license.txt" />
+    <Resource Include="baschdi.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\EvilBaschdi.Core\EvilBaschdi.Core\EvilBaschdi.Core.csproj">
@@ -203,7 +199,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="baschdi.ico" />
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

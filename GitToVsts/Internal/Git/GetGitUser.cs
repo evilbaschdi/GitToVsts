@@ -2,7 +2,6 @@
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Internal.Models;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace GitToVsts.Internal.Git
@@ -29,8 +28,8 @@ namespace GitToVsts.Internal.Git
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
-                var response = client.Execute(request);
-                var gitUser = JsonConvert.DeserializeObject<GitUser>(response.Content);
+
+                var gitUser = client.Execute<GitUser>(request).Data;
                 return gitUser;
             }
         }

@@ -16,7 +16,6 @@
         string GitSource { get; set; }
         string VsUser { get; set; }
         string VsPassword { get; set; }
-        bool VsNewProject { get; set; }
         string VsProject { get; set; }
         string VsSource { get; set; }
         string TempPath { get; set; }

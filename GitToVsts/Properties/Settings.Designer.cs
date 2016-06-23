@@ -62,6 +62,18 @@ namespace GitToVsts.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TempPath {
+            get {
+                return ((string)(this["TempPath"]));
+            }
+            set {
+                this["TempPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string GitSourceType {
             get {
                 return ((string)(this["GitSourceType"]));
@@ -98,18 +110,6 @@ namespace GitToVsts.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GitSource {
-            get {
-                return ((string)(this["GitSource"]));
-            }
-            set {
-                this["GitSource"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string VsUser {
             get {
                 return ((string)(this["VsUser"]));
@@ -133,18 +133,6 @@ namespace GitToVsts.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool VsNewProject {
-            get {
-                return ((bool)(this["VsNewProject"]));
-            }
-            set {
-                this["VsNewProject"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string VsProject {
             get {
@@ -152,18 +140,6 @@ namespace GitToVsts.Properties {
             }
             set {
                 this["VsProject"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TempPath {
-            get {
-                return ((string)(this["TempPath"]));
-            }
-            set {
-                this["TempPath"] = value;
             }
         }
         
@@ -188,6 +164,18 @@ namespace GitToVsts.Properties {
             }
             set {
                 this["VsSource"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitSource {
+            get {
+                return ((string)(this["GitSource"]));
+            }
+            set {
+                this["GitSource"] = value;
             }
         }
     }

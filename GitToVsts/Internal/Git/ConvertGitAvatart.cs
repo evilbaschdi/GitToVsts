@@ -20,22 +20,25 @@ namespace GitToVsts.Internal.Git
                 request.Timeout = -1;
                 WebResponse response = request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
-                BinaryReader reader = new BinaryReader(responseStream);
-                MemoryStream memoryStream = new MemoryStream();
-
-                byte[] bytebuffer = new byte[BytesToRead];
-                int bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
-
-                while (bytesRead > 0)
+                if (responseStream != null)
                 {
-                    memoryStream.Write(bytebuffer, 0, bytesRead);
-                    bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
+                    BinaryReader reader = new BinaryReader(responseStream);
+                    MemoryStream memoryStream = new MemoryStream();
+
+                    byte[] bytebuffer = new byte[BytesToRead];
+                    int bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
+
+                    while (bytesRead > 0)
+                    {
+                        memoryStream.Write(bytebuffer, 0, bytesRead);
+                        bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
+                    }
+
+                    image.BeginInit();
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+
+                    image.StreamSource = memoryStream;
                 }
-
-                image.BeginInit();
-                memoryStream.Seek(0, SeekOrigin.Begin);
-
-                image.StreamSource = memoryStream;
                 image.EndInit();
             }
             return image;
