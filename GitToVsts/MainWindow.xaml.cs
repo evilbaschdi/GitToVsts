@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Shell;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Browsers;
 using EvilBaschdi.Core.Wpf;
@@ -24,22 +27,29 @@ namespace GitToVsts
     public partial class MainWindow : MetroWindow
     {
         public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
+        private readonly BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
         private readonly IMetroStyle _style;
         private readonly IApplicationSettings _applicationSettings;
         private int _overrideProtection;
+        private int _executionCount;
         private string _loggingPath;
         private IProjects _projects;
         private ITemplates _templates;
+        private readonly IToast _toast;
+        private Configuration _configuration;
+        private KeyValuePair<string, string> _result;
+
 
         public MainWindow()
         {
             ISettings coreSettings = new CoreSettings();
             _applicationSettings = new ApplicationSettings();
-
             InitializeComponent();
+            _bw = new BackgroundWorker();
             _style = new MetroStyleByToggleSwitch(this, Accent, ThemeSwitch, coreSettings);
             _style.Load(true, false);
+            _toast = new Toast("baschdi.png");
             Load();
         }
 
@@ -183,14 +193,35 @@ namespace GitToVsts
 
         private void RunMigrationOnClick(object sender, RoutedEventArgs e)
         {
+            TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
             Run();
         }
 
         private void Run()
         {
+            _executionCount++;
+            var configuration = new Configuration
+                                {
+                                    VsTemplate = VsTemplates.Text,
+                                    VsProject = VsProjects.Text
+                                };
+            Cursor = Cursors.Wait;
+            _configuration = configuration;
+            if (_executionCount == 1)
+            {
+                _bw.DoWork += (o, args) => RunRepositoryMigration();
+                _bw.WorkerReportsProgress = true;
+                _bw.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
+            }
+            _bw.RunWorkerAsync();
+        }
+
+        private void RunRepositoryMigration()
+        {
+            var configuration = _configuration;
             var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
             var gitCommands = new GitCommands();
-            var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, VsTemplates.Text, VsProjects.Text);
+            var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration.VsTemplate, configuration.VsProject);
 
             var repositoriesToMigrate = checkedItems as IList<GitRepositoryObservableCollectionItem> ?? checkedItems.ToList();
             Parallel.ForEach(repositoriesToMigrate, checkedItem =>
@@ -201,8 +232,16 @@ namespace GitToVsts
                                                             //todo errorhandling
                                                         }
                                                     });
+            _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
+        }
 
-            ShowMessage("Finished", $"All {repositoriesToMigrate.Count()} repositories were migrated.");
+        private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ShowMessage(_result.Key, _result.Value);
+            _toast.Show(_result.Key, _result.Value);
+
+            TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
+            Cursor = Cursors.Arrow;
         }
 
         #endregion RunTab

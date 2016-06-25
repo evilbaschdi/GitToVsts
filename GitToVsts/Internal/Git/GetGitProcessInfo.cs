@@ -25,7 +25,7 @@ namespace GitToVsts.Internal.Git
             {
                 var gitInfo = new ProcessStartInfo
                               {
-                                  CreateNoWindow = false,
+                                  CreateNoWindow = true,
                                   RedirectStandardError = true,
                                   RedirectStandardOutput = true,
                                   FileName = $@"{_applicationSettings.GitBinPath}\git.exe",

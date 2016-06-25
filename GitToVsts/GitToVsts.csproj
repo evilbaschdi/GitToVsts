@@ -122,6 +122,7 @@
     <Compile Include="Internal\Models\VsTsProjects.cs" />
     <Compile Include="Internal\Models\VsTsRepositories.cs" />
     <Compile Include="Internal\Models\VsTsRepository.cs" />
+    <Compile Include="Internal\TeamServices\Configuration.cs" />
     <Compile Include="Internal\TeamServices\CreateProject.cs">
       <DependentUpon>ICreateProject.cs</DependentUpon>
     </Compile>
@@ -140,6 +141,7 @@
     <Compile Include="Internal\TeamServices\ICreateProject.cs" />
     <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
     <Compile Include="Internal\TeamServices\IMigrateRepository.cs" />
+    <Compile Include="Internal\TeamServices\IMigrationConfiguration.cs" />
     <Compile Include="Internal\TeamServices\IProjects.cs" />
     <Compile Include="Internal\TeamServices\IRepositories.cs" />
     <Compile Include="Internal\TeamServices\ITemplates.cs" />
@@ -203,6 +205,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="baschdi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
