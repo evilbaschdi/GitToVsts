@@ -1,7 +1,8 @@
-# early version with the following open items: #
+# open items: #
 
 - logging is not implemented
-- no parallel work
 - temporary cloned repos are not getting deleted (debug purposes)
-- settings sometimes don't get stored - but who cares
 - cleanup code
+- pagination for users / orgs with more than 100 repositories
+- two factor authentication for git
+- encryption of credentials
