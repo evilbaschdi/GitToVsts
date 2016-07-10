@@ -47,7 +47,7 @@ namespace GitToVsts
             _applicationSettings = new ApplicationSettings();
             InitializeComponent();
             _bw = new BackgroundWorker();
-            _style = new MetroStyleByToggleSwitch(this, Accent, ThemeSwitch, coreSettings);
+            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
             _style.Load(true, false);
             _toast = new Toast("baschdi.png");
             Load();
@@ -406,7 +406,15 @@ namespace GitToVsts
             {
                 return;
             }
-            _style.SetTheme(sender);
+            var routedEventArgs = e as RoutedEventArgs;
+            if (routedEventArgs != null)
+            {
+                _style.SetTheme(sender, routedEventArgs);
+            }
+            else
+            {
+                _style.SetTheme(sender);
+            }
         }
 
         private void AccentOnSelectionChanged(object sender, SelectionChangedEventArgs e)
