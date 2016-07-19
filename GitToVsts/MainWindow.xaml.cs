@@ -48,7 +48,7 @@ namespace GitToVsts
             InitializeComponent();
             _bw = new BackgroundWorker();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
-            _style.Load(true, false);
+            _style.Load(true);
             _toast = new Toast("baschdi.png");
             Load();
         }
@@ -378,8 +378,8 @@ namespace GitToVsts
 
             foreach (
                 var nonactiveFlyout in
-                    Flyouts.Items.Cast<Flyout>()
-                           .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
+                Flyouts.Items.Cast<Flyout>()
+                       .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
             {
                 nonactiveFlyout.IsOpen = false;
             }

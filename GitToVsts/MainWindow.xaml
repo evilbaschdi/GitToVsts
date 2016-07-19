@@ -101,7 +101,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <Label Content="Choose repositories to migrate" Name="RepoLabel"  />
-                        <Button Name="MigrateAll" Content="Check all" Click="MigrateAllOnClick"></Button>
+                        <Button Name="MigrateAll" Content="Check all" Click="MigrateAllOnClick" />
                     </StackPanel>
                     <ListBox Name="GitRepositoryObservableCollectionBox" Margin="10" Grid.Row="1">
                         <ListBox.ItemTemplate>
