@@ -24,16 +24,20 @@ namespace GitToVsts
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
+    // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : MetroWindow
     {
+        /// <summary>
+        ///     ObservableColletion to contain GitRepositories.
+        /// </summary>
         public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
+
         private readonly BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
         private readonly IMetroStyle _style;
         private readonly IApplicationSettings _applicationSettings;
         private int _overrideProtection;
         private int _executionCount;
-        private string _loggingPath;
         private IProjects _projects;
         private ITemplates _templates;
         private readonly IToast _toast;
@@ -41,6 +45,9 @@ namespace GitToVsts
         private KeyValuePair<string, string> _result;
 
 
+        /// <summary>
+        ///     MainWindow
+        /// </summary>
         public MainWindow()
         {
             ISettings coreSettings = new CoreSettings();
@@ -115,6 +122,13 @@ namespace GitToVsts
             _applicationSettings.GitSourceType = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value ? "orgs" : "users";
         }
 
+        private void ValidateGitTextBoxesOnTextChanged(object sender, EventArgs e)
+        {
+            GitLogin.IsEnabled = !string.IsNullOrWhiteSpace(GitUsername.Text) &&
+                                 !string.IsNullOrWhiteSpace(GitPassword.Password) &&
+                                 !string.IsNullOrWhiteSpace(GitSource.Text);
+        }
+
         #endregion GitTab
 
         #region RepoTab
@@ -185,6 +199,13 @@ namespace GitToVsts
             {
                 RunTab.IsEnabled = true;
             }
+        }
+
+        private void ValidateVsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
+        {
+            VsLogin.IsEnabled = !string.IsNullOrWhiteSpace(VsUsername.Text) &&
+                                !string.IsNullOrWhiteSpace(VsPassword.Password) &&
+                                !string.IsNullOrWhiteSpace(VsSource.Text);
         }
 
         #endregion VsTsTab

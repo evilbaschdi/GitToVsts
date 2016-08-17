@@ -10,6 +10,7 @@ namespace GitToVsts.Internal.Git
 
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
         public GetGitProcessInfo(IApplicationSettings applicationSettings)
         {
             if (applicationSettings == null)

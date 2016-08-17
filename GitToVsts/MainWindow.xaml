@@ -35,12 +35,13 @@
                     <!-- Git Settings -->
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
                     <TextBox x:Name="GitUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="username or mail address" />
+                             controls:TextBoxHelper.Watermark="username or mail address" TextChanged="ValidateGitTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
-                    <PasswordBox x:Name="GitPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <PasswordBox x:Name="GitPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                                 PasswordChanged="ValidateGitTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Source" />
                     <TextBox x:Name="GitSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="name of the user or organization you try to access" />
+                             controls:TextBoxHelper.Watermark="name of the user or organization you try to access" TextChanged="ValidateGitTextBoxesOnTextChanged" />
                     <controls:ToggleSwitch Name="SourceSwitch" Margin="0,90,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="SourceType"
                                            OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Org" OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="User" />
                     <!-- Login -->
@@ -100,14 +101,16 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <Label Content="Choose repositories to migrate" Name="RepoLabel"  />
+                        <Label Content="Choose repositories to migrate" Name="RepoLabel" />
                         <Button Name="MigrateAll" Content="Check all" Click="MigrateAllOnClick" />
                     </StackPanel>
                     <ListBox Name="GitRepositoryObservableCollectionBox" Margin="10" Grid.Row="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
+                                <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                                 <CheckBox IsChecked="{Binding MigrateToVsTs}" Click="MigrateToVsTsOnClick">
                                     <CheckBox.Content>
+                                        <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                                         <TextBlock Text="{Binding Displayname}" />
                                     </CheckBox.Content>
                                 </CheckBox>
@@ -121,12 +124,13 @@
                 <Grid>
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
                     <TextBox x:Name="VsUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="alternative credentials are needed" />
+                             controls:TextBoxHelper.Watermark="alternative credentials are needed" TextChanged="ValidateVsTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Password" />
-                    <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center" />
+                    <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                                 PasswordChanged="ValidateVsTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Target" />
                     <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="https://{target}.visualstudio.com" />
+                             controls:TextBoxHelper.Watermark="https://{target}.visualstudio.com" TextChanged="ValidateVsTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
                     <ComboBox Name="VsProjects" Height="30" Margin="75,130,115,0" VerticalAlignment="Top" DropDownClosed="VsProjectsOnDropDownClosed" IsEnabled="False">
                         <ComboBoxItem Content="one project per repo (default)" IsSelected="True" />

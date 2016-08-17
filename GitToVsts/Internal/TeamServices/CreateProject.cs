@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     CreateProject through visualstudio.com api.
+    /// </summary>
     public class CreateProject : ICreateProject
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -13,6 +16,11 @@ namespace GitToVsts.Internal.TeamServices
         private readonly VsTsProcessTemplate _vsTsProcessTemplate;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
+        ///     <paramref name="repository" /> is <see langword="null" />.
+        ///     <paramref name="vsTsProcessTemplate" /> is <see langword="null" />.
+        /// </exception>
         public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, VsTsProcessTemplate vsTsProcessTemplate)
         {
             if (applicationSettings == null)
@@ -32,6 +40,9 @@ namespace GitToVsts.Internal.TeamServices
             _vsTsProcessTemplate = vsTsProcessTemplate;
         }
 
+        /// <summary>
+        ///     Value.
+        /// </summary>
         public VsTsCreateResponse Value
         {
             get
@@ -41,7 +52,7 @@ namespace GitToVsts.Internal.TeamServices
 
                 var json = new StringBuilder();
                 json.Append($@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ");
-                json.Append($@"""capabilities"": {{    ""versioncontrol"": {{      ""sourceControlType"": ""Git""    }},    ");
+                json.Append(@"""capabilities"": {    ""versioncontrol"": {      ""sourceControlType"": ""Git""    },    ");
                 json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_vsTsProcessTemplate.Id}""      }}}}");
 
                 request.AddHeader("cache-control", "no-cache");

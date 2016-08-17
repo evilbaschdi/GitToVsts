@@ -11,6 +11,7 @@ namespace GitToVsts.Internal.Git
         private readonly IApplicationSettings _applicationSettings;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
         public GetGitUser(IApplicationSettings applicationSettings)
         {
             if (applicationSettings == null)

@@ -18,6 +18,14 @@ namespace GitToVsts.Internal.TeamServices
         private readonly string _project;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
+        ///     <paramref name="templates" /> is <see langword="null" />.
+        ///     <paramref name="projects" /> is <see langword="null" />.
+        ///     <paramref name="gitCommands" /> is <see langword="null" />.
+        ///     <paramref name="template" /> is <see langword="null" />.
+        ///     <paramref name="project" /> is <see langword="null" />.
+        /// </exception>
         public MigrateRepository(IApplicationSettings applicationSettings, ITemplates templates, IProjects projects, IGitCommands gitCommands, string template, string project)
         {
             if (applicationSettings == null)
@@ -52,8 +60,13 @@ namespace GitToVsts.Internal.TeamServices
             _project = project;
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="repository" /> is <see langword="null" />.</exception>
         public int For(GitRepository repository)
         {
+            if (repository == null)
+            {
+                throw new ArgumentNullException(nameof(repository));
+            }
             var workingDir = $@"{_applicationSettings.TempPath}\{repository.Name}";
             Directory.CreateDirectory(workingDir);
             var cloneDir = $@"{workingDir}\{repository.Name}.git";

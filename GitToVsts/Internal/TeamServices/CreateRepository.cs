@@ -13,6 +13,11 @@ namespace GitToVsts.Internal.TeamServices
         private readonly string _name;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
+        ///     <paramref name="vsTsProject" /> is <see langword="null" />.
+        ///     <paramref name="name" /> is <see langword="null" />.
+        /// </exception>
         public CreateRepository(IApplicationSettings applicationSettings, VsTsProject vsTsProject, string name)
         {
             if (applicationSettings == null)

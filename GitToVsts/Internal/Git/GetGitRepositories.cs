@@ -12,6 +12,7 @@ namespace GitToVsts.Internal.Git
         private readonly IApplicationSettings _applicationSettings;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
         public GetGitRepositories(IApplicationSettings applicationSettings)
         {
             if (applicationSettings == null)
@@ -21,6 +22,7 @@ namespace GitToVsts.Internal.Git
             _applicationSettings = applicationSettings;
         }
 
+        /// <exception cref="InvalidOperationException">Accessing repos throws an error.</exception>
         public List<GitRepository> Value
         {
             get
@@ -38,9 +40,10 @@ namespace GitToVsts.Internal.Git
                     var gitRepositories = client.Execute<List<GitRepository>>(request).Data;
                     return gitRepositories;
                 }
+                // ReSharper disable once CatchAllClause
                 catch (Exception exception)
                 {
-                    throw new Exception(exception.Message);
+                    throw new InvalidOperationException(exception.Message, exception);
                 }
             }
         }

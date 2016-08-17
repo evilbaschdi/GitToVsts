@@ -8,6 +8,7 @@ namespace GitToVsts.Internal.Git
         private readonly IGitProcessInfo _gitProcessInfo;
 
         /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
+        /// <exception cref="ArgumentNullException"><paramref name="gitProcessInfo" /> is <see langword="null" />.</exception>
         public GetGitProcess(IGitProcessInfo gitProcessInfo)
         {
             if (gitProcessInfo == null)
