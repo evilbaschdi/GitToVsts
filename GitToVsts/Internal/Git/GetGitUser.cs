@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.Git
 {
+    /// <summary>
+    ///     Class that requests an user from github api.
+    /// </summary>
     public class GetGitUser : IGitUser
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -21,6 +24,9 @@ namespace GitToVsts.Internal.Git
             _applicationSettings = applicationSettings;
         }
 
+        /// <summary>
+        ///     Contains a GitUser
+        /// </summary>
         public GitUser Value
         {
             get

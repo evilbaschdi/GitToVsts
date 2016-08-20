@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     Creates repository through visualstudio.com api.
+    /// </summary>
     public class CreateRepository : ICreateRepository
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -37,6 +40,9 @@ namespace GitToVsts.Internal.TeamServices
             _name = name;
         }
 
+        /// <summary>
+        ///     Contains a VsTs Repository.
+        /// </summary>
         public VsTsRepository Value
         {
             get

@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     Class for requesting vsts process templates.
+    /// </summary>
     public class GetTemplates : ITemplates
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -21,6 +24,9 @@ namespace GitToVsts.Internal.TeamServices
             _applicationSettings = applicationSettings;
         }
 
+        /// <summary>
+        ///     Requested vsts process templates.
+        /// </summary>
         public VsTsProcessTemplates Value
         {
             get

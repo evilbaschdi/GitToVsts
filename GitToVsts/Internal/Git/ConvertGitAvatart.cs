@@ -6,10 +6,23 @@ using GitToVsts.Internal.Models;
 
 namespace GitToVsts.Internal.Git
 {
+    /// <summary>
+    ///     Class that extracts the a git avatar by GitUser.
+    /// </summary>
     public class ConvertGitAvatart : IGitAvatar
     {
+        /// <summary>
+        ///     Contains a BitmapImage for given GitUser.
+        /// </summary>
+        /// <param name="gitUser">GitUser to extract avatar for.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="gitUser" /> is <see langword="null" />.</exception>
         public BitmapImage For(GitUser gitUser)
         {
+            if (gitUser == null)
+            {
+                throw new ArgumentNullException(nameof(gitUser));
+            }
             var image = new BitmapImage();
             const int bytesToRead = 100;
 

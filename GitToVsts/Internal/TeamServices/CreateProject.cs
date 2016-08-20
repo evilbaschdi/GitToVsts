@@ -7,7 +7,7 @@ using RestSharp;
 namespace GitToVsts.Internal.TeamServices
 {
     /// <summary>
-    ///     CreateProject through visualstudio.com api.
+    ///     Creates project through visualstudio.com api.
     /// </summary>
     public class CreateProject : ICreateProject
     {

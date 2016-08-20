@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     Class for requesting for Vsts Repositories.
+    /// </summary>
     public class GetRepositories : IRepositories
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -21,6 +24,9 @@ namespace GitToVsts.Internal.TeamServices
             _applicationSettings = applicationSettings;
         }
 
+        /// <summary>
+        ///     Requested vsts repositories.
+        /// </summary>
         public VsTsRepositories Value
         {
             get

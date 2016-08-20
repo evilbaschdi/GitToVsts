@@ -4,6 +4,9 @@ using GitToVsts.Core;
 
 namespace GitToVsts.Internal.Git
 {
+    /// <summary>
+    ///     Class for ProcessStartInfo of git.exe.
+    /// </summary>
     public class GetGitProcessInfo : IGitProcessInfo
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -20,6 +23,9 @@ namespace GitToVsts.Internal.Git
             _applicationSettings = applicationSettings;
         }
 
+        /// <summary>
+        ///     Value of ProccessStartInfo.
+        /// </summary>
         public ProcessStartInfo Value
         {
             get

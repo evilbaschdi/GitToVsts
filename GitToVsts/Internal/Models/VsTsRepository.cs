@@ -8,9 +8,13 @@ namespace GitToVsts.Internal.Models
     [DataContract]
     public class VsTsRepository
     {
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string Id { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string Url { get; set; }
 

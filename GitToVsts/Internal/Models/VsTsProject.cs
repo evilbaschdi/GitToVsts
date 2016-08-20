@@ -14,18 +14,28 @@ namespace GitToVsts.Internal.Models
         [DataMember]
         public string Id { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string Name { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string Description { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string Url { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public string State { get; set; }
 
+        /// <summary>
+        /// </summary>
         [DataMember]
         public int Revision { get; set; }
     }

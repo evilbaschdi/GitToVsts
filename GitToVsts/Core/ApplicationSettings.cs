@@ -42,6 +42,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string GitUser
         {
             get
@@ -58,6 +60,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string GitPassword
         {
             get
@@ -74,6 +78,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string GitSource
         {
             get
@@ -90,6 +96,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string VsUser
         {
             get
@@ -106,6 +114,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string VsPassword
         {
             get
@@ -122,6 +132,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string VsProject
         {
             get
@@ -138,6 +150,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string VsSource
         {
             get
@@ -154,6 +168,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string TempPath
         {
             get
@@ -170,6 +186,8 @@ namespace GitToVsts.Core
             }
         }
 
+        /// <summary>
+        /// </summary>
         public string GitBinPath
         {
             get

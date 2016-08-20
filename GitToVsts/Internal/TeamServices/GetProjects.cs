@@ -6,6 +6,9 @@ using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     Class for requesting visualstudio teamservices projects.
+    /// </summary>
     public class GetProjects : IProjects
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -21,6 +24,9 @@ namespace GitToVsts.Internal.TeamServices
             _applicationSettings = applicationSettings;
         }
 
+        /// <summary>
+        ///     VsTs projects
+        /// </summary>
         public VsTsProjects Value
         {
             get

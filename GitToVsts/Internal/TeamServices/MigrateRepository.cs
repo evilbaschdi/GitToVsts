@@ -8,6 +8,9 @@ using GitToVsts.Internal.Models;
 
 namespace GitToVsts.Internal.TeamServices
 {
+    /// <summary>
+    ///     Migrates a github repository to vistualstudio team services.
+    /// </summary>
     public class MigrateRepository : IMigrateRepository
     {
         private readonly IApplicationSettings _applicationSettings;
@@ -60,81 +63,94 @@ namespace GitToVsts.Internal.TeamServices
             _project = project;
         }
 
+        /// <summary>
+        ///     Contains the response code of repository migration.
+        /// </summary>
+        /// <param name="repository">GitRepository to migrate.</param>
+        /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="repository" /> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">somethings wrong.</exception>
         public int For(GitRepository repository)
         {
             if (repository == null)
             {
                 throw new ArgumentNullException(nameof(repository));
             }
-            var workingDir = $@"{_applicationSettings.TempPath}\{repository.Name}";
-            Directory.CreateDirectory(workingDir);
-            var cloneDir = $@"{workingDir}\{repository.Name}.git";
-
-            var gitInfo = new GetGitProcessInfo(_applicationSettings);
-
-            var getGitProcess = new GetGitProcess(gitInfo);
-            //clone --mirror
-            getGitProcess.Run($"{_gitCommands.Clone} {repository.Clone_Url}", workingDir);
-
-            var dirInfo = new DirectoryInfo(cloneDir);
-            dirInfo.RenameTo(".git");
-            //config --local --bool core.bare false
-            getGitProcess.Run(_gitCommands.Config, workingDir);
-            //reset --hard HEAD
-            getGitProcess.Run(_gitCommands.Reset, workingDir);
-
-            VsTsProject vsTsProject;
-            if (_project.Contains("(default)"))
+            try
             {
-                var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _template));
-                Console.Write(createProject.Value.Id);
+                var workingDir = $@"{_applicationSettings.TempPath}\{repository.Name}";
+                Directory.CreateDirectory(workingDir);
+                var cloneDir = $@"{workingDir}\{repository.Name}.git";
 
-                var projects = new GetProjects(_applicationSettings).Value.Value;
+                var gitInfo = new GetGitProcessInfo(_applicationSettings);
 
-                while (!projects.Any(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                var getGitProcess = new GetGitProcess(gitInfo);
+                //clone --mirror
+                getGitProcess.Run($"{_gitCommands.Clone} {repository.Clone_Url}", workingDir);
+
+                var dirInfo = new DirectoryInfo(cloneDir);
+                dirInfo.RenameTo(".git");
+                //config --local --bool core.bare false
+                getGitProcess.Run(_gitCommands.Config, workingDir);
+                //reset --hard HEAD
+                getGitProcess.Run(_gitCommands.Reset, workingDir);
+
+                VsTsProject vsTsProject;
+                if (_project.Contains("(default)"))
                 {
-                    projects = new GetProjects(_applicationSettings).Value.Value;
+                    var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _template));
+                    Console.Write(createProject.Value.Id);
+
+                    var projects = new GetProjects(_applicationSettings).Value.Value;
+
+                    while (!projects.Any(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        projects = new GetProjects(_applicationSettings).Value.Value;
+                    }
+
+
+                    vsTsProject = projects.First(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                }
+                else
+                {
+                    vsTsProject = _projects.Value.Value.First(item => item.Name == _project);
                 }
 
+                var createRespository = new CreateRepository(_applicationSettings, vsTsProject, repository.Name);
+                Console.Write(createRespository.Value.Id);
 
-                vsTsProject = projects.First(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                var repositories = new GetRepositories(_applicationSettings).Value.Value;
+
+                while (
+                    !repositories.Any(
+                        item =>
+                            string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    repositories = new GetRepositories(_applicationSettings).Value.Value;
+                }
+
+                var currentRepository =
+                    repositories.First(
+                        item =>
+                            string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                            string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
+
+                //add remote vsts {currentRepository.RemoteUrl}
+                getGitProcess.Run($"{_gitCommands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
+
+                //push --all vsts
+                getGitProcess.Run(_gitCommands.PushAll, workingDir);
+
+                //push --tags vsts
+                getGitProcess.Run(_gitCommands.PushTags, workingDir);
+
+                return 200;
             }
-            else
+            catch (Exception exception)
             {
-                vsTsProject = _projects.Value.Value.First(item => item.Name == _project);
+                throw new InvalidOperationException(exception.Message, exception);
             }
-
-            var createRespository = new CreateRepository(_applicationSettings, vsTsProject, repository.Name);
-            Console.Write(createRespository.Value.Id);
-
-            var repositories = new GetRepositories(_applicationSettings).Value.Value;
-
-            while (
-                !repositories.Any(
-                    item =>
-                        string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                        string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
-            {
-                repositories = new GetRepositories(_applicationSettings).Value.Value;
-            }
-
-            var currentRepository =
-                repositories.First(
-                    item =>
-                        string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                        string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
-
-            //add remote vsts {currentRepository.RemoteUrl}
-            getGitProcess.Run($"{_gitCommands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
-
-            //push --all vsts
-            getGitProcess.Run(_gitCommands.PushAll, workingDir);
-
-            //push --tags vsts
-            getGitProcess.Run(_gitCommands.PushTags, workingDir);
-
-            return 200;
         }
     }
 }

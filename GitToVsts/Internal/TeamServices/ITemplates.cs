@@ -3,5 +3,10 @@ using GitToVsts.Internal.Models;
 
 namespace GitToVsts.Internal.TeamServices
 {
-    public interface ITemplates : IValue<VsTsProcessTemplates> { }
+    /// <summary>
+    ///     Interface for requesting vsts process templates.
+    /// </summary>
+    public interface ITemplates : IValue<VsTsProcessTemplates>
+    {
+    }
 }
