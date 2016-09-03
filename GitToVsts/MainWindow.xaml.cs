@@ -298,7 +298,7 @@ namespace GitToVsts
 
         private void BrowseLoggingPathClick(object sender, RoutedEventArgs e)
         {
-            var browser = new ExplorerFolderBrower
+            var browser = new ExplorerFolderBrowser
                           {
                               SelectedPath = _applicationSettings.LoggingPath
                           };
@@ -317,7 +317,7 @@ namespace GitToVsts
 
         private void BrowseTempPathClick(object sender, RoutedEventArgs e)
         {
-            var browser = new ExplorerFolderBrower
+            var browser = new ExplorerFolderBrowser
                           {
                               SelectedPath = _applicationSettings.TempPath
                           };
@@ -336,12 +336,12 @@ namespace GitToVsts
 
         private void BrowseGitPathClick(object sender, RoutedEventArgs e)
         {
-            var browser = new ExplorerFolderBrower
+            var browser = new ExplorerFolderBrowser
                           {
                               SelectedPath = _applicationSettings.GitBinPath
                           };
             browser.ShowDialog();
-            if (File.Exists(browser.SelectedPath + "\\git.exe"))
+            if (File.Exists($@"{browser.SelectedPath}\git.exe"))
             {
                 _applicationSettings.GitBinPath = browser.SelectedPath;
                 GitBinPath.Text = _applicationSettings.GitBinPath;
@@ -354,7 +354,7 @@ namespace GitToVsts
 
         private void GitPathOnLostFocus(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(GitBinPath.Text) && File.Exists(GitBinPath.Text + "\\git.exe"))
+            if (Directory.Exists(GitBinPath.Text) && File.Exists($@"{GitBinPath.Text}\git.exe"))
             {
                 _applicationSettings.GitBinPath = GitBinPath.Text;
             }
