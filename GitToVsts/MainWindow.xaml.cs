@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +58,9 @@ namespace GitToVsts
             _bw = new BackgroundWorker();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
             _style.Load(true);
-            _toast = new Toast("baschdi.png");
+            _toast = new Toast(Title, "baschdi.png");
+            var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
+            LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
         }
 
