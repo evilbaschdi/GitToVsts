@@ -77,11 +77,12 @@ namespace GitToVsts
         {
             var collection = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
+            int i = 1;
             foreach (var repository in _gitRepositories.Value)
             {
                 collection.Add(new GitRepositoryObservableCollectionItem
                                {
-                                   Displayname = repository.Name,
+                                   Displayname = i++ + "_" + repository.Name,
                                    Repository = repository
                                });
             }
