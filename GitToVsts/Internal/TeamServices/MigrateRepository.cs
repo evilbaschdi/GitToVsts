@@ -92,8 +92,6 @@ namespace GitToVsts.Internal.TeamServices
                 dirInfo.RenameTo(".git");
                 //config --local --bool core.bare false
                 getGitProcess.Run(_gitCommands.Config, workingDir);
-                //reset --hard HEAD
-                getGitProcess.Run(_gitCommands.Reset, workingDir);
 
                 VsTsProject vsTsProject;
                 if (_project.Contains("(default)"))
