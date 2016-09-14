@@ -82,7 +82,7 @@ namespace GitToVsts
             {
                 collection.Add(new GitRepositoryObservableCollectionItem
                                {
-                                   Displayname = i++ + "_" + repository.Name,
+                                   Displayname = $"{i++}_{repository.Name}",
                                    Repository = repository
                                });
             }

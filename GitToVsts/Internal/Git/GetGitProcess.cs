@@ -41,13 +41,13 @@ namespace GitToVsts.Internal.Git
                 throw new ArgumentNullException(nameof(directory));
             }
             var gitInfo = _gitProcessInfo.Value;
-            var gitResetHead = new Process();
+            var gitProcess = new Process();
             gitInfo.Arguments = arguments;
             gitInfo.WorkingDirectory = directory;
-            gitResetHead.StartInfo = gitInfo;
-            gitResetHead.Start();
-            gitResetHead.WaitForExit();
-            gitResetHead.Close();
+            gitProcess.StartInfo = gitInfo;
+            gitProcess.Start();
+            gitProcess.WaitForExit();
+            gitProcess.Close();
         }
     }
 }
