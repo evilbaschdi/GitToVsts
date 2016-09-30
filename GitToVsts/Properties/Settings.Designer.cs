@@ -178,5 +178,17 @@ namespace GitToVsts.Properties {
                 this["GitSource"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DeleteTempRepos {
+            get {
+                return ((bool)(this["DeleteTempRepos"]));
+            }
+            set {
+                this["DeleteTempRepos"] = value;
+            }
+        }
     }
 }

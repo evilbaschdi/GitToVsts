@@ -157,6 +157,7 @@
       <DependentUpon>IMigrateRepository.cs</DependentUpon>
     </Compile>
     <Compile Include="Internal\Utils\RestClientExtensions.cs" />
+    <Compile Include="Internal\Models\Response.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

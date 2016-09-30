@@ -64,13 +64,13 @@ namespace GitToVsts.Internal.TeamServices
         }
 
         /// <summary>
-        ///     Contains the response code of repository migration.
+        ///     Contains the response of repository migration.
         /// </summary>
         /// <param name="repository">GitRepository to migrate.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="repository" /> is <see langword="null" />.</exception>
         /// <exception cref="InvalidOperationException">somethings wrong.</exception>
-        public int For(GitRepository repository)
+        public Response<string> For(GitRepository repository)
         {
             if (repository == null)
             {
@@ -143,7 +143,11 @@ namespace GitToVsts.Internal.TeamServices
                 //push --tags vsts
                 getGitProcess.Run(_gitCommands.PushTags, workingDir);
 
-                return 200;
+                return new Response<string>
+                       {
+                           Code = 200,
+                           Value = workingDir
+                       };
             }
             catch (Exception exception)
             {

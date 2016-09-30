@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -45,7 +46,6 @@ namespace GitToVsts
         private readonly IToast _toast;
         private Configuration _configuration;
         private KeyValuePair<string, string> _result;
-
 
         /// <summary>
         ///     MainWindow
@@ -244,6 +244,7 @@ namespace GitToVsts
 
         private void RunRepositoryMigration()
         {
+            var repoPaths = new ConcurrentBag<string>();
             var configuration = _configuration;
             var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
             var gitCommands = new GitCommands();
@@ -253,11 +254,32 @@ namespace GitToVsts
             Parallel.ForEach(repositoriesToMigrate, checkedItem =>
                                                     {
                                                         var response = migrate.For(checkedItem.Repository);
-                                                        if (response != 200)
+                                                        if (response.Code != 200)
                                                         {
                                                             //todo errorhandling
                                                         }
+                                                        else
+                                                        {
+                                                            repoPaths.Add(response.Value);
+                                                        }
                                                     });
+
+            if (_applicationSettings.DeleteTempRepos)
+            {
+                foreach (var repoPath in repoPaths)
+                {
+                    if (Directory.Exists(repoPath))
+                    {
+                        try
+                        {
+                            Directory.Delete(repoPath);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
             _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
         }
 
@@ -286,6 +308,7 @@ namespace GitToVsts
             LoggingPath.Text = _applicationSettings.LoggingPath;
             TempPath.Text = _applicationSettings.TempPath;
             GitBinPath.Text = _applicationSettings.GitBinPath;
+            CleanUpSwitch.IsChecked = _applicationSettings.DeleteTempRepos;
 
             switch (_applicationSettings.GitSourceType)
             {
@@ -337,6 +360,12 @@ namespace GitToVsts
             {
                 _applicationSettings.TempPath = TempPath.Text;
             }
+        }
+
+        private void CleanUp(object sender, EventArgs e)
+        {
+            var toggleSwitch = (ToggleSwitch) sender;
+            _applicationSettings.DeleteTempRepos = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value;
         }
 
         private void BrowseGitPathClick(object sender, RoutedEventArgs e)

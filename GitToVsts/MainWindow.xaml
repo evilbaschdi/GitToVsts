@@ -91,6 +91,10 @@
                             <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
                         </StackPanel>
                     </Button>
+                    <!-- CleanUp -->
+                    <controls:ToggleSwitch Name="CleanUpSwitch" Margin="75,220,115,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="CleanUp"
+                                           OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Delete temp Repos" OffSwitchBrush="{DynamicResource AccentColorBrush}"
+                                           OffLabel="Keep temp repos" />
                 </Grid>
             </TabItem>
             <!-- Git Repository -->

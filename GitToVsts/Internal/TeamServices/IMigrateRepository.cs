@@ -8,10 +8,10 @@ namespace GitToVsts.Internal.TeamServices
     public interface IMigrateRepository
     {
         /// <summary>
-        ///     Contains the response code of repository migration.
+        ///     Contains the response of repository migration.
         /// </summary>
         /// <param name="repository">GitRepository to migrate.</param>
         /// <returns></returns>
-        int For(GitRepository repository);
+        Response<string> For(GitRepository repository);
     }
 }

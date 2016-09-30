@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace GitToVsts.Core
 {
     /// <summary>
@@ -15,7 +13,7 @@ namespace GitToVsts.Core
             {
                 return
                     string.IsNullOrWhiteSpace(Properties.Settings.Default.LoggingPath)
-                        ? Path.GetTempPath()
+                        ? @"C:\G2V"
                         : Properties.Settings.Default.LoggingPath;
             }
             set
@@ -176,12 +174,24 @@ namespace GitToVsts.Core
             {
                 return
                     string.IsNullOrWhiteSpace(Properties.Settings.Default.TempPath)
-                        ? @"C:\Temp"
+                        ? @"C:\G2V"
                         : Properties.Settings.Default.TempPath;
             }
             set
             {
                 Properties.Settings.Default.TempPath = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        public bool DeleteTempRepos
+        {
+            get { return Properties.Settings.Default.DeleteTempRepos; }
+            set
+            {
+                Properties.Settings.Default.DeleteTempRepos = value;
                 Properties.Settings.Default.Save();
             }
         }

@@ -47,6 +47,10 @@
 
         /// <summary>
         /// </summary>
+        bool DeleteTempRepos { get; set; }
+
+        /// <summary>
+        /// </summary>
         string GitBinPath { get; set; }
     }
 }
