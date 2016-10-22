@@ -43,9 +43,9 @@ namespace GitToVsts
         private int _executionCount;
         private IProjects _projects;
         private ITemplates _templates;
-        private readonly IToast _toast;
         private Configuration _configuration;
         private KeyValuePair<string, string> _result;
+        private ProgressDialogController _controller;
 
         /// <summary>
         ///     MainWindow
@@ -58,7 +58,6 @@ namespace GitToVsts
             _bw = new BackgroundWorker();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
             _style.Load(true);
-            _toast = new Toast(Title, "baschdi.png");
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
@@ -220,10 +219,14 @@ namespace GitToVsts
         private void RunMigrationOnClick(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-            Run();
+            var run = Run();
+            if (run.IsCompleted || run.IsCanceled)
+            {
+                run.Dispose();
+            }
         }
 
-        private void Run()
+        private async Task Run()
         {
             _executionCount++;
             var configuration = new Configuration
@@ -239,6 +242,15 @@ namespace GitToVsts
                 _bw.WorkerReportsProgress = true;
                 _bw.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
             }
+            var options = new MetroDialogSettings
+                          {
+                              ColorScheme = MetroDialogColorScheme.Theme
+                          };
+
+            MetroDialogOptions = options;
+            _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options);
+            _controller.SetIndeterminate();
+            _controller.Canceled += ControllerCanceled;
             _bw.RunWorkerAsync();
         }
 
@@ -285,11 +297,22 @@ namespace GitToVsts
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            _controller.CloseAsync();
+            _controller.Closed += ControllerClosed;
+        }
+
+        private void ControllerClosed(object sender, EventArgs e)
+        {
             ShowMessage(_result.Key, _result.Value);
-            _toast.Show(_result.Key, _result.Value);
 
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
+            TaskbarItemInfo.ProgressValue = 1;
             Cursor = Cursors.Arrow;
+        }
+
+        private void ControllerCanceled(object sender, EventArgs e)
+        {
+            _bw.CancelAsync();
         }
 
         #endregion RunTab
@@ -411,7 +434,7 @@ namespace GitToVsts
                           };
 
             MetroDialogOptions = options;
-            await this.ShowMessageAsync(title, message);
+            await this.ShowMessageAsync(title, message, MessageDialogStyle.Affirmative, options);
         }
 
         #endregion Window Methods
