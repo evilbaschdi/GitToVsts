@@ -240,6 +240,7 @@ namespace GitToVsts
             {
                 _bw.DoWork += (o, args) => RunRepositoryMigration();
                 _bw.WorkerReportsProgress = true;
+                _bw.WorkerSupportsCancellation = true;
                 _bw.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
             }
             var options = new MetroDialogSettings
