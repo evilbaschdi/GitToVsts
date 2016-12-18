@@ -4,7 +4,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls" Icon="baschdi.ico"
-                      mc:Ignorable="d" TitleCaps="False" GlowBrush="{DynamicResource AccentColorBrush}"
+                      mc:Ignorable="d" TitleCharacterCasing="Normal" GlowBrush="{DynamicResource AccentColorBrush}"
                       Title="Git to VisualStudio TeamServices" Height="500" Width="500">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>

@@ -105,7 +105,7 @@ namespace GitToVsts
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
-                ShowMessage("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
+                ShowMessageAsync("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
             }
             else
@@ -219,14 +219,14 @@ namespace GitToVsts
         private void RunMigrationOnClick(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-            var run = Run();
+            var run = RunAsync();
             if (run.IsCompleted || run.IsCanceled)
             {
                 run.Dispose();
             }
         }
 
-        private async Task Run()
+        private async Task RunAsync()
         {
             _executionCount++;
             var configuration = new Configuration
@@ -287,6 +287,7 @@ namespace GitToVsts
                         {
                             Directory.Delete(repoPath);
                         }
+                        // ReSharper disable once EmptyGeneralCatchClause
                         catch
                         {
                         }
@@ -304,7 +305,7 @@ namespace GitToVsts
 
         private void ControllerClosed(object sender, EventArgs e)
         {
-            ShowMessage(_result.Key, _result.Value);
+            ShowMessageAsync(_result.Key, _result.Value);
 
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
             TaskbarItemInfo.ProgressValue = 1;
@@ -406,7 +407,7 @@ namespace GitToVsts
             }
             else
             {
-                ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+                ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
             }
         }
 
@@ -418,7 +419,7 @@ namespace GitToVsts
             }
             else
             {
-                ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+                ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
             }
         }
 
@@ -427,7 +428,7 @@ namespace GitToVsts
         /// </summary>
         /// <param name="title"></param>
         /// <param name="message"></param>
-        public async void ShowMessage(string title, string message)
+        public async void ShowMessageAsync(string title, string message)
         {
             var options = new MetroDialogSettings
                           {
