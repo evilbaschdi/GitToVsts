@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -35,29 +34,31 @@ namespace GitToVsts
         /// </summary>
         public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
 
-        private readonly BackgroundWorker _bw;
+        //private readonly BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
         private readonly IMetroStyle _style;
         private readonly IApplicationSettings _applicationSettings;
-        private int _overrideProtection;
-        private int _executionCount;
         private IProjects _projects;
         private ITemplates _templates;
+        private readonly IDialogService _dialogService;
+        private int _overrideProtection;
         private Configuration _configuration;
         private KeyValuePair<string, string> _result;
         private ProgressDialogController _controller;
+        private Task _task;
 
         /// <summary>
         ///     MainWindow
         /// </summary>
         public MainWindow()
         {
-            ISettings coreSettings = new CoreSettings();
-            _applicationSettings = new ApplicationSettings();
             InitializeComponent();
-            _bw = new BackgroundWorker();
-            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
+            ISettings coreSettings = new CoreSettings(Properties.Settings.Default);
+            _applicationSettings = new ApplicationSettings();
+            IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
+            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
             _style.Load(true);
+            _dialogService = new DialogService(this);
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
@@ -105,7 +106,7 @@ namespace GitToVsts
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
-                ShowMessageAsync("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
+                _dialogService.ShowMessage("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
             }
             else
@@ -216,10 +217,11 @@ namespace GitToVsts
 
         #region RunTab
 
-        private void RunMigrationOnClick(object sender, RoutedEventArgs e)
+        private async void RunMigrationOnClick(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-            var run = RunAsync();
+            var run = Task.Factory.StartNew(RunAsync);
+            await run;
             if (run.IsCompleted || run.IsCanceled)
             {
                 run.Dispose();
@@ -228,7 +230,6 @@ namespace GitToVsts
 
         private async Task RunAsync()
         {
-            _executionCount++;
             var configuration = new Configuration
                                 {
                                     VsTemplate = VsTemplates.Text,
@@ -236,13 +237,7 @@ namespace GitToVsts
                                 };
             Cursor = Cursors.Wait;
             _configuration = configuration;
-            if (_executionCount == 1)
-            {
-                _bw.DoWork += (o, args) => RunRepositoryMigration();
-                _bw.WorkerReportsProgress = true;
-                _bw.WorkerSupportsCancellation = true;
-                _bw.RunWorkerCompleted += BackgroundWorkerRunWorkerCompleted;
-            }
+
             var options = new MetroDialogSettings
                           {
                               ColorScheme = MetroDialogColorScheme.Theme
@@ -252,7 +247,9 @@ namespace GitToVsts
             _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options);
             _controller.SetIndeterminate();
             _controller.Canceled += ControllerCanceled;
-            _bw.RunWorkerAsync();
+            _task = Task.Factory.StartNew(RunRepositoryMigration);
+            await _task;
+            _task.GetAwaiter().OnCompleted(TaskCompleted);
         }
 
         private void RunRepositoryMigration()
@@ -297,7 +294,7 @@ namespace GitToVsts
             _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
         }
 
-        private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void TaskCompleted()
         {
             _controller.CloseAsync();
             _controller.Closed += ControllerClosed;
@@ -305,7 +302,7 @@ namespace GitToVsts
 
         private void ControllerClosed(object sender, EventArgs e)
         {
-            ShowMessageAsync(_result.Key, _result.Value);
+            _dialogService.ShowMessage(_result.Key, _result.Value);
 
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
             TaskbarItemInfo.ProgressValue = 1;
@@ -314,7 +311,7 @@ namespace GitToVsts
 
         private void ControllerCanceled(object sender, EventArgs e)
         {
-            _bw.CancelAsync();
+            _task.Dispose();
         }
 
         #endregion RunTab
@@ -407,7 +404,7 @@ namespace GitToVsts
             }
             else
             {
-                ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
+                _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
             }
         }
 
@@ -419,24 +416,8 @@ namespace GitToVsts
             }
             else
             {
-                ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
+                _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
             }
-        }
-
-
-        /// <summary>
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        public async void ShowMessageAsync(string title, string message)
-        {
-            var options = new MetroDialogSettings
-                          {
-                              ColorScheme = MetroDialogColorScheme.Theme
-                          };
-
-            MetroDialogOptions = options;
-            await this.ShowMessageAsync(title, message, MessageDialogStyle.Affirmative, options);
         }
 
         #endregion Window Methods
