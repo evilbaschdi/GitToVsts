@@ -224,12 +224,7 @@ namespace GitToVsts
         private async void RunMigrationOnClick(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-            var run = Task.Factory.StartNew(RunAsync);
-            await run;
-            if (run.IsCompleted || run.IsCanceled)
-            {
-                run.Dispose();
-            }
+            await RunAsync();
         }
 
         private async Task RunAsync()
@@ -251,12 +246,11 @@ namespace GitToVsts
             _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options);
             _controller.SetIndeterminate();
             _controller.Canceled += ControllerCanceled;
-            _task = Task.Factory.StartNew(RunRepositoryMigration);
-            await _task;
-            _task.GetAwaiter().OnCompleted(TaskCompleted);
+            await RunRepositoryMigration();
+            TaskCompleted();
         }
 
-        private void RunRepositoryMigration()
+        private async Task RunRepositoryMigration()
         {
             var repoPaths = new ConcurrentBag<string>();
             var configuration = _configuration;
