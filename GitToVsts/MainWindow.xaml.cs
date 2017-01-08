@@ -43,7 +43,6 @@ namespace GitToVsts
         private int _executionCount;
         private IProjects _projects;
         private ITemplates _templates;
-        private readonly IToast _toast;
         private Configuration _configuration;
         private KeyValuePair<string, string> _result;
 
@@ -58,7 +57,6 @@ namespace GitToVsts
             _bw = new BackgroundWorker();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
             _style.Load(true);
-            _toast = new Toast(Title, "baschdi.png");
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
@@ -71,6 +69,8 @@ namespace GitToVsts
         {
             GitRepositoryObservableCollection = GetGitRepositoryObservableCollection();
             GitRepositoryObservableCollectionBox.ItemsSource = GitRepositoryObservableCollection;
+            GitRepositoryMigrationFailedObservableCollectionBox.ItemsSource = _migrationFailedRepos;
+            GitRepositoryMigrationSuccessObservableCollectionBox.ItemsSource = _migrationSuccessRepos;
         }
 
         private ObservableCollection<GitRepositoryObservableCollectionItem> GetGitRepositoryObservableCollection()
@@ -175,6 +175,8 @@ namespace GitToVsts
 
             VsProjects.IsEnabled = true;
             VsTemplates.IsEnabled = true;
+            MigrationFailedTab.IsEnabled = true;
+            SuccessfulTab.IsEnabled = true;
 
             _projects = new GetProjects(_applicationSettings);
             foreach (var project in _projects.Value.Value)
@@ -251,42 +253,86 @@ namespace GitToVsts
             var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration.VsTemplate, configuration.VsProject);
 
             var repositoriesToMigrate = checkedItems as IList<GitRepositoryObservableCollectionItem> ?? checkedItems.ToList();
-            Parallel.ForEach(repositoriesToMigrate, checkedItem =>
-                                                    {
-                                                        var response = migrate.For(checkedItem.Repository);
-                                                        if (response.Code != 200)
-                                                        {
-                                                            //todo errorhandling
-                                                        }
-                                                        else
-                                                        {
-                                                            repoPaths.Add(response.Value);
-                                                        }
-                                                    });
-
-            if (_applicationSettings.DeleteTempRepos)
+            try
             {
-                foreach (var repoPath in repoPaths)
+                Parallel.ForEach(repositoriesToMigrate, checkedItem => checkedItem.MigrationSuccessful = false);
+
+                repositoriesToMigrate.Take(5).ToList().ForEach(checkedItem =>
+                                                               {
+                                                                   var response = migrate.For(checkedItem.Repository);
+                                                                   if (response.Code != 200)
+                                                                   {
+                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", response.Value + "\r\n");
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       checkedItem.MigrationSuccessful = true;
+                                                                       repoPaths.Add(response.Value);
+                                                                   }
+                                                               });
+                var restRepositoriesToMigrate = repositoriesToMigrate.Skip(5).ToList();
+                Parallel.ForEach(restRepositoriesToMigrate, checkedItem =>
+                                                            {
+                                                                var response = migrate.For(checkedItem.Repository);
+                                                                if (response.Code != 200)
+                                                                {
+                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", response.Value + "\r\n");
+                                                                }
+                                                                else
+                                                                {
+                                                                    checkedItem.MigrationSuccessful = true;
+                                                                    repoPaths.Add(response.Value);
+                                                                }
+                                                            });
+            }
+            catch (Exception ex)
+            {
+                File.AppendAllText("C:/temp/GitVSTSMigration.txt", "\r\n" + ex.Message + "\r\n" + ex.StackTrace);
+            }
+            finally
+            {
+                if (_applicationSettings.DeleteTempRepos)
                 {
-                    if (Directory.Exists(repoPath))
+                    foreach (var repoPath in repoPaths)
                     {
-                        try
+                        if (Directory.Exists(repoPath))
                         {
-                            Directory.Delete(repoPath);
-                        }
-                        catch
-                        {
+                            try
+                            {
+                                Directory.Delete(repoPath);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
+
+                _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
             }
-            _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
         }
+
+        public void RefreshMigrationRepos()
+        {
+            _migrationFailedRepos.Clear();
+            _migrationSuccessRepos.Clear();
+
+            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs && !attribute.MigrationSuccessful)
+                                             .ToList()
+                                             .ForEach(repo => _migrationFailedRepos.Add(repo));
+
+            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs && attribute.MigrationSuccessful)
+                                             .ToList()
+                                             .ForEach(repo => _migrationSuccessRepos.Add(repo));
+        }
+
+        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ShowMessage(_result.Key, _result.Value);
-            _toast.Show(_result.Key, _result.Value);
+            RefreshMigrationRepos();
 
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
             Cursor = Cursors.Arrow;

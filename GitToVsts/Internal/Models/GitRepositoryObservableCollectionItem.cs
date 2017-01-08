@@ -21,6 +21,12 @@ namespace GitToVsts.Internal.Models
         public bool MigrateToVsTs { get; set; }
 
         /// <summary>
+        ///     True if the GitRepository was successfully migrated to VsTs.
+        /// </summary>
+        [DataMember]
+        public bool MigrationSuccessful { get; set; }
+
+        /// <summary>
         ///     GitRepository of current Item.
         /// </summary>
         [DataMember]

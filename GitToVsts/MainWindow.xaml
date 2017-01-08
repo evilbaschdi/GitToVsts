@@ -5,7 +5,7 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls" Icon="baschdi.ico"
                       mc:Ignorable="d" TitleCaps="False" GlowBrush="{DynamicResource AccentColorBrush}"
-                      Title="Git to VisualStudio TeamServices" Height="500" Width="500">
+                      Title="Git to VisualStudio TeamServices" Height="500" Width="850">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
@@ -180,6 +180,40 @@
                                        Text="Click to migrate chosen git repositories to visual studio team services" />
                         </StackPanel>
                     </Button>
+                </Grid>
+            </TabItem>
+            <!-- Migration failed Repositories -->
+            <TabItem Name="MigrationFailedTab" Header="Failed" IsEnabled="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ListBox Name="GitRepositoryMigrationFailedObservableCollectionBox" Margin="10" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                                <TextBlock Text="{Binding Displayname}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            <!-- Migration failed Repositories -->
+            <TabItem Name="SuccessfulTab" Header="Successful" IsEnabled="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ListBox Name="GitRepositoryMigrationSuccessObservableCollectionBox" Margin="10" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                                <TextBlock Text="{Binding Displayname}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </TabItem>
         </TabControl>
