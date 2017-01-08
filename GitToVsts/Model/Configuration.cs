@@ -1,4 +1,4 @@
-﻿namespace GitToVsts.Internal.TeamServices
+﻿namespace GitToVsts.Model
 {
     /// <summary>
     ///     Class for migration configuration.

@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace GitToVsts.Internal.Models
+namespace GitToVsts.Model
 {
     /// <summary>
     ///     Visual Studio Team Services repository.

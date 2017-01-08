@@ -13,7 +13,7 @@ namespace GitToVsts.Internal.Utils
         ///     <paramref name="restClient" /> is <see langword="null" />.
         ///     <paramref name="restRequest" /> is <see langword="null" />.
         /// </exception>
-        public static async Task<IRestResponse> ExecuteTask(this IRestClient restClient, RestRequest restRequest)
+        public static async Task<IRestResponse> ExecuteTaskAsync(this IRestClient restClient, RestRequest restRequest)
         {
             if (restClient == null)
             {

@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace GitToVsts.Internal.Models
+namespace GitToVsts.Model
 {
     /// <summary>
     ///     ObservableColletion to contain GitRepositories.

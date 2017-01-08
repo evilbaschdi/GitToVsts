@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using GitToVsts.Core;
-using GitToVsts.Internal.Models;
+using GitToVsts.Model;
 using RestSharp;
 
 namespace GitToVsts.Internal.Git

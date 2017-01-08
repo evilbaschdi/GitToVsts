@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace GitToVsts.Internal.Models
+namespace GitToVsts.Model
 {
     /// <summary>
     /// </summary>
     [DataContract]
-    public class VsTsProcessTemplates
+    public class VsTsProjects
     {
         /// <summary>
         /// </summary>
@@ -16,6 +16,6 @@ namespace GitToVsts.Internal.Models
         /// <summary>
         /// </summary>
         [DataMember]
-        public List<VsTsProcessTemplate> Value { get; set; }
+        public List<VsTsProject> Value { get; set; }
     }
 }

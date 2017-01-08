@@ -93,7 +93,6 @@
       <DependentUpon>IApplicationSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\IApplicationSettings.cs" />
-    <Compile Include="Core\IValue.cs" />
     <Compile Include="Internal\Git\ConvertGitAvatart.cs">
       <DependentUpon>IGitAvatar.cs</DependentUpon>
     </Compile>
@@ -118,20 +117,20 @@
     <Compile Include="Internal\Git\IGitProcessInfo.cs" />
     <Compile Include="Internal\Git\IGitRepositories.cs" />
     <Compile Include="Internal\Git\IGitUser.cs" />
-    <Compile Include="Internal\Models\GitOwner.cs" />
-    <Compile Include="Internal\Models\GitPermissions.cs" />
-    <Compile Include="Internal\Models\GitPlan.cs" />
-    <Compile Include="Internal\Models\GitRepository.cs" />
-    <Compile Include="Internal\Models\GitRepositoryObservableCollectionItem.cs" />
-    <Compile Include="Internal\Models\GitUser.cs" />
-    <Compile Include="Internal\Models\VsTsCreateResponse.cs" />
-    <Compile Include="Internal\Models\VsTsProcessTemplate.cs" />
-    <Compile Include="Internal\Models\VsTsProcessTemplates.cs" />
-    <Compile Include="Internal\Models\VsTsProject.cs" />
-    <Compile Include="Internal\Models\VsTsProjects.cs" />
-    <Compile Include="Internal\Models\VsTsRepositories.cs" />
-    <Compile Include="Internal\Models\VsTsRepository.cs" />
-    <Compile Include="Internal\TeamServices\Configuration.cs">
+    <Compile Include="Model\GitOwner.cs" />
+    <Compile Include="Model\GitPermissions.cs" />
+    <Compile Include="Model\GitPlan.cs" />
+    <Compile Include="Model\GitRepository.cs" />
+    <Compile Include="Model\GitRepositoryObservableCollectionItem.cs" />
+    <Compile Include="Model\GitUser.cs" />
+    <Compile Include="Model\VsTsCreateResponse.cs" />
+    <Compile Include="Model\VsTsProcessTemplate.cs" />
+    <Compile Include="Model\VsTsProcessTemplates.cs" />
+    <Compile Include="Model\VsTsProject.cs" />
+    <Compile Include="Model\VsTsProjects.cs" />
+    <Compile Include="Model\VsTsRepositories.cs" />
+    <Compile Include="Model\VsTsRepository.cs" />
+    <Compile Include="Model\Configuration.cs">
       <DependentUpon>IMigrationConfiguration.cs</DependentUpon>
     </Compile>
     <Compile Include="Internal\TeamServices\CreateProject.cs">
@@ -152,7 +151,7 @@
     <Compile Include="Internal\TeamServices\ICreateProject.cs" />
     <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
     <Compile Include="Internal\TeamServices\IMigrateRepository.cs" />
-    <Compile Include="Internal\TeamServices\IMigrationConfiguration.cs" />
+    <Compile Include="Model\IMigrationConfiguration.cs" />
     <Compile Include="Internal\TeamServices\IProjects.cs" />
     <Compile Include="Internal\TeamServices\IRepositories.cs" />
     <Compile Include="Internal\TeamServices\ITemplates.cs" />
@@ -160,7 +159,7 @@
       <DependentUpon>IMigrateRepository.cs</DependentUpon>
     </Compile>
     <Compile Include="Internal\Utils\RestClientExtensions.cs" />
-    <Compile Include="Internal\Models\Response.cs" />
+    <Compile Include="Model\Response.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

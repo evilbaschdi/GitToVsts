@@ -4,7 +4,7 @@ using System.Linq;
 using EvilBaschdi.Core.DirectoryExtensions;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
-using GitToVsts.Internal.Models;
+using GitToVsts.Model;
 
 namespace GitToVsts.Internal.TeamServices
 {
@@ -70,7 +70,7 @@ namespace GitToVsts.Internal.TeamServices
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="repository" /> is <see langword="null" />.</exception>
         /// <exception cref="InvalidOperationException">somethings wrong.</exception>
-        public Response<string> For(GitRepository repository)
+        public Response<string> ValueFor(GitRepository repository)
         {
             if (repository == null)
             {

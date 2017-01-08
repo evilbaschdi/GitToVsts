@@ -1,17 +1,12 @@
-﻿using GitToVsts.Internal.Models;
+﻿using EvilBaschdi.Core.DotNetExtensions;
+using GitToVsts.Model;
 
 namespace GitToVsts.Internal.TeamServices
 {
     /// <summary>
     ///     Migrates a github repository to vistualstudio team services.
     /// </summary>
-    public interface IMigrateRepository
+    public interface IMigrateRepository : IValueFor<GitRepository, Response<string>>
     {
-        /// <summary>
-        ///     Contains the response of repository migration.
-        /// </summary>
-        /// <param name="repository">GitRepository to migrate.</param>
-        /// <returns></returns>
-        Response<string> For(GitRepository repository);
     }
 }

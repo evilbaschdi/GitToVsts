@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Windows.Media.Imaging;
-using GitToVsts.Internal.Models;
+using GitToVsts.Model;
 
 namespace GitToVsts.Internal.Git
 {
@@ -17,7 +17,7 @@ namespace GitToVsts.Internal.Git
         /// <param name="gitUser">GitUser to extract avatar for.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="gitUser" /> is <see langword="null" />.</exception>
-        public BitmapImage For(GitUser gitUser)
+        public BitmapImage ValueFor(GitUser gitUser)
         {
             if (gitUser == null)
             {

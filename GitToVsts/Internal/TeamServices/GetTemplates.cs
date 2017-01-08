@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using GitToVsts.Core;
-using GitToVsts.Internal.Models;
+using GitToVsts.Model;
 using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices

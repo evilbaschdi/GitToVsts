@@ -1,5 +1,5 @@
-﻿using GitToVsts.Core;
-using GitToVsts.Internal.Models;
+﻿using EvilBaschdi.Core.DotNetExtensions;
+using GitToVsts.Model;
 
 namespace GitToVsts.Internal.TeamServices
 {

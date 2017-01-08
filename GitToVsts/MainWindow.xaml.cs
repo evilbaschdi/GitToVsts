@@ -16,8 +16,8 @@ using EvilBaschdi.Core.Browsers;
 using EvilBaschdi.Core.Wpf;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
-using GitToVsts.Internal.Models;
 using GitToVsts.Internal.TeamServices;
+using GitToVsts.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -34,6 +34,9 @@ namespace GitToVsts
         /// </summary>
         public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
 
+        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+
         //private readonly BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
         private readonly IMetroStyle _style;
@@ -45,7 +48,6 @@ namespace GitToVsts
         private Configuration _configuration;
         private KeyValuePair<string, string> _result;
         private ProgressDialogController _controller;
-        private Task _task;
 
         /// <summary>
         ///     MainWindow
@@ -104,7 +106,7 @@ namespace GitToVsts
                 _gitRepositories = new GetGitRepositories(_applicationSettings);
                 LoadGitRepositoryList();
                 var convertGitAvatar = new ConvertGitAvatart();
-                GitAvatar.Source = convertGitAvatar.For(getGitUser.Value);
+                GitAvatar.Source = convertGitAvatar.ValueFor(getGitUser.Value);
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
@@ -221,7 +223,7 @@ namespace GitToVsts
 
         #region RunTab
 
-        private async void RunMigrationOnClick(object sender, RoutedEventArgs e)
+        private async void RunMigrationOnClickAsync(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
             await RunAsync();
@@ -246,11 +248,15 @@ namespace GitToVsts
             _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options);
             _controller.SetIndeterminate();
             _controller.Canceled += ControllerCanceled;
-            await RunRepositoryMigration();
+            await RunRepositoryMigrationAsync();
             TaskCompleted();
         }
 
-        private async Task RunRepositoryMigration()
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        //todo: CS1998 evaluieren
+        private async Task RunRepositoryMigrationAsync()
         {
             var repoPaths = new ConcurrentBag<string>();
             var configuration = _configuration;
@@ -265,10 +271,10 @@ namespace GitToVsts
 
                 repositoriesToMigrate.Take(5).ToList().ForEach(checkedItem =>
                                                                {
-                                                                   var response = migrate.For(checkedItem.Repository);
+                                                                   var response = migrate.ValueFor(checkedItem.Repository);
                                                                    if (response.Code != 200)
                                                                    {
-                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", response.Value + "\r\n");
+                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"{response.Value}\r\n");
                                                                    }
                                                                    else
                                                                    {
@@ -279,10 +285,10 @@ namespace GitToVsts
                 var restRepositoriesToMigrate = repositoriesToMigrate.Skip(5).ToList();
                 Parallel.ForEach(restRepositoriesToMigrate, checkedItem =>
                                                             {
-                                                                var response = migrate.For(checkedItem.Repository);
+                                                                var response = migrate.ValueFor(checkedItem.Repository);
                                                                 if (response.Code != 200)
                                                                 {
-                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", response.Value + "\r\n");
+                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"{response.Value}\r\n");
                                                                 }
                                                                 else
                                                                 {
@@ -293,7 +299,7 @@ namespace GitToVsts
             }
             catch (Exception ex)
             {
-                File.AppendAllText("C:/temp/GitVSTSMigration.txt", "\r\n" + ex.Message + "\r\n" + ex.StackTrace);
+                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"\r\n{ex.Message}\r\n{ex.StackTrace}");
             }
             finally
             {
@@ -318,6 +324,8 @@ namespace GitToVsts
             }
         }
 
+        /// <summary>
+        /// </summary>
         public void RefreshMigrationRepos()
         {
             _migrationFailedRepos.Clear();
@@ -332,8 +340,6 @@ namespace GitToVsts
                                              .ForEach(repo => _migrationSuccessRepos.Add(repo));
         }
 
-        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
-        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
         private void TaskCompleted()
         {
@@ -352,7 +358,8 @@ namespace GitToVsts
 
         private void ControllerCanceled(object sender, EventArgs e)
         {
-            _task.Dispose();
+            _controller.CloseAsync();
+            _controller.Closed += ControllerClosed;
         }
 
         #endregion RunTab
