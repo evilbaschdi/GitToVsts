@@ -274,7 +274,7 @@ namespace GitToVsts
                                                                    var response = migrate.ValueFor(checkedItem.Repository);
                                                                    if (response.Code != 200)
                                                                    {
-                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"{response.Value}\r\n");
+                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
                                                                    }
                                                                    else
                                                                    {
@@ -288,7 +288,7 @@ namespace GitToVsts
                                                                 var response = migrate.ValueFor(checkedItem.Repository);
                                                                 if (response.Code != 200)
                                                                 {
-                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"{response.Value}\r\n");
+                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
                                                                 }
                                                                 else
                                                                 {
@@ -299,7 +299,7 @@ namespace GitToVsts
             }
             catch (Exception ex)
             {
-                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $"\r\n{ex.Message}\r\n{ex.StackTrace}");
+                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             finally
             {
@@ -313,8 +313,9 @@ namespace GitToVsts
                             {
                                 Directory.Delete(repoPath);
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
                             }
                         }
                     }
@@ -466,6 +467,8 @@ namespace GitToVsts
             {
                 _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
             }
+            
+
         }
 
         #endregion Window Methods
