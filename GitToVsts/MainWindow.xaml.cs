@@ -252,11 +252,14 @@ namespace GitToVsts
             TaskCompleted();
         }
 
+
         /// <summary>
         /// </summary>
         /// <returns></returns>
         //todo: CS1998 evaluieren
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task RunRepositoryMigrationAsync()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             var repoPaths = new ConcurrentBag<string>();
             var configuration = _configuration;
