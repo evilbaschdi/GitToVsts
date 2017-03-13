@@ -37,7 +37,7 @@ namespace GitToVsts
         readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
         readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
-        //private readonly BackgroundWorker _bw;
+        //private read-only BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
         private readonly IMetroStyle _style;
         private readonly IApplicationSettings _applicationSettings;
@@ -110,7 +110,7 @@ namespace GitToVsts
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
-                _dialogService.ShowMessage("Successfull", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
+                _dialogService.ShowMessage("Successful", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
             }
             else
@@ -256,7 +256,7 @@ namespace GitToVsts
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        //todo: CS1998 evaluieren
+        //todo: CS1998 evaluate
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task RunRepositoryMigrationAsync()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -470,13 +470,11 @@ namespace GitToVsts
             {
                 _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
             }
-            
-
         }
 
         #endregion Window Methods
 
-        #region Flyout
+        #region Fly-out
 
         private void ToggleSettingsFlyoutClick(object sender, RoutedEventArgs e)
         {
@@ -502,7 +500,7 @@ namespace GitToVsts
             activeFlyout.IsOpen = activeFlyout.IsOpen && stayOpen || !activeFlyout.IsOpen;
         }
 
-        #endregion Flyout
+        #endregion Fly-out
 
         #region MetroStyle
 
