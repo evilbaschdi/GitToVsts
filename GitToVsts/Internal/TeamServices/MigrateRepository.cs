@@ -87,8 +87,7 @@ namespace GitToVsts.Internal.TeamServices
                 var getGitProcess = new GetGitProcess(gitInfo);
                 //clone --mirror
                 getGitProcess.Run(
-                    $"{_gitCommands.Clone} {repository.Clone_Url.Replace("https://", "https://" + _applicationSettings.GitUser + ":" + _applicationSettings.GitPassword + "@")}",
-                    workingDir);
+                    $"{_gitCommands.Clone} {repository.Clone_Url.Replace("https://", $"https://{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}@")}", workingDir);
 
                 var dirInfo = new DirectoryInfo(cloneDir);
                 dirInfo.RenameTo(".git");
