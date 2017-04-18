@@ -9,9 +9,9 @@ using System.Windows;
 [assembly: AssemblyTitle("GitToVsts")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("evilbaschdi")]
 [assembly: AssemblyProduct("GitToVsts")]
-[assembly: AssemblyCopyright("Copyright © evilbaschdi 2016")]
+[assembly: AssemblyCopyright("Copyright © evilbaschdi 2016 - 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

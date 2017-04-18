@@ -39,6 +39,7 @@ namespace GitToVsts
 
         //private read-only BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
+
         private readonly IMetroStyle _style;
         private readonly IApplicationSettings _applicationSettings;
         private IProjects _projects;
@@ -272,19 +273,21 @@ namespace GitToVsts
             {
                 Parallel.ForEach(repositoriesToMigrate, checkedItem => checkedItem.MigrationSuccessful = false);
 
-                repositoriesToMigrate.Take(5).ToList().ForEach(checkedItem =>
-                                                               {
-                                                                   var response = migrate.ValueFor(checkedItem.Repository);
-                                                                   if (response.Code != 200)
-                                                                   {
-                                                                       File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
-                                                                   }
-                                                                   else
-                                                                   {
-                                                                       checkedItem.MigrationSuccessful = true;
-                                                                       repoPaths.Add(response.Value);
-                                                                   }
-                                                               });
+                repositoriesToMigrate.Take(5)
+                                     .ToList()
+                                     .ForEach(checkedItem =>
+                                              {
+                                                  var response = migrate.ValueFor(checkedItem.Repository);
+                                                  if (response.Code != 200)
+                                                  {
+                                                      File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
+                                                  }
+                                                  else
+                                                  {
+                                                      checkedItem.MigrationSuccessful = true;
+                                                      repoPaths.Add(response.Value);
+                                                  }
+                                              });
                 var restRepositoriesToMigrate = repositoriesToMigrate.Skip(5).ToList();
                 Parallel.ForEach(restRepositoriesToMigrate, checkedItem =>
                                                             {

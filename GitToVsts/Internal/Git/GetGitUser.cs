@@ -34,7 +34,8 @@ namespace GitToVsts.Internal.Git
                 var client = new RestClient("https://api.github.com/user");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
+                request.AddHeader("authorization",
+                    $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
 
                 var gitUser = client.Execute<GitUser>(request).Data;
                 return gitUser;
