@@ -1,5 +1,7 @@
 # requirements #
 
+[![Join the chat at https://gitter.im/evilbaschdi/GitToVsts](https://badges.gitter.im/evilbaschdi/GitToVsts.svg)](https://gitter.im/evilbaschdi/GitToVsts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 - .net 4.6.2
 - a current version of git for windows
 - a current version of git credential manager for windows (maybe included in git for windows)
