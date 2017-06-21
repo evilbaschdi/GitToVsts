@@ -25,7 +25,7 @@
         <TaskbarItemInfo />
     </Window.TaskbarItemInfo>
     <Grid>
-        <TabControl>
+        <TabControl controls:TabControlHelper.Underlined="TabPanel" TabStripPlacement="Left">
             <!-- Git Settings -->
             <TabItem Name="GitTab" Header="Git Settings">
                 <Grid>
@@ -81,7 +81,7 @@
                 </Grid>
             </TabItem>
             <!-- Git Repository -->
-            <TabItem Name="RepoTab" Header="Repositories" IsEnabled="False">
+            <TabItem Name="RepoTab" Header="Repositories" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
@@ -112,7 +112,7 @@
                 </Grid>
             </TabItem>
             <!-- Visual Studio Team Services Settings -->
-            <TabItem Name="VsTab" Header="VsTs" IsEnabled="False">
+            <TabItem Name="VsTab" Header="VsTs" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
                     <TextBox x:Name="VsUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
@@ -139,7 +139,7 @@
                 </Grid>
             </TabItem>
             <!-- Do all the magic -->
-            <TabItem Name="RunTab" Header="Run" IsEnabled="False">
+            <TabItem Name="RunTab" Header="Run" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Button Name="RunMigration" Click="RunMigrationOnClickAsync" Margin="10">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -155,7 +155,7 @@
                 </Grid>
             </TabItem>
             <!-- Migration failed Repositories -->
-            <TabItem Name="MigrationFailedTab" Header="Failed" IsEnabled="False">
+            <TabItem Name="MigrationFailedTab" Header="Failed" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
@@ -172,7 +172,7 @@
                 </Grid>
             </TabItem>
             <!-- Migration failed Repositories -->
-            <TabItem Name="SuccessfulTab" Header="Successful" IsEnabled="False">
+            <TabItem Name="SuccessfulTab" Header="Successful" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />

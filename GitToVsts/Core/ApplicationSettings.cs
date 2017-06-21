@@ -1,7 +1,11 @@
+using System;
+using System.IO;
+using GitToVsts.Properties;
+
 namespace GitToVsts.Core
 {
     /// <summary>
-    ///     Wrapper arround Default Settings.
+    ///     Wrapper around Default Settings.
     /// </summary>
     public class ApplicationSettings : IApplicationSettings
     {
@@ -9,209 +13,135 @@ namespace GitToVsts.Core
         /// </summary>
         public string LoggingPath
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.LoggingPath)
-                        ? @"C:\G2V"
-                        : Properties.Settings.Default.LoggingPath;
-            }
-            set
-            {
-                Properties.Settings.Default.LoggingPath = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("LoggingPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}G2V");
+            set => Set("LoggingPath", value);
         }
 
         /// <summary>
         /// </summary>
         public string GitSourceType
         {
-            get
-            {
-                return string.IsNullOrWhiteSpace(Properties.Settings.Default.GitSourceType)
-                    ? "users"
-                    : Properties.Settings.Default.GitSourceType;
-            }
-            set
-            {
-                Properties.Settings.Default.GitSourceType = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("GitSourceType", "users");
+            set => Set("GitSourceType", value);
         }
 
         /// <summary>
         /// </summary>
         public string GitUser
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.GitUser)
-                        ? ""
-                        : Properties.Settings.Default.GitUser;
-            }
-            set
-            {
-                Properties.Settings.Default.GitUser = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("GitUser", "");
+            set => Set("GitUser", value);
         }
 
         /// <summary>
         /// </summary>
         public string GitPassword
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.GitPassword)
-                        ? ""
-                        : Properties.Settings.Default.GitPassword;
-            }
-            set
-            {
-                Properties.Settings.Default.GitPassword = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("GitPassword", "");
+            set => Set("GitPassword", value);
         }
 
         /// <summary>
         /// </summary>
         public string GitSource
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.GitSource)
-                        ? ""
-                        : Properties.Settings.Default.GitSource;
-            }
-            set
-            {
-                Properties.Settings.Default.GitSource = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("GitSource", "");
+            set => Set("GitSource", value);
         }
 
         /// <summary>
         /// </summary>
         public string VsUser
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.VsUser)
-                        ? ""
-                        : Properties.Settings.Default.VsUser;
-            }
-            set
-            {
-                Properties.Settings.Default.VsUser = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("VsUser", "");
+            set => Set("VsUser", value);
         }
 
         /// <summary>
         /// </summary>
         public string VsPassword
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.VsPassword)
-                        ? ""
-                        : Properties.Settings.Default.VsPassword;
-            }
-            set
-            {
-                Properties.Settings.Default.VsPassword = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("VsPassword", "");
+            set => Set("VsPassword", value);
         }
 
         /// <summary>
         /// </summary>
         public string VsProject
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.VsProject)
-                        ? ""
-                        : Properties.Settings.Default.VsProject;
-            }
-            set
-            {
-                Properties.Settings.Default.VsProject = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("VsProject", "");
+            set => Set("VsProject", value);
         }
 
         /// <summary>
         /// </summary>
         public string VsSource
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.VsSource)
-                        ? ""
-                        : Properties.Settings.Default.VsSource;
-            }
-            set
-            {
-                Properties.Settings.Default.VsSource = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("VsSource", "");
+            set => Set("VsSource", value);
         }
 
         /// <summary>
         /// </summary>
         public string TempPath
         {
-            get
-            {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.TempPath)
-                        ? @"C:\G2V"
-                        : Properties.Settings.Default.TempPath;
-            }
-            set
-            {
-                Properties.Settings.Default.TempPath = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get("TempPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}G2V");
+            set => Set("TempPath", value);
         }
 
         /// <summary>
         /// </summary>
         public bool DeleteTempRepos
         {
-            get { return Properties.Settings.Default.DeleteTempRepos; }
-            set
-            {
-                Properties.Settings.Default.DeleteTempRepos = value;
-                Properties.Settings.Default.Save();
-            }
+            get => Get<bool>("DeleteTempRepos");
+            set => Set("DeleteTempRepos", value);
         }
 
         /// <summary>
         /// </summary>
         public string GitBinPath
         {
-            get
+            get => Get("GitBinPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}Program Files\Git\bin");
+            set => Set("GitBinPath", value);
+        }
+
+
+        private T Get<T>(string setting, T fallback = default(T))
+        {
+            var value = (T) Settings.Default[setting];
+            if (fallback != null)
             {
-                return
-                    string.IsNullOrWhiteSpace(Properties.Settings.Default.GitBinPath)
-                        ? @"C:\Program Files\Git\bin"
-                        : Properties.Settings.Default.GitBinPath;
+                if (IsValueEmpty(value))
+                {
+                    return fallback;
+                }
             }
-            set
+            return value;
+        }
+
+        private void Set(string setting, object value)
+        {
+            Settings.Default[setting] = value;
+            Settings.Default.Save();
+        }
+
+        private bool IsValueEmpty<T>(T value)
+        {
+            if (value is string)
             {
-                Properties.Settings.Default.GitBinPath = value;
-                Properties.Settings.Default.Save();
+                if (string.IsNullOrWhiteSpace(value as string))
+                {
+                    return true;
+                }
             }
+            else
+            {
+                if (value.Equals(default(T)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

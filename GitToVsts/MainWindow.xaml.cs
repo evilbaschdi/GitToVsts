@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shell;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Browsers;
@@ -18,6 +19,7 @@ using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
 using GitToVsts.Model;
+using GitToVsts.Properties;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -29,26 +31,24 @@ namespace GitToVsts
     // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : MetroWindow
     {
-        /// <summary>
-        ///     ObservableColletion to contain GitRepositories.
-        /// </summary>
-        public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
+        private readonly IApplicationSettings _applicationSettings;
+        private readonly IDialogService _dialogService;
 
-        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
-        readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+
+        private readonly IMetroStyle _style;
+        private Brush _accentColorBrush;
+        private Configuration _configuration;
+        private ProgressDialogController _controller;
 
         //private read-only BackgroundWorker _bw;
         private IGitRepositories _gitRepositories;
 
-        private readonly IMetroStyle _style;
-        private readonly IApplicationSettings _applicationSettings;
-        private IProjects _projects;
-        private ITemplates _templates;
-        private readonly IDialogService _dialogService;
         private int _overrideProtection;
-        private Configuration _configuration;
+        private IProjects _projects;
         private KeyValuePair<string, string> _result;
-        private ProgressDialogController _controller;
+        private ITemplates _templates;
 
         /// <summary>
         ///     MainWindow
@@ -56,20 +56,26 @@ namespace GitToVsts
         public MainWindow()
         {
             InitializeComponent();
-            ISettings coreSettings = new CoreSettings(Properties.Settings.Default);
+            ISettings coreSettings = new CoreSettings(Settings.Default);
             _applicationSettings = new ApplicationSettings();
             IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
             _style.Load(true);
+            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
             _dialogService = new DialogService(this);
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
         }
 
+        /// <summary>
+        ///     ObservableColletion to contain GitRepositories.
+        /// </summary>
+        public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
+
+
         #region GitTab
 
-        //todo: auslagern
         private void LoadGitRepositoryList()
         {
             GitRepositoryObservableCollection = GetGitRepositoryObservableCollection();
@@ -82,7 +88,7 @@ namespace GitToVsts
         {
             var collection = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
-            int i = 1;
+            var i = 1;
             foreach (var repository in _gitRepositories.Value)
             {
                 collection.Add(new GitRepositoryObservableCollectionItem
@@ -113,6 +119,7 @@ namespace GitToVsts
 
                 _dialogService.ShowMessage("Successful", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
+                RepoTab.Background = _accentColorBrush;
             }
             else
             {
@@ -165,6 +172,7 @@ namespace GitToVsts
             var checkedItemsCount = GitRepositoryObservableCollection.Count(attribute => attribute.MigrateToVsTs);
             RepoLabel.Content = $"Repositories chosen to migrate: {checkedItemsCount}";
             VsTab.IsEnabled = checkedItemsCount != 0;
+            VsTab.Background = VsTab.IsEnabled ? _accentColorBrush : GitTab.Background;
         }
 
         #endregion RepoTab
@@ -202,6 +210,7 @@ namespace GitToVsts
             if (!string.IsNullOrWhiteSpace(VsTemplates.Text) && !string.IsNullOrWhiteSpace(VsTemplates.Text))
             {
                 RunTab.IsEnabled = true;
+                RunTab.Background = _accentColorBrush;
             }
         }
 
@@ -210,6 +219,7 @@ namespace GitToVsts
             if (!string.IsNullOrWhiteSpace(VsTemplates.Text) && !string.IsNullOrWhiteSpace(VsTemplates.Text))
             {
                 RunTab.IsEnabled = true;
+                RunTab.Background = _accentColorBrush;
             }
         }
 
@@ -227,7 +237,8 @@ namespace GitToVsts
         private async void RunMigrationOnClickAsync(object sender, RoutedEventArgs e)
         {
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Indeterminate;
-            await RunAsync();
+            // ReSharper disable once AsyncConverter.AsyncAwaitMayBeElidedHighlighting
+            await RunAsync().ConfigureAwait(true);
         }
 
         private async Task RunAsync()
@@ -246,10 +257,10 @@ namespace GitToVsts
                           };
 
             MetroDialogOptions = options;
-            _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options);
+            _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options).ConfigureAwait(true);
             _controller.SetIndeterminate();
             _controller.Canceled += ControllerCanceled;
-            await RunRepositoryMigrationAsync();
+            RunRepositoryMigration();
             TaskCompleted();
         }
 
@@ -257,10 +268,7 @@ namespace GitToVsts
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        //todo: CS1998 evaluate
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        private async Task RunRepositoryMigrationAsync()
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        private void RunRepositoryMigration()
         {
             var repoPaths = new ConcurrentBag<string>();
             var configuration = _configuration;
@@ -345,6 +353,16 @@ namespace GitToVsts
             GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs && attribute.MigrationSuccessful)
                                              .ToList()
                                              .ForEach(repo => _migrationSuccessRepos.Add(repo));
+
+            if (_migrationFailedRepos.Any())
+            {
+                MigrationFailedTab.Background = _accentColorBrush;
+            }
+
+            if (_migrationSuccessRepos.Any())
+            {
+                SuccessfulTab.Background = _accentColorBrush;
+            }
         }
 
 
@@ -475,6 +493,12 @@ namespace GitToVsts
             }
         }
 
+        private void TabOnGotFocus(object sender, RoutedEventArgs e)
+        {
+            var current = (TabItem) sender;
+            current.Background = GitTab.Background;
+        }
+
         #endregion Window Methods
 
         #region Fly-out
@@ -531,6 +555,7 @@ namespace GitToVsts
             {
                 _style.SetTheme(sender);
             }
+            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
         }
 
         private void AccentOnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -540,6 +565,7 @@ namespace GitToVsts
                 return;
             }
             _style.SetAccent(sender, e);
+            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
         }
 
         #endregion MetroStyle
