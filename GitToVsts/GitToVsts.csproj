@@ -161,7 +161,6 @@
     <Compile Include="Internal\TeamServices\MigrateRepository.cs">
       <DependentUpon>IMigrateRepository.cs</DependentUpon>
     </Compile>
-    <Compile Include="Internal\Utils\RestClientExtensions.cs" />
     <Compile Include="Model\Response.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -1,7 +1,7 @@
 ﻿namespace GitToVsts.Core
 {
     /// <summary>
-    ///     Wrapper arround Default Settings.
+    ///     Wrapper around Default Settings.
     /// </summary>
     public interface IApplicationSettings
     {

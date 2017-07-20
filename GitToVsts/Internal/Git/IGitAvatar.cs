@@ -5,7 +5,7 @@ using GitToVsts.Model;
 namespace GitToVsts.Internal.Git
 {
     /// <summary>
-    ///     Interfcae for classes that extract the a git avatar by GitUser.
+    ///     Interface for classes that extract the a git avatar by GitUser.
     /// </summary>
     public interface IGitAvatar : IValueFor<GitUser, BitmapImage>
     {

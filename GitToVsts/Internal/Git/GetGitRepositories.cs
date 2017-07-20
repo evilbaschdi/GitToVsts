@@ -10,7 +10,7 @@ using RestSharp;
 namespace GitToVsts.Internal.Git
 {
     /// <summary>
-    ///     Class that returns a list of GitRepositories via github api.
+    ///     Class that returns a list of GitRepositories via github API.
     /// </summary>
     public class GetGitRepositories : IGitRepositories
     {

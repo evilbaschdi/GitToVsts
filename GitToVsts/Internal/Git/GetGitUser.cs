@@ -7,7 +7,7 @@ using RestSharp;
 namespace GitToVsts.Internal.Git
 {
     /// <summary>
-    ///     Class that requests an user from github api.
+    ///     Class that requests an user from github API.
     /// </summary>
     public class GetGitUser : IGitUser
     {

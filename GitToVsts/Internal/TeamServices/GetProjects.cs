@@ -7,7 +7,7 @@ using RestSharp;
 namespace GitToVsts.Internal.TeamServices
 {
     /// <summary>
-    ///     Class for requesting visualstudio teamservices projects.
+    ///     Class for requesting visualstudio team services projects.
     /// </summary>
     public class GetProjects : IProjects
     {
