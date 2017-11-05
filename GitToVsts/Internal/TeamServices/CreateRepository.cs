@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
@@ -47,12 +48,14 @@ namespace GitToVsts.Internal.TeamServices
         {
             get
             {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}.visualstudio.com/DefaultCollection/_apis/git/repositories/?api-version=1");
+                var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/git/repositories/?api-version=1.0");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("gitrepositorytocreate", $@"""{_name}""");
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
+                var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
                 request.AddParameter("application/json", $@"{{  ""name"": ""{_name}"",  ""project"": {{    ""id"": ""{_vsTsProject.Id}""  }}}}", ParameterType.RequestBody);
 
                 var responseItem = client.Execute<VsTsRepository>(request).Data;

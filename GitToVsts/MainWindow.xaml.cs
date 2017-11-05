@@ -225,8 +225,7 @@ namespace GitToVsts
 
         private void ValidateVsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
         {
-            VsLogin.IsEnabled = !string.IsNullOrWhiteSpace(VsUsername.Text) &&
-                                !string.IsNullOrWhiteSpace(VsPassword.Password) &&
+            VsLogin.IsEnabled = !string.IsNullOrWhiteSpace(VsPassword.Password) &&
                                 !string.IsNullOrWhiteSpace(VsSource.Text);
         }
 
@@ -325,7 +324,7 @@ namespace GitToVsts
                         {
                             try
                             {
-                                Directory.Delete(repoPath);
+                                CleanUpDirectory(repoPath);
                             }
                             catch (Exception ex)
                             {
@@ -336,6 +335,26 @@ namespace GitToVsts
                 }
 
                 _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
+            }
+        }
+
+        private void CleanUpDirectory(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
+            }
+            DirectoryInfo dir = new DirectoryInfo(path);
+
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+
+            foreach (DirectoryInfo di in dir.GetDirectories())
+            {
+                CleanUpDirectory(di.FullName);
+                di.Delete();
             }
         }
 

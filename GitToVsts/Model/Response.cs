@@ -15,7 +15,7 @@ namespace GitToVsts.Model
         public T Value { get; set; }
 
         /// <summary>
-        ///     DataMember that contains a responsecode.
+        ///     DataMember that contains a response code.
         /// </summary>
         [DataMember]
         public int Code { get; set; }

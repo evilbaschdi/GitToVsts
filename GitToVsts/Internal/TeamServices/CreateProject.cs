@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
@@ -47,7 +48,7 @@ namespace GitToVsts.Internal.TeamServices
         {
             get
             {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}.visualstudio.com/defaultcollection/_apis/projects?api-version=2.0-preview");
+                var client = new RestClient($"https://{_applicationSettings.VsSource}/defaultcollection/_apis/projects?api-version=2.0-preview");
                 var request = new RestRequest(Method.POST);
 
                 var json = new StringBuilder();
@@ -58,7 +59,9 @@ namespace GitToVsts.Internal.TeamServices
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("projecttocreate", $@"""{_repository.Name}""");
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.VsUser}:{_applicationSettings.VsPassword}"))}");
+                var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
                 request.AddParameter("application/json", json.ToString(), ParameterType.RequestBody);
 
                 var responseItem = client.Execute<VsTsCreateResponse>(request).Data;
