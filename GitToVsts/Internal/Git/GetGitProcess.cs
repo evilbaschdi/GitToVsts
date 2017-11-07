@@ -14,11 +14,7 @@ namespace GitToVsts.Internal.Git
         /// <exception cref="ArgumentNullException"><paramref name="gitProcessInfo" /> is <see langword="null" />.</exception>
         public GetGitProcess(IGitProcessInfo gitProcessInfo)
         {
-            if (gitProcessInfo == null)
-            {
-                throw new ArgumentNullException(nameof(gitProcessInfo));
-            }
-            _gitProcessInfo = gitProcessInfo;
+            _gitProcessInfo = gitProcessInfo ?? throw new ArgumentNullException(nameof(gitProcessInfo));
         }
 
         /// <summary>
@@ -32,18 +28,10 @@ namespace GitToVsts.Internal.Git
         /// </exception>
         public void Run(string arguments, string directory)
         {
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-            if (directory == null)
-            {
-                throw new ArgumentNullException(nameof(directory));
-            }
             var gitInfo = _gitProcessInfo.Value;
             var gitProcess = new Process();
-            gitInfo.Arguments = arguments;
-            gitInfo.WorkingDirectory = directory;
+            gitInfo.Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
+            gitInfo.WorkingDirectory = directory ?? throw new ArgumentNullException(nameof(directory));
             gitProcess.StartInfo = gitInfo;
             gitProcess.Start();
             gitProcess.WaitForExit();

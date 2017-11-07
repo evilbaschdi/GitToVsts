@@ -20,11 +20,7 @@ namespace GitToVsts.Internal.Git
         /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
         public GetGitRepositories(IApplicationSettings applicationSettings)
         {
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
-            _applicationSettings = applicationSettings;
+            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
         }
 
         /// <exception cref="InvalidOperationException">Accessing repos throws an error.</exception>

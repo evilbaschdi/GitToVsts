@@ -31,36 +31,12 @@ namespace GitToVsts.Internal.TeamServices
         /// </exception>
         public MigrateRepository(IApplicationSettings applicationSettings, ITemplates templates, IProjects projects, IGitCommands gitCommands, string template, string project)
         {
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
-            if (templates == null)
-            {
-                throw new ArgumentNullException(nameof(templates));
-            }
-            if (projects == null)
-            {
-                throw new ArgumentNullException(nameof(projects));
-            }
-            if (gitCommands == null)
-            {
-                throw new ArgumentNullException(nameof(gitCommands));
-            }
-            if (template == null)
-            {
-                throw new ArgumentNullException(nameof(template));
-            }
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-            _applicationSettings = applicationSettings;
-            _templates = templates;
-            _projects = projects;
-            _gitCommands = gitCommands;
-            _template = template;
-            _project = project;
+            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+            _templates = templates ?? throw new ArgumentNullException(nameof(templates));
+            _projects = projects ?? throw new ArgumentNullException(nameof(projects));
+            _gitCommands = gitCommands ?? throw new ArgumentNullException(nameof(gitCommands));
+            _template = template ?? throw new ArgumentNullException(nameof(template));
+            _project = project ?? throw new ArgumentNullException(nameof(project));
         }
 
         /// <summary>

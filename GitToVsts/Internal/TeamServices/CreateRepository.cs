@@ -24,21 +24,9 @@ namespace GitToVsts.Internal.TeamServices
         /// </exception>
         public CreateRepository(IApplicationSettings applicationSettings, VsTsProject vsTsProject, string name)
         {
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
-            if (vsTsProject == null)
-            {
-                throw new ArgumentNullException(nameof(vsTsProject));
-            }
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            _applicationSettings = applicationSettings;
-            _vsTsProject = vsTsProject;
-            _name = name;
+            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+            _vsTsProject = vsTsProject ?? throw new ArgumentNullException(nameof(vsTsProject));
+            _name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
         /// <summary>

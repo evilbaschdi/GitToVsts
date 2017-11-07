@@ -18,11 +18,7 @@ namespace GitToVsts.Internal.TeamServices
         /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
         public GetTemplates(IApplicationSettings applicationSettings)
         {
-            if (applicationSettings == null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
-            _applicationSettings = applicationSettings;
+            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
         }
 
         /// <summary>
