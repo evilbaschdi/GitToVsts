@@ -5,6 +5,9 @@
  *
  * Made By MaterializeCSS.com
  */
+ body {
+  background-color: black;
+}
 
 nav ul a,
 nav .brand-logo {
@@ -15,8 +18,9 @@ p {
   line-height: 2rem;
 }
 
-.button-collapse {
-  color: #26a69a;
+.page-footer{
+  
+  height: auto;
 }
 
 .parallax-container {
