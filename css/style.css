@@ -1,16 +1,17 @@
 /* Custom Stylesheet */
+
 /**
  * Use this file to override Materialize files so you can update
  * the core Materialize files in the future
  *
  * Made By MaterializeCSS.com
  */
- body {
-  background-color: black;
+
+body {
+  background-color: #040404;
 }
 
-nav ul a,
-nav .brand-logo {
+nav ul a, nav .brand-logo {
   color: #444;
 }
 
@@ -18,24 +19,23 @@ p {
   line-height: 2rem;
 }
 
-.page-footer{
-  
+.page-footer {
   height: auto;
 }
 
 .parallax-container {
-    min-height: 380px;
+  min-height: 380px;
   line-height: 0;
   height: auto;
-    color: #ffffff;
-    color: rgba(255,255,255,.9);
+  color: #ffffff;
+  color: rgba(255, 255, 255, .9);
 }
 
 .parallax-container .section {
-    width: 100%;
-  }
+  width: 100%;
+}
 
-@media only screen and (max-width : 992px) {
+@media only screen and (max-width: 992px) {
   .parallax-container .section {
     position: absolute;
     top: 40%;
@@ -45,7 +45,7 @@ p {
   }
 }
 
-@media only screen and (max-width : 600px) {
+@media only screen and (max-width: 600px) {
   #index-banner .section {
     top: 0;
   }
@@ -58,6 +58,7 @@ p {
 footer.page-footer {
   margin: 0;
 }
+
 /*
 h1 {
   text-shadow: 0 1px 0 #242424,

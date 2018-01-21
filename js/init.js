@@ -1,6 +1,6 @@
-(function($){
-  $(function(){
+(function($) {
+
     //$(".button-collapse").sideNav();
-    $(".parallax").parallax();
-  }); // end of document ready
+    // ReSharper disable once PossiblyUnassignedProperty
+    $('.parallax').parallax();
 })(jQuery); // end of jQuery name space
