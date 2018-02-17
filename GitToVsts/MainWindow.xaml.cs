@@ -12,9 +12,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
-using EvilBaschdi.Core.Application;
-using EvilBaschdi.Core.Browsers;
-using EvilBaschdi.Core.Wpf;
+using EvilBaschdi.Core.Extensions;
+using EvilBaschdi.CoreExtended;
+using EvilBaschdi.CoreExtended.AppHelpers;
+using EvilBaschdi.CoreExtended.Browsers;
+using EvilBaschdi.CoreExtended.Metro;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
@@ -37,7 +39,7 @@ namespace GitToVsts
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
-        private readonly IMetroStyle _style;
+        private readonly IApplicationStyle _applicationStyle;
         private Brush _accentColorBrush;
         private Configuration _configuration;
         private ProgressDialogController _controller;
@@ -56,11 +58,12 @@ namespace GitToVsts
         public MainWindow()
         {
             InitializeComponent();
-            ISettings coreSettings = new CoreSettings(Settings.Default);
-            _applicationSettings = new ApplicationSettings();
+            IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
+            IApplicationStyleSettings applicationStyleSettings = new ApplicationStyleSettings(appSettingsBase);
+            _applicationSettings = new ApplicationSettings(appSettingsBase);
             IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
-            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
-            _style.Load(true);
+            _applicationStyle = new ApplicationStyle(this, Accent, ThemeSwitch, applicationStyleSettings, themeManagerHelper);
+            _applicationStyle.Load(true);
             _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
             _dialogService = new DialogService(this);
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
@@ -135,6 +138,7 @@ namespace GitToVsts
             {
                 return;
             }
+
             var toggleSwitch = (ToggleSwitch) sender;
             _applicationSettings.GitSourceType = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value ? "orgs" : "users";
         }
@@ -161,6 +165,7 @@ namespace GitToVsts
             {
                 gitRepositoryObservableCollectionItem.MigrateToVsTs = true;
             }
+
             GitRepositoryObservableCollectionBox.ItemsSource = null;
             GitRepositoryObservableCollectionBox.ItemsSource = GitRepositoryObservableCollection;
 
@@ -202,6 +207,7 @@ namespace GitToVsts
             {
                 VsTemplates.Items.Add(template.Name);
             }
+
             VsLogin.IsEnabled = false;
         }
 
@@ -344,6 +350,7 @@ namespace GitToVsts
             {
                 throw new ArgumentException("Value cannot be null or empty.", nameof(path));
             }
+
             DirectoryInfo dir = new DirectoryInfo(path);
 
             foreach (FileInfo fi in dir.GetFiles())
@@ -556,7 +563,8 @@ namespace GitToVsts
             {
                 return;
             }
-            _style.SaveStyle();
+
+            _applicationStyle.SaveStyle();
         }
 
         private void Theme(object sender, EventArgs e)
@@ -565,15 +573,17 @@ namespace GitToVsts
             {
                 return;
             }
+
             var routedEventArgs = e as RoutedEventArgs;
             if (routedEventArgs != null)
             {
-                _style.SetTheme(sender, routedEventArgs);
+                _applicationStyle.SetTheme(sender, routedEventArgs);
             }
             else
             {
-                _style.SetTheme(sender);
+                _applicationStyle.SetTheme(sender);
             }
+
             _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
         }
 
@@ -583,7 +593,8 @@ namespace GitToVsts
             {
                 return;
             }
-            _style.SetAccent(sender, e);
+
+            _applicationStyle.SetAccent(sender, e);
             _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
         }
 

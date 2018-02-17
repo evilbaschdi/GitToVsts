@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using EvilBaschdi.Core.DotNetExtensions;
+using EvilBaschdi.Core;
 
 namespace GitToVsts.Internal.Git
 {

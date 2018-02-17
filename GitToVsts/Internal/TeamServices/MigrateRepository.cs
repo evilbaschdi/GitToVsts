@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using EvilBaschdi.Core.DirectoryExtensions;
+using EvilBaschdi.Core.Extensions;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Model;
@@ -52,6 +52,7 @@ namespace GitToVsts.Internal.TeamServices
             {
                 throw new ArgumentNullException(nameof(repository));
             }
+
             try
             {
                 var workingDir = $@"{_applicationSettings.TempPath}\{repository.Name}";

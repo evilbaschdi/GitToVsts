@@ -23,6 +23,7 @@ namespace GitToVsts.Internal.Git
             {
                 throw new ArgumentNullException(nameof(gitUser));
             }
+
             var image = new BitmapImage();
             const int bytesToRead = 100;
 
@@ -30,6 +31,7 @@ namespace GitToVsts.Internal.Git
             {
                 return image;
             }
+
             var pictureUri = new Uri(gitUser.Avatar_Url, UriKind.Absolute);
             var request = WebRequest.Create(pictureUri);
             request.Timeout = -1;
@@ -54,6 +56,7 @@ namespace GitToVsts.Internal.Git
 
                 image.StreamSource = memoryStream;
             }
+
             image.EndInit();
             return image;
         }
