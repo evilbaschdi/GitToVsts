@@ -1,15 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2941E6B8-F198-4E44-9401-6ACB689CEBE2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GitToVsts</RootNamespace>
+    <AssemblyName>GitToVsts</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,92 +37,178 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\GitToVsts.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>baschdi.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ControlzEx" Version="3.0.2.4" />
-    <PackageReference Include="EvilBaschdi.Core" Version="2018.2.12.1" />
-    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2018.216.10.5" />
-    <PackageReference Include="MahApps.Metro" Version="1.6.1" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="2.2.0" />
-    <PackageReference Include="RestSharp" Version="106.2.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
-  </ItemGroup>
-  <ItemGroup>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="EvilBaschdi.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EvilBaschdi.Core.2018.2.12.1\lib\netstandard2.0\EvilBaschdi.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EvilBaschdi.CoreExtended, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EvilBaschdi.CoreExtended.2018.216.10.5\lib\net462\EvilBaschdi.CoreExtended.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.1.4, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\MahApps.Metro.1.6.1\lib\net45\MahApps.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks, Version=2.2.0.12, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\MahApps.Metro.IconPacks.2.2.0\lib\net46\MahApps.Metro.IconPacks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.2.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75">
+      <HintPath>..\packages\RestSharp.106.2.1\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="App.xaml.cs">
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Core\ApplicationSettings.cs">
+    <Compile Include="Core\ApplicationSettings.cs">
       <DependentUpon>IApplicationSettings.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\ConvertGitAvatart.cs">
+    <Compile Include="Core\IApplicationSettings.cs" />
+    <Compile Include="Internal\Git\ConvertGitAvatart.cs">
       <DependentUpon>IGitAvatar.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\GetGitProcess.cs">
+    <Compile Include="Internal\Git\GetGitProcess.cs">
       <DependentUpon>IGitProcess.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\GetGitProcessInfo.cs">
+    <Compile Include="Internal\Git\GetGitProcessInfo.cs">
       <DependentUpon>IGitProcessInfo.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\GetGitRepositories.cs">
+    <Compile Include="Internal\Git\GetGitRepositories.cs">
       <DependentUpon>IGitRepositories.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\GetGitUser.cs">
+    <Compile Include="Internal\Git\GetGitUser.cs">
       <DependentUpon>IGitUser.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\Git\GitCommands.cs">
+    <Compile Include="Internal\Git\GitCommands.cs">
       <DependentUpon>IGitCommands.cs</DependentUpon>
     </Compile>
-    <Compile Update="Model\Configuration.cs">
+    <Compile Include="Internal\Git\IGitAvatar.cs" />
+    <Compile Include="Internal\Git\IGitCommands.cs" />
+    <Compile Include="Internal\Git\IGitProcess.cs" />
+    <Compile Include="Internal\Git\IGitProcessInfo.cs" />
+    <Compile Include="Internal\Git\IGitRepositories.cs" />
+    <Compile Include="Internal\Git\IGitUser.cs" />
+    <Compile Include="Model\GitOwner.cs" />
+    <Compile Include="Model\GitPermissions.cs" />
+    <Compile Include="Model\GitPlan.cs" />
+    <Compile Include="Model\GitRepository.cs" />
+    <Compile Include="Model\GitRepositoryObservableCollectionItem.cs" />
+    <Compile Include="Model\GitUser.cs" />
+    <Compile Include="Model\VsTsCreateResponse.cs" />
+    <Compile Include="Model\VsTsProcessTemplate.cs" />
+    <Compile Include="Model\VsTsProcessTemplates.cs" />
+    <Compile Include="Model\VsTsProject.cs" />
+    <Compile Include="Model\VsTsProjects.cs" />
+    <Compile Include="Model\VsTsRepositories.cs" />
+    <Compile Include="Model\VsTsRepository.cs" />
+    <Compile Include="Model\Configuration.cs">
       <DependentUpon>IMigrationConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\CreateProject.cs">
+    <Compile Include="Internal\TeamServices\CreateProject.cs">
       <DependentUpon>ICreateProject.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\CreateRepository.cs">
+    <Compile Include="Internal\TeamServices\CreateRepository.cs">
       <DependentUpon>ICreateRepository.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\GetProjects.cs">
+    <Compile Include="Internal\TeamServices\GetProjects.cs">
       <DependentUpon>IProjects.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\GetRepositories.cs">
+    <Compile Include="Internal\TeamServices\GetRepositories.cs">
       <DependentUpon>IRepositories.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\GetTemplates.cs">
+    <Compile Include="Internal\TeamServices\GetTemplates.cs">
       <DependentUpon>ITemplates.cs</DependentUpon>
     </Compile>
-    <Compile Update="Internal\TeamServices\MigrateRepository.cs">
+    <Compile Include="Internal\TeamServices\ICreateProject.cs" />
+    <Compile Include="Internal\TeamServices\ICreateRepository.cs" />
+    <Compile Include="Internal\TeamServices\IMigrateRepository.cs" />
+    <Compile Include="Model\IMigrationConfiguration.cs" />
+    <Compile Include="Internal\TeamServices\IProjects.cs" />
+    <Compile Include="Internal\TeamServices\IRepositories.cs" />
+    <Compile Include="Internal\TeamServices\ITemplates.cs" />
+    <Compile Include="Internal\TeamServices\MigrateRepository.cs">
       <DependentUpon>IMigrateRepository.cs</DependentUpon>
     </Compile>
-    <Compile Update="MainWindow.xaml.cs">
+    <Compile Include="Model\Response.cs" />
+    <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Properties\AssemblyInfo.cs">
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
+    <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="baschdi.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="baschdi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -130,14 +221,13 @@
     <Content Include="GitToVsts.VisualElementsManifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Resource Include="baschdi.ico" />
   </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
