@@ -3,16 +3,16 @@ using System.Runtime.Serialization;
 namespace GitToVsts.Model
 {
     /// <summary>
-    ///     ObservableColletion to contain GitRepositories.
+    ///     ObservableCollection to contain GitRepositories.
     /// </summary>
     [DataContract]
     public class GitRepositoryObservableCollectionItem
     {
         /// <summary>
-        ///     Displayname of the GitRepository.
+        ///     DisplayName of the GitRepository.
         /// </summary>
         [DataMember]
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         ///     True if the GitRepository should be migrated to VsTs.

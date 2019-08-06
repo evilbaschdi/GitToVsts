@@ -13,15 +13,15 @@ namespace GitToVsts.Internal.TeamServices
     public class CreateRepository : ICreateRepository
     {
         private readonly IApplicationSettings _applicationSettings;
-        private readonly VsTsProject _vsTsProject;
         private readonly string _name;
+        private readonly VsTsProject _vsTsProject;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
-        ///     <paramref name="vsTsProject" /> is <see langword="null" />.
-        ///     <paramref name="name" /> is <see langword="null" />.
-        /// </exception>
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="applicationSettings"></param>
+        /// <param name="vsTsProject"></param>
+        /// <param name="name"></param>
         public CreateRepository(IApplicationSettings applicationSettings, VsTsProject vsTsProject, string name)
         {
             _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
@@ -40,6 +40,7 @@ namespace GitToVsts.Internal.TeamServices
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
+                // ReSharper disable once StringLiteralTypo
                 request.AddHeader("gitrepositorytocreate", $@"""{_name}""");
                 var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;

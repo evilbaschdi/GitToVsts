@@ -16,8 +16,10 @@ namespace GitToVsts.Internal.Git
     {
         private readonly IApplicationSettings _applicationSettings;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="applicationSettings"></param>
         public GetGitRepositories(IApplicationSettings applicationSettings)
         {
             _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
@@ -30,7 +32,7 @@ namespace GitToVsts.Internal.Git
             {
                 try
                 {
-                    var api = "https://api.github.com";
+                    const string api = "https://api.github.com";
                     var url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos";
                     var client = new RestClient(url);
                     var request = new RestRequest(Method.GET);

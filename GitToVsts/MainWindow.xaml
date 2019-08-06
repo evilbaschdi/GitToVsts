@@ -5,14 +5,21 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                      Icon="baschdi.ico"
-                      mc:Ignorable="d" TitleCharacterCasing="Normal" GlowBrush="{DynamicResource AccentColorBrush}"
+                      Icon="b.ico"
+                      mc:Ignorable="d" TitleCharacterCasing="Normal" GlowBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                       Title="Git to VisualStudio TeamServices" Height="500" Width="850">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
+            <!-- About -->
+            <Button Click="AboutWindowClick">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="Information" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="about" />
+                </StackPanel>
+            </Button>
             <!--  Settings  -->
-            <Button Click="ToggleSettingsFlyoutClick">
+            <Button Click="ToggleSettingsFlyOutClick">
                 <StackPanel Orientation="Horizontal">
                     <iconPacks:PackIconMaterial Kind="Settings" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Settings" />
@@ -20,7 +27,7 @@
             </Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-    <!-- TaskbarItemInfo -->
+    <!-- TaskBarItemInfo -->
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo />
     </Window.TaskbarItemInfo>
@@ -40,7 +47,8 @@
                     <TextBox x:Name="GitSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
                              controls:TextBoxHelper.Watermark="name of the user or organization you try to access" TextChanged="ValidateGitTextBoxesOnTextChanged" />
                     <controls:ToggleSwitch Name="SourceSwitch" Margin="0,90,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="SourceType"
-                                           OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Org" OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="User" />
+                                           OnSwitchBrush="{DynamicResource MahApps.Brushes.AccentBase}" OnLabel="Org" OffSwitchBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                                           OffLabel="User" />
                     <!-- Login -->
                     <Button Name="GitLogin" Width="100" Height="70" Margin="0,10,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="GitLoginOnClick"
                             Visibility="Visible">
@@ -51,12 +59,13 @@
                     </Button>
                     <Image Width="70" Height="70" Margin="0,10,25,0" HorizontalAlignment="Right" VerticalAlignment="Top" Name="GitAvatar" Visibility="Hidden" />
                     <StackPanel Margin="15,130,10,0" Orientation="Vertical">
-                        <Separator Background="{DynamicResource AccentColorBrush}" />
+                        <Separator Background="{DynamicResource MahApps.Brushes.AccentBase}" />
                     </StackPanel>
                     <!-- TempPath -->
                     <Label Width="60" Height="30" Margin="10,140,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Working" />
                     <TextBox x:Name="TempPath" Height="30" Margin="75,140,115,0" VerticalAlignment="Top" LostFocus="TempPathOnLostFocus" VerticalContentAlignment="Center"
-                             controls:TextBoxHelper.Watermark="temporary repositories clone path (lenght!!!)" />
+                             controls:TextBoxHelper.Watermark="temporary repositories clone path (length!!!)" />
+                    <!-- ReSharper disable once UnusedMember.Global -->
                     <Button Name="TempPathBrowse" Width="100" Margin="0,140,10,0" HorizontalAlignment="Right" VerticalAlignment="Top"
                             Click="BrowseTempPathClick">
                         <StackPanel Orientation="Horizontal">
@@ -68,6 +77,7 @@
                     <Label Width="60" Height="30" Margin="10,180,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Git Path" />
                     <TextBox x:Name="GitBinPath" Height="30" Margin="75,180,115,0" VerticalAlignment="Top" LostFocus="GitPathOnLostFocus" VerticalContentAlignment="Center"
                              controls:TextBoxHelper.Watermark="bin path of you git installation" />
+                    <!-- ReSharper disable once UnusedMember.Global -->
                     <Button Name="GitPathBrowse" Width="100" Margin="0,180,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="BrowseGitPathClick">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="FolderOutline" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -76,7 +86,8 @@
                     </Button>
                     <!-- CleanUp -->
                     <controls:ToggleSwitch Name="CleanUpSwitch" Margin="75,220,115,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="CleanUp"
-                                           OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Delete temp Repos" OffSwitchBrush="{DynamicResource AccentColorBrush}"
+                                           OnSwitchBrush="{DynamicResource MahApps.Brushes.AccentBase}" OnLabel="Delete temp Repos"
+                                           OffSwitchBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                                            OffLabel="Keep temp repos" />
                 </Grid>
             </TabItem>
@@ -89,6 +100,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <Label Content="Choose repositories to migrate" Name="RepoLabel" />
+                        <!-- ReSharper disable once UnusedMember.Global -->
                         <Button Name="MigrateAll" Click="MigrateAllOnClick">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="CheckAll" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -103,7 +115,7 @@
                                 <CheckBox IsChecked="{Binding MigrateToVsTs}" Click="MigrateToVsTsOnClick">
                                     <CheckBox.Content>
                                         <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                                        <TextBlock Text="{Binding Displayname}" />
+                                        <TextBlock Text="{Binding DisplayName}" />
                                     </CheckBox.Content>
                                 </CheckBox>
                             </DataTemplate>
@@ -121,6 +133,7 @@
                     <PasswordBox x:Name="VsPassword" Height="30" Margin="75,50,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
                                  PasswordChanged="ValidateVsTextBoxesOnTextChanged" controls:TextBoxHelper.Watermark="password or token" />
                     <Label Width="60" Height="30" Margin="10,90,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Target" />
+                    <!-- ReSharper disable once MarkupAttributeTypo -->
                     <TextBox x:Name="VsSource" Height="30" Margin="75,90,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"
                              controls:TextBoxHelper.Watermark="target.visualstudio.com | myOnPremiseTfsServer" TextChanged="ValidateVsTextBoxesOnTextChanged" />
                     <Label Width="60" Height="30" Margin="10,130,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Project" />
@@ -141,6 +154,7 @@
             <!-- Do all the magic -->
             <TabItem Name="RunTab" Header="Run" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
+                    <!-- ReSharper disable once UnusedMember.Global -->
                     <Button Name="RunMigration" Click="RunMigrationOnClickAsync" Margin="10">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -148,6 +162,7 @@
                                 <iconPacks:PackIconMaterial Kind="FolderMove" Width="128" Height="128" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <iconPacks:PackIconMaterial Kind="Visualstudio" Width="128" Height="128" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </StackPanel>
+                            <!-- ReSharper disable once UnusedMember.Global -->
                             <TextBlock Name="RenameFoldersContent" Margin="10" VerticalAlignment="Center"
                                        Text="Click to migrate the chosen git repositories to visual studio team services" />
                         </StackPanel>
@@ -165,7 +180,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                                <TextBlock Text="{Binding Displayname}" />
+                                <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -182,7 +197,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                                <TextBlock Text="{Binding Displayname}" />
+                                <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -194,64 +209,26 @@
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
             <!--  Settings Fly-out  -->
-            <controls:Flyout Name="SettingsFlyout" Width="400" AnimateOnPositionChange="True" AnimateOpacity="True"
+            <!-- ReSharper disable once UnusedMember.Global -->
+            <controls:Flyout Name="SettingsFlyOut" Width="400" AnimateOnPositionChange="True" AnimateOpacity="True"
                              Header="Settings" Position="Right" Theme="Accent">
                 <StackPanel>
-                    <StackPanel>
-                        <!-- Logging -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <!--Label-->
-                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logging" />
+                    <!-- Logging -->
+                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                        <!--Label-->
+                        <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logging" />
 
-                            <!--TextBox-->
-                            <TextBox Name="LoggingPath" Height="30" Width="200" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                     LostFocus="LoggingPathOnLostFocus" />
-                            <!--Button-->
-                            <Button Name="BrowseLoggingPath" Width="95" Margin="10,5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="BrowseLoggingPathClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial Kind="FolderOutline" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                    <!-- Line -->
-                    <StackPanel Margin="15,10,15,0" Orientation="Vertical">
-                        <Separator Background="{DynamicResource AccentColorBrush}" />
-                    </StackPanel>
-                    <!--Application Style-->
-                    <StackPanel>
-                        <!-- Theme -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Content="Theme" />
-                            <controls:ToggleSwitch Name="ThemeSwitch" Margin="10,1,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="Theme"
-                                                   OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
-                                                   OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
-                        </StackPanel>
-                        <!-- Accent -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <Label Width="60" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Accent" />
-                            <ComboBox Name="Accent" Width="305" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
-                        </StackPanel>
-                        <!-- Save Style -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <Button Name="SaveStyle" Width="305" Margin="70,5,0,0" Click="SaveStyleClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial Kind="ContentSaveSettings" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                    <!-- Line -->
-                    <StackPanel Margin="15,10,15,0" Orientation="Vertical">
-                        <Separator Background="{DynamicResource AccentColorBrush}" />
-                    </StackPanel>
-                    <!-- Build / Linker Time -->
-                    <StackPanel Orientation="Horizontal">
-                        <Label Width="50" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Build" />
-                        <Label Width="310" Margin="15,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Name="LinkerTime" />
+                        <!--TextBox-->
+                        <TextBox Name="LoggingPath" Height="30" Width="200" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                 LostFocus="LoggingPathOnLostFocus" />
+                        <!--Button-->
+                        <!-- ReSharper disable once UnusedMember.Global -->
+                        <Button Name="BrowseLoggingPath" Width="95" Margin="10,5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="BrowseLoggingPathClick">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="FolderOutline" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="browse" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </controls:Flyout>

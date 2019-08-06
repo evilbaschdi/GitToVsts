@@ -15,10 +15,6 @@ namespace GitToVsts.Internal.Git
 
         /// <summary>
         /// </summary>
-        string Reset { get; }
-
-        /// <summary>
-        /// </summary>
         string RemoteAdd { get; }
 
         /// <summary>

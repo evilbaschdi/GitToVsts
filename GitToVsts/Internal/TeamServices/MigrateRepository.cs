@@ -5,6 +5,7 @@ using EvilBaschdi.Core.Extensions;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Model;
+using JetBrains.Annotations;
 
 namespace GitToVsts.Internal.TeamServices
 {
@@ -14,29 +15,27 @@ namespace GitToVsts.Internal.TeamServices
     public class MigrateRepository : IMigrateRepository
     {
         private readonly IApplicationSettings _applicationSettings;
-        private readonly ITemplates _templates;
-        private readonly IProjects _projects;
         private readonly IGitCommands _gitCommands;
-        private readonly string _template;
-        private readonly string _project;
+        private readonly IMigrationConfiguration _migrationConfiguration;
+        private readonly IProjects _projects;
+        private readonly ITemplates _templates;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
-        ///     <paramref name="templates" /> is <see langword="null" />.
-        ///     <paramref name="projects" /> is <see langword="null" />.
-        ///     <paramref name="gitCommands" /> is <see langword="null" />.
-        ///     <paramref name="template" /> is <see langword="null" />.
-        ///     <paramref name="project" /> is <see langword="null" />.
-        /// </exception>
-        public MigrateRepository(IApplicationSettings applicationSettings, ITemplates templates, IProjects projects, IGitCommands gitCommands, string template, string project)
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="applicationSettings"></param>
+        /// <param name="templates"></param>
+        /// <param name="projects"></param>
+        /// <param name="gitCommands"></param>
+        /// <param name="migrationConfiguration"></param>
+        public MigrateRepository(IApplicationSettings applicationSettings, ITemplates templates, IProjects projects, IGitCommands gitCommands,
+                                 [NotNull] IMigrationConfiguration migrationConfiguration)
         {
             _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
             _templates = templates ?? throw new ArgumentNullException(nameof(templates));
             _projects = projects ?? throw new ArgumentNullException(nameof(projects));
             _gitCommands = gitCommands ?? throw new ArgumentNullException(nameof(gitCommands));
-            _template = template ?? throw new ArgumentNullException(nameof(template));
-            _project = project ?? throw new ArgumentNullException(nameof(project));
+            _migrationConfiguration = migrationConfiguration ?? throw new ArgumentNullException(nameof(migrationConfiguration));
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace GitToVsts.Internal.TeamServices
 
                 var gitInfo = new GetGitProcessInfo(_applicationSettings);
 
-                var getGitProcess = new GetGitProcess(gitInfo);
+                IGitProcess getGitProcess = new GetGitProcess(gitInfo);
                 //clone --mirror
                 getGitProcess.Run(
                     $"{_gitCommands.Clone} {repository.Clone_Url.Replace("https://", $"https://{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}@")}", workingDir);
@@ -72,9 +71,9 @@ namespace GitToVsts.Internal.TeamServices
                 getGitProcess.Run(_gitCommands.Config, workingDir);
 
                 VsTsProject vsTsProject;
-                if (_project.Contains("(default)"))
+                if (_migrationConfiguration.VsProject.Contains("(default)"))
                 {
-                    var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _template));
+                    var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _migrationConfiguration.VsTemplate));
                     Console.Write(createProject.Value.Id);
 
                     var projects = new GetProjects(_applicationSettings).Value.Value;
@@ -89,11 +88,11 @@ namespace GitToVsts.Internal.TeamServices
                 }
                 else
                 {
-                    vsTsProject = _projects.Value.Value.First(item => item.Name == _project);
+                    vsTsProject = _projects.Value.Value.First(item => item.Name == _migrationConfiguration.VsProject);
                 }
 
-                var createRespository = new CreateRepository(_applicationSettings, vsTsProject, repository.Name);
-                Console.Write(createRespository.Value.Id);
+                var createRepository = new CreateRepository(_applicationSettings, vsTsProject, repository.Name);
+                Console.Write(createRepository.Value.Id);
 
                 var repositories = new GetRepositories(_applicationSettings).Value.Value;
 

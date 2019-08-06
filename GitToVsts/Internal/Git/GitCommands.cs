@@ -15,10 +15,6 @@ namespace GitToVsts.Internal.Git
 
         /// <summary>
         /// </summary>
-        public string Reset { get; } = "reset --hard HEAD";
-
-        /// <summary>
-        /// </summary>
         public string RemoteAdd { get; } = "remote add vsts";
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace GitToVsts.Internal.Git
     /// <summary>
     ///     Class that extracts the a git avatar by GitUser.
     /// </summary>
-    public class ConvertGitAvatart : IGitAvatar
+    public class ConvertGitAvatar : IGitAvatar
     {
         /// <summary>
         ///     Contains a BitmapImage for given GitUser.
@@ -42,13 +42,13 @@ namespace GitToVsts.Internal.Git
                 var reader = new BinaryReader(responseStream);
                 var memoryStream = new MemoryStream();
 
-                var bytebuffer = new byte[bytesToRead];
-                var bytesRead = reader.Read(bytebuffer, 0, bytesToRead);
+                var byteBuffer = new byte[bytesToRead];
+                var bytesRead = reader.Read(byteBuffer, 0, bytesToRead);
 
                 while (bytesRead > 0)
                 {
-                    memoryStream.Write(bytebuffer, 0, bytesRead);
-                    bytesRead = reader.Read(bytebuffer, 0, bytesToRead);
+                    memoryStream.Write(byteBuffer, 0, bytesRead);
+                    bytesRead = reader.Read(byteBuffer, 0, bytesToRead);
                 }
 
                 image.BeginInit();

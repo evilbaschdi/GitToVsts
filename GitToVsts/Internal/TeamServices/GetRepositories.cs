@@ -14,8 +14,10 @@ namespace GitToVsts.Internal.TeamServices
     {
         private readonly IApplicationSettings _applicationSettings;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException"><paramref name="applicationSettings" /> is <see langword="null" />.</exception>
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="applicationSettings"></param>
         public GetRepositories(IApplicationSettings applicationSettings)
         {
             _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));

@@ -2,26 +2,28 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
-using EvilBaschdi.Core.Extensions;
 using EvilBaschdi.CoreExtended;
 using EvilBaschdi.CoreExtended.AppHelpers;
 using EvilBaschdi.CoreExtended.Browsers;
 using EvilBaschdi.CoreExtended.Metro;
+using EvilBaschdi.CoreExtended.Mvvm;
+using EvilBaschdi.CoreExtended.Mvvm.View;
+using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
 using GitToVsts.Model;
 using GitToVsts.Properties;
+using JetBrains.Annotations;
+using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -33,15 +35,13 @@ namespace GitToVsts
     // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : MetroWindow
     {
+        private readonly Brush _accentColorBrush;
         private readonly IApplicationSettings _applicationSettings;
         private readonly IDialogService _dialogService;
-
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
-
-        private readonly IApplicationStyle _applicationStyle;
-        private Brush _accentColorBrush;
-        private Configuration _configuration;
+        private readonly IThemeManagerHelper _themeManagerHelper;
+        private IMigrationConfiguration _configuration;
         private ProgressDialogController _controller;
 
         //private read-only BackgroundWorker _bw;
@@ -59,22 +59,21 @@ namespace GitToVsts
         {
             InitializeComponent();
             IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
-            IApplicationStyleSettings applicationStyleSettings = new ApplicationStyleSettings(appSettingsBase);
             _applicationSettings = new ApplicationSettings(appSettingsBase);
-            IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
-            _applicationStyle = new ApplicationStyle(this, Accent, ThemeSwitch, applicationStyleSettings, themeManagerHelper);
-            _applicationStyle.Load(true);
-            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
+            _themeManagerHelper = new ThemeManagerHelper();
+
+            var applicationStyle = new ApplicationStyle(_themeManagerHelper);
+            applicationStyle.Load(true);
+            _accentColorBrush = (Brush)ThemeManager.GetResourceFromAppStyle(this, "MahApps.Brushes.AccentBase");
+
             _dialogService = new DialogService(this);
-            var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
-            LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
             Load();
         }
 
         /// <summary>
-        ///     ObservableColletion to contain GitRepositories.
+        ///     ObservableCollection to contain GitRepositories.
         /// </summary>
-        public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
+        private ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoryObservableCollection { get; set; }
 
 
         #region GitTab
@@ -96,7 +95,7 @@ namespace GitToVsts
             {
                 collection.Add(new GitRepositoryObservableCollectionItem
                                {
-                                   Displayname = $"{i++}_{repository.Name}",
+                                   DisplayName = $"{i++}_{repository.Name}",
                                    Repository = repository
                                });
             }
@@ -115,7 +114,7 @@ namespace GitToVsts
                 _applicationSettings.GitSource = GitSource.Text;
                 _gitRepositories = new GetGitRepositories(_applicationSettings);
                 LoadGitRepositoryList();
-                var convertGitAvatar = new ConvertGitAvatart();
+                var convertGitAvatar = new ConvertGitAvatar();
                 GitAvatar.Source = convertGitAvatar.ValueFor(getGitUser.Value);
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
@@ -140,6 +139,7 @@ namespace GitToVsts
             }
 
             var toggleSwitch = (ToggleSwitch) sender;
+            // ReSharper disable once StringLiteralTypo
             _applicationSettings.GitSourceType = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value ? "orgs" : "users";
         }
 
@@ -213,20 +213,24 @@ namespace GitToVsts
 
         private void VsTemplatesOnDropDownClosed(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(VsTemplates.Text) && !string.IsNullOrWhiteSpace(VsTemplates.Text))
+            if (string.IsNullOrWhiteSpace(VsTemplates.Text) || string.IsNullOrWhiteSpace(VsTemplates.Text))
             {
-                RunTab.IsEnabled = true;
-                RunTab.Background = _accentColorBrush;
+                return;
             }
+
+            RunTab.IsEnabled = true;
+            RunTab.Background = _accentColorBrush;
         }
 
         private void VsProjectsOnDropDownClosed(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(VsTemplates.Text) && !string.IsNullOrWhiteSpace(VsTemplates.Text))
+            if (string.IsNullOrWhiteSpace(VsTemplates.Text) || string.IsNullOrWhiteSpace(VsTemplates.Text))
             {
-                RunTab.IsEnabled = true;
-                RunTab.Background = _accentColorBrush;
+                return;
             }
+
+            RunTab.IsEnabled = true;
+            RunTab.Background = _accentColorBrush;
         }
 
         private void ValidateVsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
@@ -248,11 +252,11 @@ namespace GitToVsts
 
         private async Task RunAsync()
         {
-            var configuration = new Configuration
-                                {
-                                    VsTemplate = VsTemplates.Text,
-                                    VsProject = VsProjects.Text
-                                };
+            IMigrationConfiguration configuration = new Configuration
+                                                    {
+                                                        VsTemplate = VsTemplates.Text,
+                                                        VsProject = VsProjects.Text
+                                                    };
             Cursor = Cursors.Wait;
             _configuration = configuration;
 
@@ -279,7 +283,7 @@ namespace GitToVsts
             var configuration = _configuration;
             var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
             var gitCommands = new GitCommands();
-            var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration.VsTemplate, configuration.VsProject);
+            var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration);
 
             var repositoriesToMigrate = checkedItems as IList<GitRepositoryObservableCollectionItem> ?? checkedItems.ToList();
             try
@@ -326,16 +330,18 @@ namespace GitToVsts
                 {
                     foreach (var repoPath in repoPaths)
                     {
-                        if (Directory.Exists(repoPath))
+                        if (!Directory.Exists(repoPath))
                         {
-                            try
-                            {
-                                CleanUpDirectory(repoPath);
-                            }
-                            catch (Exception ex)
-                            {
-                                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
-                            }
+                            continue;
+                        }
+
+                        try
+                        {
+                            CleanUpDirectory(repoPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
                         }
                     }
                 }
@@ -344,21 +350,22 @@ namespace GitToVsts
             }
         }
 
-        private void CleanUpDirectory(string path)
+        private void CleanUpDirectory([NotNull] string path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (path == null)
             {
-                throw new ArgumentException("Value cannot be null or empty.", nameof(path));
+                throw new ArgumentNullException(nameof(path));
             }
 
-            DirectoryInfo dir = new DirectoryInfo(path);
 
-            foreach (FileInfo fi in dir.GetFiles())
+            var dir = new DirectoryInfo(path);
+
+            foreach (var fi in dir.GetFiles())
             {
                 fi.Delete();
             }
 
-            foreach (DirectoryInfo di in dir.GetDirectories())
+            foreach (var di in dir.GetDirectories())
             {
                 CleanUpDirectory(di.FullName);
                 di.Delete();
@@ -367,7 +374,7 @@ namespace GitToVsts
 
         /// <summary>
         /// </summary>
-        public void RefreshMigrationRepos()
+        private void RefreshMigrationRepos()
         {
             _migrationFailedRepos.Clear();
             _migrationSuccessRepos.Clear();
@@ -431,12 +438,13 @@ namespace GitToVsts
             GitBinPath.Text = _applicationSettings.GitBinPath;
             CleanUpSwitch.IsChecked = _applicationSettings.DeleteTempRepos;
 
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (_applicationSettings.GitSourceType)
             {
                 case "users":
                     SourceSwitch.IsChecked = false;
                     break;
-
+                // ReSharper disable once StringLiteralTypo
                 case "orgs":
                     SourceSwitch.IsChecked = true;
                     break;
@@ -525,79 +533,47 @@ namespace GitToVsts
             current.Background = GitTab.Background;
         }
 
+        private void AboutWindowClick(object sender, RoutedEventArgs e)
+        {
+            var assembly = typeof(MainWindow).Assembly;
+            IAboutWindowContent aboutWindowContent = new AboutWindowContent(assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\b.png");
+
+            var aboutWindow = new AboutWindow
+                              {
+                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                              };
+
+            aboutWindow.ShowDialog();
+        }
+
         #endregion Window Methods
 
         #region Fly-out
 
-        private void ToggleSettingsFlyoutClick(object sender, RoutedEventArgs e)
+        private void ToggleSettingsFlyOutClick(object sender, RoutedEventArgs e)
         {
-            ToggleFlyout(0);
+            ToggleFlyOut(0);
         }
 
-        private void ToggleFlyout(int index, bool stayOpen = false)
+        private void ToggleFlyOut(int index, bool stayOpen = false)
         {
-            var activeFlyout = (Flyout) Flyouts.Items[index];
-            if (activeFlyout == null)
+            var activeFlyOut = (Flyout) Flyouts.Items[index];
+            if (activeFlyOut == null)
             {
                 return;
             }
 
             foreach (
-                var nonactiveFlyout in
+                var nonactiveFlyOut in
                 Flyouts.Items.Cast<Flyout>()
-                       .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
+                       .Where(nonactiveFlyOut => nonactiveFlyOut.IsOpen && nonactiveFlyOut.Name != activeFlyOut.Name))
             {
-                nonactiveFlyout.IsOpen = false;
+                nonactiveFlyOut.IsOpen = false;
             }
 
-            activeFlyout.IsOpen = activeFlyout.IsOpen && stayOpen || !activeFlyout.IsOpen;
+            activeFlyOut.IsOpen = activeFlyOut.IsOpen && stayOpen || !activeFlyOut.IsOpen;
         }
 
         #endregion Fly-out
-
-        #region MetroStyle
-
-        private void SaveStyleClick(object sender, RoutedEventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            _applicationStyle.SaveStyle();
-        }
-
-        private void Theme(object sender, EventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            var routedEventArgs = e as RoutedEventArgs;
-            if (routedEventArgs != null)
-            {
-                _applicationStyle.SetTheme(sender, routedEventArgs);
-            }
-            else
-            {
-                _applicationStyle.SetTheme(sender);
-            }
-
-            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
-        }
-
-        private void AccentOnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            _applicationStyle.SetAccent(sender, e);
-            _accentColorBrush = (Brush) Application.Current.TryFindResource("AccentColorBrush");
-        }
-
-        #endregion MetroStyle
     }
 }

@@ -16,12 +16,12 @@ namespace GitToVsts.Internal.TeamServices
         private readonly GitRepository _repository;
         private readonly VsTsProcessTemplate _vsTsProcessTemplate;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="applicationSettings" /> is <see langword="null" />.
-        ///     <paramref name="repository" /> is <see langword="null" />.
-        ///     <paramref name="vsTsProcessTemplate" /> is <see langword="null" />.
-        /// </exception>
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="applicationSettings"></param>
+        /// <param name="repository"></param>
+        /// <param name="vsTsProcessTemplate"></param>
         public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, VsTsProcessTemplate vsTsProcessTemplate)
         {
             _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
@@ -36,16 +36,19 @@ namespace GitToVsts.Internal.TeamServices
         {
             get
             {
+                // ReSharper disable once StringLiteralTypo
                 var client = new RestClient($"https://{_applicationSettings.VsSource}/defaultcollection/_apis/projects?api-version=2.0-preview");
                 var request = new RestRequest(Method.POST);
 
                 var json = new StringBuilder();
                 json.Append($@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ");
+                // ReSharper disable once StringLiteralTypo
                 json.Append(@"""capabilities"": {    ""versioncontrol"": {      ""sourceControlType"": ""Git""    },    ");
                 json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_vsTsProcessTemplate.Id}""      }}}}");
 
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
+                // ReSharper disable once StringLiteralTypo
                 request.AddHeader("projecttocreate", $@"""{_repository.Name}""");
                 var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;

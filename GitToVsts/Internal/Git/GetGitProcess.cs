@@ -10,8 +10,10 @@ namespace GitToVsts.Internal.Git
     {
         private readonly IGitProcessInfo _gitProcessInfo;
 
-        /// <summary>Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.</summary>
-        /// <exception cref="ArgumentNullException"><paramref name="gitProcessInfo" /> is <see langword="null" />.</exception>
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="gitProcessInfo"></param>
         public GetGitProcess(IGitProcessInfo gitProcessInfo)
         {
             _gitProcessInfo = gitProcessInfo ?? throw new ArgumentNullException(nameof(gitProcessInfo));
