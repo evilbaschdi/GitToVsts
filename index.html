@@ -9,30 +9,31 @@
     <!-- Open Graph data -->
     <meta property="og:title" content="GitToVsts by evilbaschdi" />
     <meta property="og:description" content="GitToVsts by evilbaschdi" />
-    <meta property="og:image" content="http://evilbaschdi.bplaced.net/img/spectre_key_blue.jpg" />
+    <meta property="og:image" content="https://evilbaschdi.github.io/GitToVsts/img/spectre_key_blue.jpg" />
     <meta property="og:url" content="https://evilbaschdi.github.io/GitToVsts/" />
     <meta property="og:site_name" content="GitToVsts by evilbaschdi" />
     <meta property="og:type" content="website" />
     <!-- Twitter Card data -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="http://evilbaschdi.bplaced.net/img/spectre_key_blue.jpg" />
+    <meta name="twitter:image" content="https://evilbaschdi.github.io/GitToVsts/img/spectre_key_blue.jpg" />
     <meta name="twitter:site" content="@evilbaschdi">
     <meta name="twitter:creator" content="@evilbaschdi">
     <meta name="twitter:title" content="evil.baschdi" />
     <meta name="twitter:description" content="GitToVsts by evilbaschdi" />
     <meta name="twitter:url" content="https://evilbaschdi.github.io/GitToVsts/" />
 
-    <link rel="icon" href="http://evilbaschdi.bplaced.net/img/cropped-baschdi_bw-1-32x32.png" sizes="32x32" />
-    <link rel="icon" href="http://evilbaschdi.bplaced.net/img/cropped-baschdi_bw-1-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon-precomposed" href="http://evilbaschdi.bplaced.net/img/cropped-baschdi_bw-1-180x180.png">
-    <meta name="msapplication-TileImage" content="http://evilbaschdi.bplaced.net/img/cropped-baschdi_bw-1-270x270.png">
+    <link rel="icon" href="https://evilbaschdi.github.io/GitToVsts/img/cropped-baschdi_bw-1-32x32.png" sizes="32x32" />
+    <link rel="icon" href="https://evilbaschdi.github.io/GitToVsts/img/cropped-baschdi_bw-1-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon-precomposed" href="https://evilbaschdi.github.io/GitToVsts/img/cropped-baschdi_bw-1-180x180.png">
+    <meta name="msapplication-TileImage" content="https://evilbaschdi.github.io/GitToVsts/img/cropped-baschdi_bw-1-270x270.png">
     <title>GitToVsts by evilbaschdi</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <link href="lib/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" />
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="font/font.css" rel="stylesheet" />
     <link href="css/style.css" type="text/css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
@@ -58,7 +59,7 @@
                 <h1 class="center grey-text text-lighten-2">GitToVsts</h1>
                 <div class="row center">
                     <h5 class="col s12 light">
-                        Tool to migrate a list of github repositories to visual stutio team services (visualstudio.com)
+                        Tool to migrate a list of GitHub repositories to Azure DevOps (visualstudio.com / dev.azure.com)
                         platform.
                     </h5>
                 </div>
@@ -85,18 +86,15 @@
     </div>
 
     <!-- Project Section -->
-    <div class="grey darken-4 ">
+    <div class="grey darken-4 grey-text text-lighten-2">
         <div class="container">
             <div class="section">
                 <div class="row">
                     <!-- <div class="col s12 center"> -->
-                    <h3>
-                        <i class="mdi-action-list grey-text darken-1"></i>
-                    </h3>
-                    <p class="light grey-text text-lighten-2">
-                        early version with the following open items:
-                    </p>
-                    <ul class="collection z-depth-5">
+                    <h5>
+                        <i class="material-icons">list</i>&nbsp;early version with the following open items:
+                    </h5>
+                    <ul class="collection z-depth-5 grey-text text-darken-2">
                         <li class="collection-item">logging is partly implemented</li>
                         <li class="collection-item">encryption of credentials</li>
                         <li class="collection-item">code cleanup</li>
@@ -110,7 +108,7 @@
     <footer class="page-footer black darken-4">
         <div class="footer-copyright">
             <div class="container">
-                <h6 class="grey-text text-lighten-2">&copy; 2012 -
+                <h6 class="grey-text text-lighten-2">&copy; 2016 -
                     <script>document.write(new Date().getFullYear())</script> by evilbaschdi | Published with
                     <a href="http://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a>
                 </h6>
@@ -119,9 +117,9 @@
     </footer>
 
     <!-- Scripts-->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="js/bundle.min.js"></script>
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/materialize/js/materialize.min.js"></script>
+    <script src="js/init.min.js"></script>
 </body>
 
 </html>
