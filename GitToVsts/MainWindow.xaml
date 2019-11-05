@@ -7,7 +7,7 @@
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       Icon="b.ico"
                       mc:Ignorable="d" TitleCharacterCasing="Normal" GlowBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                      Title="Git to VisualStudio TeamServices" Height="500" Width="850">
+                      Title="Git to Azure DevOps" Height="500" Width="850">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
@@ -124,7 +124,7 @@
                 </Grid>
             </TabItem>
             <!-- Visual Studio Team Services Settings -->
-            <TabItem Name="VsTab" Header="VsTs" IsEnabled="False" GotFocus="TabOnGotFocus">
+            <TabItem Name="VsTab" Header="Azure DevOps" IsEnabled="False" GotFocus="TabOnGotFocus">
                 <Grid>
                     <Label Width="60" Height="30" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="User" />
                     <TextBox x:Name="VsUsername" Height="30" Margin="75,10,115,0" VerticalAlignment="Top" VerticalContentAlignment="Center"

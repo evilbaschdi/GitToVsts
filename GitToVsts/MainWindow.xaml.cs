@@ -297,7 +297,7 @@ namespace GitToVsts
                                                   var response = migrate.ValueFor(checkedItem.Repository);
                                                   if (response.Code != 200)
                                                   {
-                                                      File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
+                                                      File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{response.Value}{Environment.NewLine}");
                                                   }
                                                   else
                                                   {
@@ -311,7 +311,7 @@ namespace GitToVsts
                                                                 var response = migrate.ValueFor(checkedItem.Repository);
                                                                 if (response.Code != 200)
                                                                 {
-                                                                    File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{response.Value}{Environment.NewLine}");
+                                                                    File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{response.Value}{Environment.NewLine}");
                                                                 }
                                                                 else
                                                                 {
@@ -322,7 +322,7 @@ namespace GitToVsts
             }
             catch (Exception ex)
             {
-                File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             finally
             {
@@ -341,7 +341,7 @@ namespace GitToVsts
                         }
                         catch (Exception ex)
                         {
-                            File.AppendAllText("C:/temp/GitVSTSMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                            File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
                         }
                     }
                 }
