@@ -14,11 +14,6 @@ namespace GitToVsts.Model
         public string Id { get; set; }
 
         /// <summary>
-        /// </summary>
-        [DataMember]
-        public string Url { get; set; }
-
-        /// <summary>
         ///     Name of the repository.
         /// </summary>
         [DataMember]
@@ -35,5 +30,10 @@ namespace GitToVsts.Model
         /// </summary>
         [DataMember]
         public string RemoteUrl { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        public string Url { get; set; }
     }
 }

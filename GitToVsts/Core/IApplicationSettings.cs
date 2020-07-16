@@ -7,15 +7,11 @@
     {
         /// <summary>
         /// </summary>
-        string LoggingPath { get; set; }
+        bool DeleteTempRepos { get; set; }
 
         /// <summary>
         /// </summary>
-        string GitSourceType { get; set; }
-
-        /// <summary>
-        /// </summary>
-        string GitUser { get; set; }
+        string GitBinPath { get; set; }
 
         /// <summary>
         /// </summary>
@@ -27,7 +23,19 @@
 
         /// <summary>
         /// </summary>
-        string VsUser { get; set; }
+        string GitSourceType { get; set; }
+
+        /// <summary>
+        /// </summary>
+        string GitUser { get; set; }
+
+        /// <summary>
+        /// </summary>
+        string LoggingPath { get; set; }
+
+        /// <summary>
+        /// </summary>
+        string TempPath { get; set; }
 
         /// <summary>
         /// </summary>
@@ -43,14 +51,6 @@
 
         /// <summary>
         /// </summary>
-        string TempPath { get; set; }
-
-        /// <summary>
-        /// </summary>
-        bool DeleteTempRepos { get; set; }
-
-        /// <summary>
-        /// </summary>
-        string GitBinPath { get; set; }
+        string VsUser { get; set; }
     }
 }

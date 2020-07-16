@@ -15,14 +15,14 @@ namespace GitToVsts.Internal.Git
 
         /// <summary>
         /// </summary>
-        string RemoteAdd { get; }
-
-        /// <summary>
-        /// </summary>
         string PushAll { get; }
 
         /// <summary>
         /// </summary>
         string PushTags { get; }
+
+        /// <summary>
+        /// </summary>
+        string RemoteAdd { get; }
     }
 }

@@ -30,7 +30,7 @@ namespace GitToVsts.Internal.TeamServices
         {
             get
             {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/projects?api-version=2.0");
+                var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/projects");
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("cache-control", "no-cache");
 

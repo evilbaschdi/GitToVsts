@@ -9,15 +9,15 @@ namespace GitToVsts.Model
     public class Response<T>
     {
         /// <summary>
-        ///     DataMember that contains the return value of type "T" of a class200.
-        /// </summary>
-        [DataMember]
-        public T Value { get; set; }
-
-        /// <summary>
         ///     DataMember that contains a response code.
         /// </summary>
         [DataMember]
         public int Code { get; set; }
+
+        /// <summary>
+        ///     DataMember that contains the return value of type "T" of a class200.
+        /// </summary>
+        [DataMember]
+        public T Value { get; set; }
     }
 }

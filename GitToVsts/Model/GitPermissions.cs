@@ -15,11 +15,11 @@ namespace GitToVsts.Model
         /// <summary>
         /// </summary>
         [DataMember]
-        public bool Push { get; set; }
+        public bool Pull { get; set; }
 
         /// <summary>
         /// </summary>
         [DataMember]
-        public bool Pull { get; set; }
+        public bool Push { get; set; }
     }
 }

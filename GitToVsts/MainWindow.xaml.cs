@@ -10,20 +10,17 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
+using ControlzEx.Theming;
 using EvilBaschdi.CoreExtended;
 using EvilBaschdi.CoreExtended.AppHelpers;
 using EvilBaschdi.CoreExtended.Browsers;
-using EvilBaschdi.CoreExtended.Metro;
-using EvilBaschdi.CoreExtended.Mvvm;
-using EvilBaschdi.CoreExtended.Mvvm.View;
-using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
+using EvilBaschdi.CoreExtended.Controls.About;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
 using GitToVsts.Model;
 using GitToVsts.Properties;
 using JetBrains.Annotations;
-using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -37,10 +34,9 @@ namespace GitToVsts
     {
         private readonly Brush _accentColorBrush;
         private readonly IApplicationSettings _applicationSettings;
-        private readonly IDialogService _dialogService;
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
         private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
-        private readonly IThemeManagerHelper _themeManagerHelper;
+
         private IMigrationConfiguration _configuration;
         private ProgressDialogController _controller;
 
@@ -60,13 +56,17 @@ namespace GitToVsts
             InitializeComponent();
             IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
             _applicationSettings = new ApplicationSettings(appSettingsBase);
-            _themeManagerHelper = new ThemeManagerHelper();
 
-            var applicationStyle = new ApplicationStyle(_themeManagerHelper);
+
+            var applicationStyle = new ApplicationStyle();
             applicationStyle.Load(true);
-            _accentColorBrush = (Brush)ThemeManager.GetResourceFromAppStyle(this, "MahApps.Brushes.AccentBase");
 
-            _dialogService = new DialogService(this);
+            var accentColor = WindowsThemeHelper.GetWindowsAccentColor();
+            if (accentColor.HasValue)
+            {
+                _accentColorBrush = new SolidColorBrush(accentColor.Value);
+            }
+
             Load();
         }
 
@@ -119,7 +119,7 @@ namespace GitToVsts
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
-                _dialogService.ShowMessage("Successful", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
+                this.ShowMessageAsync("Successful", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
                 RepoTab.IsEnabled = true;
                 RepoTab.Background = _accentColorBrush;
             }
@@ -131,7 +131,7 @@ namespace GitToVsts
         }
 
 
-        private void SourceType(object sender, EventArgs e)
+        private void SourceType(object sender, RoutedEventArgs e)
         {
             if (_overrideProtection == 0)
             {
@@ -140,7 +140,7 @@ namespace GitToVsts
 
             var toggleSwitch = (ToggleSwitch) sender;
             // ReSharper disable once StringLiteralTypo
-            _applicationSettings.GitSourceType = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value ? "orgs" : "users";
+            _applicationSettings.GitSourceType = toggleSwitch.IsOn ? "orgs" : "users";
         }
 
         private void ValidateGitTextBoxesOnTextChanged(object sender, EventArgs e)
@@ -407,7 +407,7 @@ namespace GitToVsts
 
         private void ControllerClosed(object sender, EventArgs e)
         {
-            _dialogService.ShowMessage(_result.Key, _result.Value);
+            this.ShowMessageAsync(_result.Key, _result.Value);
             RefreshMigrationRepos();
             TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
             TaskbarItemInfo.ProgressValue = 1;
@@ -436,17 +436,17 @@ namespace GitToVsts
             LoggingPath.Text = _applicationSettings.LoggingPath;
             TempPath.Text = _applicationSettings.TempPath;
             GitBinPath.Text = _applicationSettings.GitBinPath;
-            CleanUpSwitch.IsChecked = _applicationSettings.DeleteTempRepos;
+            CleanUpSwitch.IsOn = _applicationSettings.DeleteTempRepos;
 
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (_applicationSettings.GitSourceType)
             {
                 case "users":
-                    SourceSwitch.IsChecked = false;
+                    SourceSwitch.IsOn = false;
                     break;
                 // ReSharper disable once StringLiteralTypo
                 case "orgs":
-                    SourceSwitch.IsChecked = true;
+                    SourceSwitch.IsOn = true;
                     break;
             }
 
@@ -491,10 +491,10 @@ namespace GitToVsts
             }
         }
 
-        private void CleanUp(object sender, EventArgs e)
+        private void CleanUp(object sender, RoutedEventArgs e)
         {
             var toggleSwitch = (ToggleSwitch) sender;
-            _applicationSettings.DeleteTempRepos = toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value;
+            _applicationSettings.DeleteTempRepos = toggleSwitch.IsOn;
         }
 
         private void BrowseGitPathClick(object sender, RoutedEventArgs e)
@@ -511,7 +511,7 @@ namespace GitToVsts
             }
             else
             {
-                _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+                this.ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
             }
         }
 
@@ -523,7 +523,7 @@ namespace GitToVsts
             }
             else
             {
-                _dialogService.ShowMessage("Path Error", "Path does not contain a 'git.exe'");
+                this.ShowMessageAsync("Path Error", "Path does not contain a 'git.exe'");
             }
         }
 
@@ -536,11 +536,11 @@ namespace GitToVsts
         private void AboutWindowClick(object sender, RoutedEventArgs e)
         {
             var assembly = typeof(MainWindow).Assembly;
-            IAboutWindowContent aboutWindowContent = new AboutWindowContent(assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\b.png");
+            IAboutContent aboutWindowContent = new AboutContent(assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\b.png");
 
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                                  DataContext = new AboutViewModel(aboutWindowContent)
                               };
 
             aboutWindow.ShowDialog();

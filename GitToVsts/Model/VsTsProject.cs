@@ -9,6 +9,11 @@ namespace GitToVsts.Model
     public class VsTsProject
     {
         /// <summary>
+        /// </summary>
+        [DataMember]
+        public string Description { get; set; }
+
+        /// <summary>
         ///     Id of the project.
         /// </summary>
         [DataMember]
@@ -22,12 +27,7 @@ namespace GitToVsts.Model
         /// <summary>
         /// </summary>
         [DataMember]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [DataMember]
-        public string Url { get; set; }
+        public int Revision { get; set; }
 
         /// <summary>
         /// </summary>
@@ -37,6 +37,6 @@ namespace GitToVsts.Model
         /// <summary>
         /// </summary>
         [DataMember]
-        public int Revision { get; set; }
+        public string Url { get; set; }
     }
 }

@@ -10,17 +10,22 @@ namespace GitToVsts.Model
         /// <summary>
         /// </summary>
         [DataMember]
-        public string Id { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [DataMember]
         public string Description { get; set; }
 
         /// <summary>
         /// </summary>
         [DataMember]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
         public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        public string Name { get; set; }
 
         /// <summary>
         /// </summary>
@@ -31,10 +36,5 @@ namespace GitToVsts.Model
         /// </summary>
         [DataMember]
         public string Url { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [DataMember]
-        public string Name { get; set; }
     }
 }

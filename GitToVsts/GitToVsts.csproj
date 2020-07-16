@@ -1,29 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GitToVsts</RootNamespace>
-    <AssemblyName>GitToVsts</AssemblyName>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFramework>net48</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <Version>$([System.DateTime]::UtcNow.ToString(yyyy.M.d.Hmm))-develop</Version>
+    <ApplicationIcon>b.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Authors>Sebastian Walter</Authors>
     <Company>evilbaschdi (Sebastian Walter)</Company>
     <Copyright>Copyright © 2016 - $([System.DateTime]::UtcNow.ToString(yyyy)) evilbaschdi</Copyright>
-    <ApplicationIcon>b.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GitToVsts.xml</DocumentationFile>
+    <LangVersion>8</LangVersion>
+    <OutputType>WinExe</OutputType>
     <Prefer32Bit>false</Prefer32Bit>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Version>$([System.DateTime]::UtcNow.ToString(yyyy.M.d.Hmm))-develop</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ControlzEx" Version="4.1.1" />
-    <PackageReference Include="EvilBaschdi.Core" Version="2019.10.10.1115-develop" />
-    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2019.10.21.1930-develop" />
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0531" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="3.0.0-alpha0258" />
-    <PackageReference Include="RestSharp" Version="106.6.10" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="ControlzEx" Version="4.3.1" />
+    <PackageReference Include="EvilBaschdi.Core" Version="2020.6.12.1028" />
+    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2020.5.24.1338" />
+    <PackageReference Include="MahApps.Metro" Version="2.1.1" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.3.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.3.0" />
+    <PackageReference Include="RestSharp" Version="106.11.5-alpha.0.2" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
@@ -58,5 +55,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
 
 </Project>

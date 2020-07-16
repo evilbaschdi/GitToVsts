@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitToVsts", "GitToVsts\GitToVsts.csproj", "{2941E6B8-F198-4E44-9401-6ACB689CEBE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitToVsts", "GitToVsts\GitToVsts.csproj", "{2941E6B8-F198-4E44-9401-6ACB689CEBE2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8291649C-BE52-4CC7-9105-7FBB589E6B34}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		global.json = global.json
+		NuGet.config = NuGet.config
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +27,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29753DC6-AC5A-48EF-9826-35D7BA4752DF}
 	EndGlobalSection
 EndGlobal

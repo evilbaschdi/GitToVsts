@@ -12,21 +12,21 @@ namespace GitToVsts.Model
         /// <summary>
         /// </summary>
         [DataMember]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [DataMember]
-        public int Space { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [DataMember]
         public int Collaborators { get; set; }
 
         /// <summary>
         /// </summary>
         [DataMember]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
         public int Private_Repos { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        public int Space { get; set; }
     }
 }
