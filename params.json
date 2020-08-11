@@ -1,6 +1,0 @@
-{
-  "name": "GitToVsts",
-  "tagline": "Tool to migrate a list of github repositories to visual stutio team services (visualstudio.com) platform.",
-  "body": "# early version with the following open items: #\r\n\r\n- logging is not implemented\r\n- git windows are showing up (debug purposes)\r\n- temporary cloned repos are not getting deleted (debug purposes)\r\n- settings sometimes don't get stored - but who cares\r\n- cleanup code",
-  "note": "Don't delete this file! It's used internally to help with page regeneration."
-}

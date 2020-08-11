@@ -1,77 +1,13 @@
-/* Custom Stylesheet */
-
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
-
 body {
-  background-color: #040404;
+  padding-top: 56px;
+  background: url('../img/me.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
 }
 
-nav ul a, nav .brand-logo {
-  color: #444;
+.special {
+  background-color: rgba(245, 245, 245, 1);
+  opacity: .8;
 }
-
-p {
-  line-height: 2rem;
-}
-
-.page-footer {
-  height: auto;
-}
-
-.parallax-container {
-  min-height: 380px;
-  line-height: 0;
-  height: auto;
-  color: #ffffff;
-  color: rgba(255, 255, 255, .9);
-}
-
-.parallax-container .section {
-  width: 100%;
-}
-
-@media only screen and (max-width: 992px) {
-  .parallax-container .section {
-    position: absolute;
-    top: 40%;
-  }
-  #index-banner .section {
-    top: 10%;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  #index-banner .section {
-    top: 0;
-  }
-}
-
-.icon-block {
-  padding: 0 15px;
-}
-
-footer.page-footer {
-  margin: 0;
-}
-
-/*
-h1 {
-  text-shadow: 0 1px 0 #242424,
-               0 2px 0 #212121,
-               0 3px 0 #212121,
-               0 4px 0 #242424,
-               0 5px 0 #E0E0E0,
-               0 6px 1px rgba(0,0,0,.1),
-               0 0 5px rgba(0,0,0,.1),
-               0 1px 3px rgba(0,0,0,.3),
-               0 3px 5px rgba(0,0,0,.2),
-               0 5px 10px rgba(0,0,0,.25),
-               0 10px 10px rgba(0,0,0,.2),
-               0 20px 20px rgba(0,0,0,.15);
-}
-*/
