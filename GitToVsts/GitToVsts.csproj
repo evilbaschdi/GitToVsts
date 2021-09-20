@@ -20,7 +20,7 @@
     <PackageReference Include="MahApps.Metro" Version="2.1.1" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.3.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.3.0" />
-    <PackageReference Include="RestSharp" Version="106.11.5-alpha.0.2" />
+    <PackageReference Include="RestSharp" Version="106.12.0" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
