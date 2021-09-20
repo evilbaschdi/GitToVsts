@@ -34,8 +34,8 @@ namespace GitToVsts
     {
         private readonly Brush _accentColorBrush;
         private readonly IApplicationSettings _applicationSettings;
-        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
-        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new ObservableCollection<GitRepositoryObservableCollectionItem>();
+        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new();
+        private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new();
 
         private IMigrationConfiguration _configuration;
         private ProgressDialogController _controller;
@@ -93,7 +93,7 @@ namespace GitToVsts
             var i = 1;
             foreach (var repository in _gitRepositories.Value)
             {
-                collection.Add(new GitRepositoryObservableCollectionItem
+                collection.Add(new()
                                {
                                    DisplayName = $"{i++}_{repository.Name}",
                                    Repository = repository
@@ -115,7 +115,7 @@ namespace GitToVsts
                 _gitRepositories = new GetGitRepositories(_applicationSettings);
                 LoadGitRepositoryList();
                 var convertGitAvatar = new ConvertGitAvatar();
-                GitAvatar.Source = convertGitAvatar.ValueFor(getGitUser.Value);
+                GitAvatar.Source = convertGitAvatar.ValueFor(getGitUser.Value).Result;
                 GitAvatar.Visibility = Visibility.Visible;
                 GitLogin.Visibility = Visibility.Hidden;
 
@@ -138,7 +138,7 @@ namespace GitToVsts
                 return;
             }
 
-            var toggleSwitch = (ToggleSwitch) sender;
+            var toggleSwitch = (ToggleSwitch)sender;
             // ReSharper disable once StringLiteralTypo
             _applicationSettings.GitSourceType = toggleSwitch.IsOn ? "orgs" : "users";
         }
@@ -346,11 +346,11 @@ namespace GitToVsts
                     }
                 }
 
-                _result = new KeyValuePair<string, string>("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
+                _result = new("Finished", $"All {repositoriesToMigrate.Count} repositories were migrated.");
             }
         }
 
-        private void CleanUpDirectory([NotNull] string path)
+        private static void CleanUpDirectory([NotNull] string path)
         {
             if (path == null)
             {
@@ -493,7 +493,7 @@ namespace GitToVsts
 
         private void CleanUp(object sender, RoutedEventArgs e)
         {
-            var toggleSwitch = (ToggleSwitch) sender;
+            var toggleSwitch = (ToggleSwitch)sender;
             _applicationSettings.DeleteTempRepos = toggleSwitch.IsOn;
         }
 
@@ -529,7 +529,7 @@ namespace GitToVsts
 
         private void TabOnGotFocus(object sender, RoutedEventArgs e)
         {
-            var current = (TabItem) sender;
+            var current = (TabItem)sender;
             current.Background = GitTab.Background;
         }
 
@@ -557,7 +557,7 @@ namespace GitToVsts
 
         private void ToggleFlyOut(int index, bool stayOpen = false)
         {
-            var activeFlyOut = (Flyout) Flyouts.Items[index];
+            var activeFlyOut = (Flyout)Flyouts.Items[index];
             if (activeFlyOut == null)
             {
                 return;

@@ -35,7 +35,7 @@ namespace GitToVsts.Internal.TeamServices
                 request.AddHeader("cache-control", "no-cache");
 
                 var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
 
                 var projects = client.Execute<VsTsProjects>(request).Data;

@@ -8,11 +8,11 @@
         /// <summary>
         ///     Template to create with.
         /// </summary>
-        public string VsTemplate { get; set; }
+        public string VsTemplate { get; init; }
 
         /// <summary>
         ///     Project to create in.
         /// </summary>
-        public string VsProject { get; set; }
+        public string VsProject { get; init; }
     }
 }

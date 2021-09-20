@@ -120,7 +120,7 @@ namespace GitToVsts.Internal.TeamServices
                 //push --tags vsts
                 getGitProcess.Run(_gitCommands.PushTags, workingDir);
 
-                return new Response<string>
+                return new()
                        {
                            Code = 200,
                            Value = workingDir

@@ -47,14 +47,18 @@ namespace GitToVsts.Internal.Git
                     if (response.Headers.Any(header => header.Name == "Link"))
                     {
                         var currentPage = 1;
-                        var pageCount =
-                            int.Parse(Regex.Match(response.Headers.First(header => header.Name.Equals("Link")).Value.ToString(), "page=([0-9]+)>; rel=\"last\"").Groups[1].Value);
-
-                        while (currentPage < pageCount)
+                        var value = response.Headers.First(header => header.Name is "Link").Value;
+                        if (value != null)
                         {
-                            client.BaseUrl = new Uri($"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}");
-                            response = client.Execute<List<GitRepository>>(request);
-                            gitRepositories.AddRange(response.Data);
+                            var pageCount =
+                                int.Parse(Regex.Match(value.ToString() ?? string.Empty, "page=([0-9]+)>; rel=\"last\"").Groups[1].Value);
+
+                            while (currentPage < pageCount)
+                            {
+                                client.BaseUrl = new($"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}");
+                                response = client.Execute<List<GitRepository>>(request);
+                                gitRepositories.AddRange(response.Data);
+                            }
                         }
                     }
 

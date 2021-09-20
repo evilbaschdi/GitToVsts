@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using GitToVsts.Model;
 
@@ -17,7 +18,7 @@ namespace GitToVsts.Internal.Git
         /// <param name="gitUser">GitUser to extract avatar for.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"><paramref name="gitUser" /> is <see langword="null" />.</exception>
-        public BitmapImage ValueFor(GitUser gitUser)
+        public async Task<BitmapImage> ValueFor(GitUser gitUser)
         {
             if (gitUser == null)
             {
@@ -25,7 +26,6 @@ namespace GitToVsts.Internal.Git
             }
 
             var image = new BitmapImage();
-            const int bytesToRead = 100;
 
             if (string.IsNullOrWhiteSpace(gitUser.Avatar_Url))
             {
@@ -33,29 +33,12 @@ namespace GitToVsts.Internal.Git
             }
 
             var pictureUri = new Uri(gitUser.Avatar_Url, UriKind.Absolute);
-            var request = WebRequest.Create(pictureUri);
-            request.Timeout = -1;
-            var response = request.GetResponse();
-            var responseStream = response.GetResponseStream();
-            if (responseStream != null)
-            {
-                var reader = new BinaryReader(responseStream);
-                var memoryStream = new MemoryStream();
 
-                var byteBuffer = new byte[bytesToRead];
-                var bytesRead = reader.Read(byteBuffer, 0, bytesToRead);
+            using var httpClient = new HttpClient();
+            var imageBytes = await httpClient.GetByteArrayAsync(pictureUri);
 
-                while (bytesRead > 0)
-                {
-                    memoryStream.Write(byteBuffer, 0, bytesRead);
-                    bytesRead = reader.Read(byteBuffer, 0, bytesToRead);
-                }
-
-                image.BeginInit();
-                memoryStream.Seek(0, SeekOrigin.Begin);
-
-                image.StreamSource = memoryStream;
-            }
+            image.BeginInit();
+            image.StreamSource = new MemoryStream(imageBytes);
 
             image.EndInit();
             return image;

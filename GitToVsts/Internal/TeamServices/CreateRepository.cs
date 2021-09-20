@@ -43,7 +43,7 @@ namespace GitToVsts.Internal.TeamServices
                 // ReSharper disable once StringLiteralTypo
                 request.AddHeader("gitrepositorytocreate", $@"""{_name}""");
                 var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
                 request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
                 request.AddParameter("application/json", $@"{{  ""name"": ""{_name}"",  ""project"": {{    ""id"": ""{_vsTsProject.Id}""  }}}}", ParameterType.RequestBody);
 
