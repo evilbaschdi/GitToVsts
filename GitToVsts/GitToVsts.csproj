@@ -15,11 +15,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ControlzEx" Version="5.0.1" />
-    <PackageReference Include="EvilBaschdi.Core" Version="2021.7.12.1538-develop" />
-    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2021.8.15.846-develop" />
+    <PackageReference Include="EvilBaschdi.Core" Version="2021.10.11.609-develop" />
+    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2021.9.28.1631-develop" />
     <PackageReference Include="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.9.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.9.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.10.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.10.0" />
     <PackageReference Include="RestSharp" Version="106.12.0" />
   </ItemGroup>
   <ItemGroup>

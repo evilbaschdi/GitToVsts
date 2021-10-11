@@ -46,6 +46,7 @@ namespace GitToVsts
         private int _overrideProtection;
         private IProjects _projects;
         private KeyValuePair<string, string> _result;
+        private readonly IRoundCorners _roundCorners;
         private ITemplates _templates;
 
         /// <summary>
@@ -58,8 +59,9 @@ namespace GitToVsts
             _applicationSettings = new ApplicationSettings(appSettingsBase);
 
 
-            var applicationStyle = new ApplicationStyle();
-            applicationStyle.Load(true);
+            _roundCorners = new RoundCorners();
+            IApplicationStyle style = new ApplicationStyle(_roundCorners, true);
+            style.Run();
 
             var accentColor = WindowsThemeHelper.GetWindowsAccentColor();
             if (accentColor.HasValue)
@@ -540,7 +542,7 @@ namespace GitToVsts
 
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent)
+                                  DataContext = new AboutViewModel(aboutWindowContent, _roundCorners)
                               };
 
             aboutWindow.ShowDialog();
