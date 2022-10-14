@@ -1,46 +1,47 @@
-using System;
 using System.Net;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
 using RestSharp;
 
-namespace GitToVsts.Internal.TeamServices
+namespace GitToVsts.Internal.TeamServices;
+
+/// <summary>
+///     Class for requesting visualstudio team services projects.
+/// </summary>
+public class GetProjects : IProjects
 {
+    private readonly IApplicationSettings _applicationSettings;
+
     /// <summary>
-    ///     Class for requesting visualstudio team services projects.
+    ///     Constructor
     /// </summary>
-    public class GetProjects : IProjects
+    /// <param name="applicationSettings"></param>
+    public GetProjects(IApplicationSettings applicationSettings)
     {
-        private readonly IApplicationSettings _applicationSettings;
+        _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+    }
 
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        /// <param name="applicationSettings"></param>
-        public GetProjects(IApplicationSettings applicationSettings)
+    /// <summary>
+    ///     VsTs projects
+    /// </summary>
+    public VsTsProjects Value
+    {
+        get
         {
-            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
-        }
+            var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/projects");
+            var request = new RestRequest
+                          {
+                              Method = Method.Get
+                          };
+            request.AddHeader("cache-control", "no-cache");
 
-        /// <summary>
-        ///     VsTs projects
-        /// </summary>
-        public VsTsProjects Value
-        {
-            get
-            {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/projects");
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
+            var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
+            ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
 
-                var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
-
-                var projects = client.Execute<VsTsProjects>(request).Data;
-                return projects;
-            }
+            var projects = client.ExecuteAsync<VsTsProjects>(request).Result.Data;
+            return projects;
         }
     }
 }

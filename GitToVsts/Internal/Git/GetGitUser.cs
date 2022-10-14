@@ -1,43 +1,44 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
 using RestSharp;
 
-namespace GitToVsts.Internal.Git
+namespace GitToVsts.Internal.Git;
+
+/// <summary>
+///     Class that requests an user from github API.
+/// </summary>
+public class GetGitUser : IGitUser
 {
+    private readonly IApplicationSettings _applicationSettings;
+
     /// <summary>
-    ///     Class that requests an user from github API.
+    ///     Constructor
     /// </summary>
-    public class GetGitUser : IGitUser
+    /// <param name="applicationSettings"></param>
+    public GetGitUser(IApplicationSettings applicationSettings)
     {
-        private readonly IApplicationSettings _applicationSettings;
+        _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+    }
 
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        /// <param name="applicationSettings"></param>
-        public GetGitUser(IApplicationSettings applicationSettings)
+    /// <summary>
+    ///     Contains a GitUser
+    /// </summary>
+    public GitUser Value
+    {
+        get
         {
-            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
-        }
+            var client = new RestClient("https://api.github.com/user");
+            var request = new RestRequest
+                          {
+                              Method = Method.Get
+                          };
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("authorization",
+                $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
 
-        /// <summary>
-        ///     Contains a GitUser
-        /// </summary>
-        public GitUser Value
-        {
-            get
-            {
-                var client = new RestClient("https://api.github.com/user");
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("authorization",
-                    $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
-
-                var gitUser = client.Execute<GitUser>(request).Data;
-                return gitUser;
-            }
+            var gitUser = client.ExecuteAsync<GitUser>(request).Result.Data;
+            return gitUser;
         }
     }
 }

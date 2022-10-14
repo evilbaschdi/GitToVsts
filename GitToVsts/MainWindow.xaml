@@ -6,7 +6,7 @@
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       Icon="b.ico"
-                      mc:Ignorable="d" TitleCharacterCasing="Normal" GlowBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                      mc:Ignorable="d" TitleCharacterCasing="Normal"
                       Title="Git to Azure DevOps" Height="500" Width="850">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
@@ -208,7 +208,7 @@
         <controls:FlyoutsControl>
             <!--  Settings Fly-out  -->
             <!-- ReSharper disable once UnusedMember.Global -->
-            <controls:Flyout Name="SettingsFlyOut" Width="400" AnimateOnPositionChange="True" Header="Settings" Position="Right" Theme="Accent">
+            <controls:Flyout Name="SettingsFlyOut" Width="400" AnimateOnPositionChange="True" Header="Settings" Position="Right" Theme="Adapt">
                 <StackPanel>
                     <!-- Logging -->
                     <StackPanel Margin="10,5,0,0" Orientation="Horizontal">

@@ -1,47 +1,47 @@
-using System;
 using System.Net;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
 using RestSharp;
 
-namespace GitToVsts.Internal.TeamServices
+namespace GitToVsts.Internal.TeamServices;
+
+/// <summary>
+///     Class for requesting vsts process templates.
+/// </summary>
+public class GetTemplates : ITemplates
 {
+    private readonly IApplicationSettings _applicationSettings;
+
     /// <summary>
-    ///     Class for requesting vsts process templates.
+    ///     Constructor
     /// </summary>
-    public class GetTemplates : ITemplates
+    /// <param name="applicationSettings"></param>
+    public GetTemplates(IApplicationSettings applicationSettings)
     {
-        private readonly IApplicationSettings _applicationSettings;
+        _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+    }
 
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        /// <param name="applicationSettings"></param>
-        public GetTemplates(IApplicationSettings applicationSettings)
+    /// <summary>
+    ///     Requested vsts process templates.
+    /// </summary>
+    public VsTsProcessTemplates Value
+    {
+        get
         {
-            _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
-        }
+            var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/process/processes?api-version=1.0");
+            var request = new RestRequest
+                          {
+                              Method = Method.Get
+                          };
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("content-type", "application/json");
+            var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
+            ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
 
-        /// <summary>
-        ///     Requested vsts process templates.
-        /// </summary>
-        public VsTsProcessTemplates Value
-        {
-            get
-            {
-                var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/process/processes?api-version=1.0");
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "application/json");
-                var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-                ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
-
-
-                var processTemplates = client.Execute<VsTsProcessTemplates>(request).Data;
-                return processTemplates;
-            }
+            var processTemplates = client.ExecuteAsync<VsTsProcessTemplates>(request).Result.Data;
+            return processTemplates;
         }
     }
 }
