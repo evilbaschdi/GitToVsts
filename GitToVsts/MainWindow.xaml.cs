@@ -34,6 +34,7 @@ public partial class MainWindow : MetroWindow
     private readonly ICurrentFlyOuts _currentFlyOuts;
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new();
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new();
+    private readonly IApplicationStyle _style;
     private readonly IToggleFlyOut _toggleFlyOut;
 
     private IMigrationConfiguration _configuration;
@@ -45,7 +46,6 @@ public partial class MainWindow : MetroWindow
     private int _overrideProtection;
     private IProjects _projects;
     private KeyValuePair<string, string> _result;
-    private readonly IApplicationStyle _style;
     private ITemplates _templates;
 
     /// <summary>
@@ -101,13 +101,16 @@ public partial class MainWindow : MetroWindow
         var collection = new ObservableCollection<GitRepositoryObservableCollectionItem>();
 
         var i = 1;
-        foreach (var repository in _gitRepositories.Value)
+        foreach (var gitRepositoryObservableCollectionItem in
+                 _gitRepositories.Value
+                                 .Select(repository
+                                             => new GitRepositoryObservableCollectionItem
+                                                {
+                                                    DisplayName = $"{i++}_{repository.Name}",
+                                                    Repository = repository
+                                                }))
         {
-            collection.Add(new()
-                           {
-                               DisplayName = $"{i++}_{repository.Name}",
-                               Repository = repository
-                           });
+            collection.Add(gitRepositoryObservableCollectionItem);
         }
 
         return collection;
