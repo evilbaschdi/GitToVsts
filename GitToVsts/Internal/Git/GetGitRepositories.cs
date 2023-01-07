@@ -54,7 +54,8 @@ public class GetGitRepositories : IGitRepositories
 
                         while (currentPage < pageCount)
                         {
-                            client.BuildUri(new($"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}"));
+                            url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}";
+                            client = new RestClient(url);
                             response = client.ExecuteAsync<List<GitRepository>>(request).Result;
                             if (gitRepositories != null && response.Data != null)
                             {

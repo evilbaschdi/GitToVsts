@@ -1,5 +1,5 @@
-using System.IO;
-using EvilBaschdi.CoreExtended.AppHelpers;
+using EvilBaschdi.Settings.ByMachineAndUser;
+using JetBrains.Annotations;
 
 namespace GitToVsts.Core;
 
@@ -8,110 +8,110 @@ namespace GitToVsts.Core;
 /// </summary>
 public class ApplicationSettings : IApplicationSettings
 {
-    private readonly IAppSettingsBase _appSettingsBase;
+    private readonly IAppSettingByKey _appSettingByKey;
 
     /// <summary>
     ///     Constructor
     /// </summary>
-    /// <param name="appSettingsBase"></param>
-    public ApplicationSettings(IAppSettingsBase appSettingsBase)
+    /// <param name="appSettingByKey"></param>
+    public ApplicationSettings([NotNull] IAppSettingByKey appSettingByKey)
     {
-        _appSettingsBase = appSettingsBase ?? throw new ArgumentNullException(nameof(appSettingsBase));
+        _appSettingByKey = appSettingByKey ?? throw new ArgumentNullException(nameof(appSettingByKey));
     }
 
     /// <summary>
     /// </summary>
     public string LoggingPath
     {
-        get => _appSettingsBase.Get("LoggingPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}G2V");
-        set => _appSettingsBase.Set("LoggingPath", value);
+        get => _appSettingByKey.ValueFor("LoggingPath");
+        set => _appSettingByKey.RunFor("LoggingPath", value);
     }
 
     /// <summary>
     /// </summary>
     public string GitSourceType
     {
-        get => _appSettingsBase.Get("GitSourceType", "users");
-        set => _appSettingsBase.Set("GitSourceType", value);
+        get => _appSettingByKey.ValueFor("GitSourceType");
+        set => _appSettingByKey.RunFor("GitSourceType", value);
     }
 
     /// <summary>
     /// </summary>
     public string GitUser
     {
-        get => _appSettingsBase.Get("GitUser", "");
-        set => _appSettingsBase.Set("GitUser", value);
+        get => _appSettingByKey.ValueFor("GitUser");
+        set => _appSettingByKey.RunFor("GitUser", value);
     }
 
     /// <summary>
     /// </summary>
     public string GitPassword
     {
-        get => _appSettingsBase.Get("GitPassword", "");
-        set => _appSettingsBase.Set("GitPassword", value);
+        get => _appSettingByKey.ValueFor("GitPassword");
+        set => _appSettingByKey.RunFor("GitPassword", value);
     }
 
     /// <summary>
     /// </summary>
     public string GitSource
     {
-        get => _appSettingsBase.Get("GitSource", "");
-        set => _appSettingsBase.Set("GitSource", value);
+        get => _appSettingByKey.ValueFor("GitSource");
+        set => _appSettingByKey.RunFor("GitSource", value);
     }
 
     /// <summary>
     /// </summary>
     public string VsUser
     {
-        get => _appSettingsBase.Get("VsUser", "");
-        set => _appSettingsBase.Set("VsUser", value);
+        get => _appSettingByKey.ValueFor("VsUser");
+        set => _appSettingByKey.RunFor("VsUser", value);
     }
 
     /// <summary>
     /// </summary>
     public string VsPassword
     {
-        get => _appSettingsBase.Get("VsPassword", "");
-        set => _appSettingsBase.Set("VsPassword", value);
+        get => _appSettingByKey.ValueFor("VsPassword");
+        set => _appSettingByKey.RunFor("VsPassword", value);
     }
 
     /// <summary>
     /// </summary>
     public string VsProject
     {
-        get => _appSettingsBase.Get("VsProject", "");
-        set => _appSettingsBase.Set("VsProject", value);
+        get => _appSettingByKey.ValueFor("VsProject");
+        set => _appSettingByKey.RunFor("VsProject", value);
     }
 
     /// <summary>
     /// </summary>
     public string VsSource
     {
-        get => _appSettingsBase.Get("VsSource", "");
-        set => _appSettingsBase.Set("VsSource", value);
+        get => _appSettingByKey.ValueFor("VsSource");
+        set => _appSettingByKey.RunFor("VsSource", value);
     }
 
     /// <summary>
     /// </summary>
     public string TempPath
     {
-        get => _appSettingsBase.Get("TempPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}G2V");
-        set => _appSettingsBase.Set("TempPath", value);
+        get => _appSettingByKey.ValueFor("TempPath");
+        set => _appSettingByKey.RunFor("TempPath", value);
     }
 
     /// <summary>
     /// </summary>
     public bool DeleteTempRepos
     {
-        get => _appSettingsBase.Get<bool>("DeleteTempRepos");
-        set => _appSettingsBase.Set("DeleteTempRepos", value);
+        get => Convert.ToBoolean(_appSettingByKey.ValueFor("DeleteTempRepos"));
+        set => _appSettingByKey.RunFor("DeleteTempRepos", value.ToString());
     }
 
     /// <summary>
     /// </summary>
     public string GitBinPath
     {
-        get => _appSettingsBase.Get("GitBinPath", $@"{Path.GetPathRoot(Environment.SystemDirectory)}Program Files\Git\bin");
-        set => _appSettingsBase.Set("GitBinPath", value);
+        get => _appSettingByKey.ValueFor("GitBinPath");
+        set => _appSettingByKey.RunFor("GitBinPath", value);
     }
 }

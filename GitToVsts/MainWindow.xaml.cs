@@ -7,16 +7,18 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
 using ControlzEx.Theming;
+using EvilBaschdi.About.Core;
+using EvilBaschdi.About.Core.Models;
+using EvilBaschdi.About.Wpf;
+using EvilBaschdi.Core;
 using EvilBaschdi.CoreExtended;
-using EvilBaschdi.CoreExtended.AppHelpers;
 using EvilBaschdi.CoreExtended.Browsers;
-using EvilBaschdi.CoreExtended.Controls.About;
 using EvilBaschdi.CoreExtended.FlyOut;
+using EvilBaschdi.Settings.ByMachineAndUser;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
 using GitToVsts.Model;
-using GitToVsts.Properties;
 using JetBrains.Annotations;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -34,7 +36,6 @@ public partial class MainWindow : MetroWindow
     private readonly ICurrentFlyOuts _currentFlyOuts;
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new();
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new();
-    private readonly IApplicationStyle _style;
     private readonly IToggleFlyOut _toggleFlyOut;
 
     private IMigrationConfiguration _configuration;
@@ -54,11 +55,13 @@ public partial class MainWindow : MetroWindow
     public MainWindow()
     {
         InitializeComponent();
-        IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
-        _applicationSettings = new ApplicationSettings(appSettingsBase);
+        IAppSettingsFromJsonFile appSettingsFromJsonFile = new AppSettingsFromJsonFile();
+        IAppSettingsFromJsonFileByMachineAndUser appSettingsFromJsonFileByMachineAndUser = new AppSettingsFromJsonFileByMachineAndUser();
+        IAppSettingByKey appSettingByKey = new AppSettingByKey(appSettingsFromJsonFile, appSettingsFromJsonFileByMachineAndUser);
+        _applicationSettings = new ApplicationSettings(appSettingByKey);
 
-        _style = new ApplicationStyle(true);
-        _style.Run();
+        IApplicationStyle applicationStyle = new ApplicationStyle(true);
+        applicationStyle.Run();
         _currentFlyOuts = new CurrentFlyOuts();
         _toggleFlyOut = new ToggleFlyOut();
 
@@ -546,7 +549,7 @@ public partial class MainWindow : MetroWindow
     {
         ICurrentAssembly currentAssembly = new CurrentAssembly();
         IAboutContent aboutContent = new AboutContent(currentAssembly);
-        IAboutModel aboutModel = new AboutViewModel(aboutContent, _style);
+        IAboutModel aboutModel = new AboutViewModel(aboutContent);
         var aboutWindow = new AboutWindow(aboutModel);
 
         aboutWindow.ShowDialog();
