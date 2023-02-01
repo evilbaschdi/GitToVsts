@@ -5,7 +5,7 @@
 		<Company>evilbaschdi (Sebastian Walter)</Company>
 		<Copyright>Copyright © 2016 - $([System.DateTime]::UtcNow.ToString(yyyy)) evilbaschdi</Copyright>
 		<!-- ReSharper disable once UnknownProperty -->
-		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GitToVsts.xml</DocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<LangVersion>preview</LangVersion>
 		<OutputType>WinExe</OutputType>
 		<Prefer32Bit>false</Prefer32Bit>
@@ -16,8 +16,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="EvilBaschdi.CoreExtended" Version="2023.1.3.1742-develop" />
-		<PackageReference Include="EvilBaschdi.Settings" Version="2022.12.14.2146-develop" />
+		<PackageReference Include="EvilBaschdi.CoreExtended" Version="2023.1.24.1707-develop" />
+		<PackageReference Include="EvilBaschdi.Settings" Version="2023.1.10.1647-develop" />
 		<PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
 		<PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.11.0" />
 		<PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1">
