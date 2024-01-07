@@ -50,7 +50,7 @@ public class GetGitRepositories : IGitRepositories
                     if (value != null)
                     {
                         var pageCount =
-                            int.Parse(Regex.Match(value.ToString() ?? string.Empty, "page=([0-9]+)>; rel=\"last\"").Groups[1].Value);
+                            int.Parse(Regex.Match(value.ToString() ?? string.Empty, "page=([0-9]+)>{} rel=\"last\"").Groups[1].Value);
 
                         while (currentPage < pageCount)
                         {
