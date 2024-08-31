@@ -480,7 +480,7 @@ public partial class MainWindow : MetroWindow
 
     private void LoggingPathOnLostFocus(object sender, RoutedEventArgs e)
     {
-        if (Directory.Exists(LoggingPath.Text))
+        if (SanitizedExtensions.SanitizedDirectoryExists(LoggingPath.Text))
         {
             _applicationSettings.LoggingPath = LoggingPath.Text;
         }
@@ -499,7 +499,7 @@ public partial class MainWindow : MetroWindow
 
     private void TempPathOnLostFocus(object sender, RoutedEventArgs e)
     {
-        if (Directory.Exists(TempPath.Text))
+        if (SanitizedExtensions.SanitizedDirectoryExists(TempPath.Text))
         {
             _applicationSettings.TempPath = TempPath.Text;
         }
@@ -518,7 +518,7 @@ public partial class MainWindow : MetroWindow
                           SelectedPath = _applicationSettings.GitBinPath
                       };
         browser.ShowDialog();
-        if (File.Exists($@"{browser.SelectedPath}\git.exe"))
+        if (SanitizedExtensions.SanitizedFileExists($@"{browser.SelectedPath}\git.exe"))
         {
             _applicationSettings.GitBinPath = browser.SelectedPath;
             GitBinPath.SetCurrentValue(TextBox.TextProperty, _applicationSettings.GitBinPath);
@@ -531,7 +531,7 @@ public partial class MainWindow : MetroWindow
 
     private void GitPathOnLostFocus(object sender, RoutedEventArgs e)
     {
-        if (Directory.Exists(GitBinPath.Text) && File.Exists($@"{GitBinPath.Text}\git.exe"))
+        if (SanitizedExtensions.SanitizedDirectoryExists(GitBinPath.Text) && SanitizedExtensions.SanitizedFileExists($@"{GitBinPath.Text}\git.exe"))
         {
             _applicationSettings.GitBinPath = GitBinPath.Text;
         }

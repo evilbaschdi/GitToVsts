@@ -9,7 +9,7 @@ namespace GitToVsts.Internal.Git;
 /// <summary>
 ///     Class that returns a list of GitRepositories via github API.
 /// </summary>
-public class GetGitRepositories : IGitRepositories
+public partial class GetGitRepositories : IGitRepositories
 {
     private readonly IApplicationSettings _applicationSettings;
 
@@ -47,10 +47,9 @@ public class GetGitRepositories : IGitRepositories
                 {
                     var currentPage = 1;
                     var value = response.Headers.First(header => header.Name is "Link").Value;
-                    if (value != null)
                     {
                         var pageCount =
-                            int.Parse(Regex.Match(value.ToString() ?? string.Empty, "page=([0-9]+)>{} rel=\"last\"").Groups[1].Value);
+                            int.Parse(LastLink().Match(value).Groups[1].Value);
 
                         while (currentPage < pageCount)
                         {
@@ -76,4 +75,7 @@ public class GetGitRepositories : IGitRepositories
             }
         }
     }
+
+    [GeneratedRegex("page=([0-9]+)>{} rel=\"last\"")]
+    private static partial Regex LastLink();
 }
