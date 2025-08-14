@@ -6,4 +6,4 @@ namespace GitToVsts.Internal.Git;
 /// <summary>
 ///     Interface for classes that return a list of GitRepositories
 /// </summary>
-public interface IGitRepositories : IValueOfList<GitRepository>;
+public interface IGitRepositories : IListOf<GitRepository>;

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
@@ -37,7 +36,6 @@ public class GetTemplates : ITemplates
             request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");
             var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-            ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
             request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
 
             var processTemplates = client.ExecuteAsync<VsTsProcessTemplates>(request).Result.Data;

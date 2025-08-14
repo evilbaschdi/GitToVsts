@@ -18,10 +18,7 @@ public class ConvertGitAvatar : IGitAvatar
     /// <exception cref="ArgumentNullException"><paramref name="gitUser" /> is <see langword="null" />.</exception>
     public async Task<BitmapImage> ValueFor(GitUser gitUser)
     {
-        if (gitUser == null)
-        {
-            throw new ArgumentNullException(nameof(gitUser));
-        }
+        ArgumentNullException.ThrowIfNull(gitUser);
 
         var image = new BitmapImage();
 

@@ -11,10 +11,10 @@ using EvilBaschdi.About.Core;
 using EvilBaschdi.About.Core.Models;
 using EvilBaschdi.About.Wpf;
 using EvilBaschdi.Core;
+using EvilBaschdi.Core.Settings.ByMachineAndUser;
 using EvilBaschdi.Core.Wpf;
 using EvilBaschdi.Core.Wpf.Browsers;
 using EvilBaschdi.Core.Wpf.FlyOut;
-using EvilBaschdi.Settings.ByMachineAndUser;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
@@ -34,8 +34,8 @@ public partial class MainWindow : MetroWindow
     private readonly Brush _accentColorBrush;
     private readonly IApplicationSettings _applicationSettings;
     private readonly ICurrentFlyOuts _currentFlyOuts;
-    private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = new();
-    private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = new();
+    private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = [];
+    private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = [];
     private readonly IToggleFlyOut _toggleFlyOut;
 
     private IMigrationConfiguration _configuration;

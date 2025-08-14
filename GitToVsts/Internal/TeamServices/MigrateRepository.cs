@@ -45,10 +45,7 @@ public class MigrateRepository : IMigrateRepository
     /// <exception cref="InvalidOperationException">somethings wrong.</exception>
     public Response<string> ValueFor(GitRepository repository)
     {
-        if (repository == null)
-        {
-            throw new ArgumentNullException(nameof(repository));
-        }
+        ArgumentNullException.ThrowIfNull(repository);
 
         try
         {
@@ -94,19 +91,17 @@ public class MigrateRepository : IMigrateRepository
             var repositories = new GetRepositories(_applicationSettings).Value.Value;
 
             while (
-                !repositories.Any(
-                    item =>
-                        string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                        string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                !repositories.Any(item =>
+                                      string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                                      string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
             {
                 repositories = new GetRepositories(_applicationSettings).Value.Value;
             }
 
             var currentRepository =
-                repositories.First(
-                    item =>
-                        string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                        string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                repositories.First(item =>
+                                       string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
+                                       string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
             //add remote vsts {currentRepository.RemoteUrl}
             getGitProcess.Run($"{_gitCommands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);

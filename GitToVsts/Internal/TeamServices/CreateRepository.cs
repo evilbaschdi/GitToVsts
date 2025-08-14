@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
 using RestSharp;
@@ -45,7 +44,6 @@ public class CreateRepository : ICreateRepository
             // ReSharper disable once StringLiteralTypo
             request.AddHeader("gitrepositorytocreate", $@"""{_name}""");
             var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-            ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
             request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
             request.AddParameter("application/json", $@"{{  ""name"": ""{_name}"",  ""project"": {{    ""id"": ""{_vsTsProject.Id}""  }}}}", ParameterType.RequestBody);
 
