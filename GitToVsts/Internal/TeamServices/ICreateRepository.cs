@@ -6,4 +6,4 @@ namespace GitToVsts.Internal.TeamServices;
 /// <summary>
 ///     Creates repository through visualstudio.com api.
 /// </summary>
-public interface ICreateRepository : IValue<VsTsRepository>;
+public interface ICreateRepository : IValue<DevOpsRepository>;

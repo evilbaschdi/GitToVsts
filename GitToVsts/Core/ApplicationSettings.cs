@@ -45,10 +45,10 @@ public class ApplicationSettings : IApplicationSettings
 
     /// <summary>
     /// </summary>
-    public string GitPassword
+    public string GitPersonalAccessToken
     {
-        get => _appSettingByKey.ValueFor("GitPassword");
-        set => _appSettingByKey.RunFor("GitPassword", value);
+        get => _appSettingByKey.ValueFor("GitPersonalAccessToken");
+        set => _appSettingByKey.RunFor("GitPersonalAccessToken", value);
     }
 
     /// <summary>
@@ -61,34 +61,42 @@ public class ApplicationSettings : IApplicationSettings
 
     /// <summary>
     /// </summary>
-    public string VsUser
+    public string DevOpsUser
     {
-        get => _appSettingByKey.ValueFor("VsUser");
-        set => _appSettingByKey.RunFor("VsUser", value);
+        get => _appSettingByKey.ValueFor("DevOpsUser");
+        set => _appSettingByKey.RunFor("DevOpsUser", value);
     }
 
     /// <summary>
     /// </summary>
-    public string VsPassword
+    public string DevOpsProjectCollection
     {
-        get => _appSettingByKey.ValueFor("VsPassword");
-        set => _appSettingByKey.RunFor("VsPassword", value);
+        get => _appSettingByKey.ValueFor("DevOpsProjectCollection");
+        set => _appSettingByKey.RunFor("DevOpsProjectCollection", value);
     }
 
     /// <summary>
     /// </summary>
-    public string VsProject
+    public string DevOpsPersonalAccessToken
     {
-        get => _appSettingByKey.ValueFor("VsProject");
-        set => _appSettingByKey.RunFor("VsProject", value);
+        get => _appSettingByKey.ValueFor("DevOpsPersonalAccessToken");
+        set => _appSettingByKey.RunFor("DevOpsPersonalAccessToken", value);
     }
 
     /// <summary>
     /// </summary>
-    public string VsSource
+    public string DevOpsProject
     {
-        get => _appSettingByKey.ValueFor("VsSource");
-        set => _appSettingByKey.RunFor("VsSource", value);
+        get => _appSettingByKey.ValueFor("DevOpsProject");
+        set => _appSettingByKey.RunFor("DevOpsProject", value);
+    }
+
+    /// <summary>
+    /// </summary>
+    public string DevOpsSource
+    {
+        get => _appSettingByKey.ValueFor("DevOpsSource");
+        set => _appSettingByKey.RunFor("DevOpsSource", value);
     }
 
     /// <summary>

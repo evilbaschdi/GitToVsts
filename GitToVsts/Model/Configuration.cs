@@ -8,10 +8,10 @@ public class Configuration : IMigrationConfiguration
     /// <summary>
     ///     Template to create with.
     /// </summary>
-    public string VsTemplate { get; init; }
+    public string DevOpsTemplate { get; init; }
 
     /// <summary>
     ///     Project to create in.
     /// </summary>
-    public string VsProject { get; init; }
+    public string DevOpsProject { get; init; }
 }

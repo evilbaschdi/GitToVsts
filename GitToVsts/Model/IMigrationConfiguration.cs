@@ -8,10 +8,10 @@ public interface IMigrationConfiguration
     /// <summary>
     ///     Project to create in.
     /// </summary>
-    string VsProject { get; }
+    string DevOpsProject { get; }
 
     /// <summary>
     ///     Template to create with.
     /// </summary>
-    string VsTemplate { get; }
+    string DevOpsTemplate { get; }
 }

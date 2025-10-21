@@ -5,20 +5,15 @@ namespace GitToVsts.Model;
 /// <summary>
 /// </summary>
 [DataContract]
-public class VsTsCreateResponse
+public class DevOpsProjects
 {
     /// <summary>
     /// </summary>
     [DataMember]
-    public string Id { get; set; }
+    public int Count { get; set; }
 
     /// <summary>
     /// </summary>
     [DataMember]
-    public string Status { get; set; }
-
-    /// <summary>
-    /// </summary>
-    [DataMember]
-    public string Url { get; set; }
+    public List<DevOpsProject> Value { get; set; }
 }

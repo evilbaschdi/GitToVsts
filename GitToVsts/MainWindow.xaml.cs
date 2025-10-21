@@ -1,8 +1,9 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
@@ -95,10 +96,14 @@ public partial class MainWindow : MetroWindow
 
     private void LoadGitRepositoryList()
     {
-        GitRepositoryObservableCollection = GetGitRepositoryObservableCollection();
-        GitRepositoryObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, GitRepositoryObservableCollection);
-        GitRepositoryMigrationFailedObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationFailedRepos);
-        GitRepositoryMigrationSuccessObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationSuccessRepos);
+        var collection = GetGitRepositoryObservableCollection();
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            GitRepositoryObservableCollection = collection;
+            GitRepositoryObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, GitRepositoryObservableCollection);
+            GitRepositoryMigrationFailedObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationFailedRepos);
+            GitRepositoryMigrationSuccessObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationSuccessRepos);
+        });
     }
 
     private ObservableCollection<GitRepositoryObservableCollectionItem> GetGitRepositoryObservableCollection()
@@ -121,30 +126,47 @@ public partial class MainWindow : MetroWindow
         return collection;
     }
 
-    private void GitLoginOnClick(object sender, RoutedEventArgs e)
+    private async void GitLoginOnClick(object sender, RoutedEventArgs e)
     {
         _applicationSettings.GitUser = GitUsername.Text;
-        _applicationSettings.GitPassword = GitPassword.Password;
+        _applicationSettings.GitPersonalAccessToken = GitPersonalAccessToken.Password;
+
+        var options = new MetroDialogSettings
+                      {
+                          ColorScheme = MetroDialogColorScheme.Theme
+                      };
+
+        _controller = await this.ShowProgressAsync("Please wait...", "Authenticating with GitHub and fetching repositories.", true, options).ConfigureAwait(true);
+        _controller.SetIndeterminate();
 
         var getGitUser = new GetGitUser(_applicationSettings);
-        if (getGitUser.Value != null)
+        GitUser user = null;
+        await Task.Run(() => user = getGitUser.Value).ConfigureAwait(true);
+
+        if (user != null)
         {
             _applicationSettings.GitSource = GitSource.Text;
             _gitRepositories = new GetGitRepositories(_applicationSettings);
-            LoadGitRepositoryList();
+            await Task.Run(LoadGitRepositoryList).ConfigureAwait(true);
+
             var convertGitAvatar = new ConvertGitAvatar();
-            GitAvatar.SetCurrentValue(Image.SourceProperty, convertGitAvatar.ValueFor(getGitUser.Value).Result);
+            var avatar = await convertGitAvatar.ValueFor(user).ConfigureAwait(true);
+            GitAvatar.SetCurrentValue(Image.SourceProperty, avatar);
             GitAvatar.SetCurrentValue(VisibilityProperty, Visibility.Visible);
             GitLogin.SetCurrentValue(VisibilityProperty, Visibility.Hidden);
 
-            this.ShowMessageAsync("Successful", $"'{getGitUser.Value.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'");
+            await _controller.CloseAsync().ConfigureAwait(true);
+            await this.ShowMessageAsync("Successful", $"'{user.Login}' was successfully authenticated {Environment.NewLine}Please switch to 'Repositories'").ConfigureAwait(true);
             RepoTab.SetCurrentValue(IsEnabledProperty, true);
             RepoTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+            MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 1);
         }
         else
         {
+            await _controller.CloseAsync().ConfigureAwait(true);
             _applicationSettings.GitUser = "";
-            _applicationSettings.GitPassword = "";
+            _applicationSettings.GitPersonalAccessToken = "";
+            await this.ShowMessageAsync("Error", "Authentication failed. Please check your credentials.").ConfigureAwait(true);
         }
     }
 
@@ -163,7 +185,7 @@ public partial class MainWindow : MetroWindow
     private void ValidateGitTextBoxesOnTextChanged(object sender, EventArgs e)
     {
         GitLogin.SetCurrentValue(IsEnabledProperty, !string.IsNullOrWhiteSpace(GitUsername.Text) &&
-                                                    !string.IsNullOrWhiteSpace(GitPassword.Password) &&
+                                                    !string.IsNullOrWhiteSpace(GitPersonalAccessToken.Password) &&
                                                     !string.IsNullOrWhiteSpace(GitSource.Text));
     }
 
@@ -171,7 +193,7 @@ public partial class MainWindow : MetroWindow
 
     #region RepoTab
 
-    private void MigrateToVsTsOnClick(object sender, RoutedEventArgs e)
+    private void MigrateToDevOpsOnClick(object sender, RoutedEventArgs e)
     {
         SetRepoLabelContent();
     }
@@ -180,7 +202,7 @@ public partial class MainWindow : MetroWindow
     {
         foreach (var gitRepositoryObservableCollectionItem in GitRepositoryObservableCollection)
         {
-            gitRepositoryObservableCollectionItem.MigrateToVsTs = true;
+            gitRepositoryObservableCollectionItem.MigrateToDevOps = true;
         }
 
         GitRepositoryObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, null);
@@ -191,46 +213,115 @@ public partial class MainWindow : MetroWindow
 
     private void SetRepoLabelContent()
     {
-        var checkedItemsCount = GitRepositoryObservableCollection.Count(attribute => attribute.MigrateToVsTs);
+        var checkedItemsCount = GitRepositoryObservableCollection.Count(attribute => attribute.MigrateToDevOps);
         RepoLabel.SetCurrentValue(ContentProperty, $"Repositories chosen to migrate: {checkedItemsCount}");
-        VsTab.SetCurrentValue(IsEnabledProperty, checkedItemsCount != 0);
-        VsTab.SetCurrentValue(BackgroundProperty, VsTab.IsEnabled ? _accentColorBrush : GitTab.Background);
+        DevOpsTab.SetCurrentValue(IsEnabledProperty, checkedItemsCount != 0);
+        DevOpsTab.SetCurrentValue(BackgroundProperty, DevOpsTab.IsEnabled ? _accentColorBrush : GitTab.Background);
     }
 
     #endregion RepoTab
 
-    #region VsTsTab
+    #region DevOpsTab
 
-    private void VsLoginOnClick(object sender, RoutedEventArgs e)
+    private async void DevOpsLoginOnClick(object sender, RoutedEventArgs e)
     {
-        _applicationSettings.VsUser = VsUsername.Text;
-        _applicationSettings.VsPassword = VsPassword.Password;
-        _applicationSettings.VsSource = VsSource.Text;
-        _applicationSettings.VsProject = VsProjects.Text;
+        _applicationSettings.DevOpsUser = DevOpsUsername.Text;
+        _applicationSettings.DevOpsPersonalAccessToken = DevOpsPersonalAccessToken.Password;
+        _applicationSettings.DevOpsSource = DevOpsSource.Text;
+        _applicationSettings.DevOpsProjectCollection = DevOpsProjectCollection.Text;
 
-        VsProjects.SetCurrentValue(IsEnabledProperty, true);
-        VsTemplates.SetCurrentValue(IsEnabledProperty, true);
-        MigrationFailedTab.SetCurrentValue(IsEnabledProperty, true);
-        SuccessfulTab.SetCurrentValue(IsEnabledProperty, true);
-
-        _projects = new GetProjects(_applicationSettings);
-        foreach (var project in _projects.Value.Value)
+        if (!string.IsNullOrWhiteSpace(DevOpsProjects.Text))
         {
-            VsProjects.Items.Add(project.Name);
+            _applicationSettings.DevOpsProject = DevOpsProjects.Text;
         }
 
-        _templates = new GetTemplates(_applicationSettings);
-        foreach (var template in _templates.Value.Value)
-        {
-            VsTemplates.Items.Add(template.Name);
-        }
+        var options = new MetroDialogSettings
+                      {
+                          ColorScheme = MetroDialogColorScheme.Theme
+                      };
 
-        VsLogin.SetCurrentValue(IsEnabledProperty, false);
+        _controller = await this.ShowProgressAsync("Please wait...", "Fetching projects and templates from Azure DevOps.", true, options).ConfigureAwait(true);
+        _controller.SetIndeterminate();
+
+        var projectsFetcher = new GetProjects(_applicationSettings);
+        var templatesFetcher = new GetTemplates(_applicationSettings);
+
+        try
+        {
+            await Task.Run(() =>
+            {
+                var projects = projectsFetcher.Value;
+                var templates = templatesFetcher.Value;
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _projects = projectsFetcher;
+                    _templates = templatesFetcher;
+
+                    DevOpsProjects.Items.Clear();
+                    DevOpsProjects.Items.Add("one project per repo (default)");
+                    if (projects?.Value != null)
+                    {
+                        foreach (var project in projects.Value)
+                        {
+                            DevOpsProjects.Items.Add(project.Name);
+                        }
+                    }
+
+                    DevOpsTemplates.Items.Clear();
+                    if (templates?.Value != null)
+                    {
+                        string defaultTemplateName = null;
+                        foreach (var template in templates.Value)
+                        {
+                            DevOpsTemplates.Items.Add(template.Name);
+                            if (template.IsDefault)
+                            {
+                                defaultTemplateName = template.Name;
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(defaultTemplateName))
+                        {
+                            DevOpsTemplates.SetCurrentValue(ComboBox.TextProperty, defaultTemplateName);
+                        }
+                        else if (DevOpsTemplates.Items.Count > 0)
+                        {
+                            DevOpsTemplates.SetCurrentValue(Selector.SelectedIndexProperty, 0);
+                        }
+                    }
+
+                                    DevOpsProjects.SetCurrentValue(IsEnabledProperty, true);
+
+                                    DevOpsTemplates.SetCurrentValue(IsEnabledProperty, true);
+
+                                    MigrationFailedTab.SetCurrentValue(IsEnabledProperty, true);
+
+                                    SuccessfulTab.SetCurrentValue(IsEnabledProperty, true);
+
+                                    DevOpsLogin.SetCurrentValue(IsEnabledProperty, false);
+
+                                    MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 2);
+
+                                });
+
+                    
+            }).ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            await this.ShowMessageAsync("Error", $"Failed to fetch data from Azure DevOps: {ex.Message}").ConfigureAwait(true);
+        }
+        finally
+        {
+            await _controller.CloseAsync().ConfigureAwait(true);
+        }
     }
 
-    private void VsTemplatesOnDropDownClosed(object sender, EventArgs e)
+    private void DevOpsTemplatesOnDropDownClosed(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(VsTemplates.Text) || string.IsNullOrWhiteSpace(VsTemplates.Text))
+        var isDefaultProject = DevOpsProjects.Text.Contains("(default)");
+        if (string.IsNullOrWhiteSpace(DevOpsProjects.Text) || (isDefaultProject && string.IsNullOrWhiteSpace(DevOpsTemplates.Text)))
         {
             return;
         }
@@ -239,24 +330,27 @@ public partial class MainWindow : MetroWindow
         RunTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
     }
 
-    private void VsProjectsOnDropDownClosed(object sender, EventArgs e)
+    private void DevOpsProjectsOnDropDownClosed(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(VsTemplates.Text) || string.IsNullOrWhiteSpace(VsTemplates.Text))
+        var isDefaultProject = DevOpsProjects.Text.Contains("(default)");
+        if (string.IsNullOrWhiteSpace(DevOpsProjects.Text) || (isDefaultProject && string.IsNullOrWhiteSpace(DevOpsTemplates.Text)))
         {
             return;
         }
 
+        _applicationSettings.DevOpsProject = DevOpsProjects.Text;
         RunTab.SetCurrentValue(IsEnabledProperty, true);
         RunTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+        MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 3);
     }
 
-    private void ValidateVsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
+    private void ValidateDevOpsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
     {
-        VsLogin.SetCurrentValue(IsEnabledProperty, !string.IsNullOrWhiteSpace(VsPassword.Password) &&
-                                                   !string.IsNullOrWhiteSpace(VsSource.Text));
+        DevOpsLogin.SetCurrentValue(IsEnabledProperty, !string.IsNullOrWhiteSpace(DevOpsPersonalAccessToken.Password) &&
+                                                   !string.IsNullOrWhiteSpace(DevOpsSource.Text));
     }
 
-    #endregion VsTsTab
+    #endregion DevOpsTab
 
     #region RunTab
 
@@ -271,8 +365,8 @@ public partial class MainWindow : MetroWindow
     {
         IMigrationConfiguration configuration = new Configuration
                                                 {
-                                                    VsTemplate = VsTemplates.Text,
-                                                    VsProject = VsProjects.Text
+                                                    DevOpsTemplate = DevOpsTemplates.Text,
+                                                    DevOpsProject = DevOpsProjects.Text
                                                 };
         SetCurrentValue(CursorProperty, Cursors.Wait);
         _configuration = configuration;
@@ -286,7 +380,7 @@ public partial class MainWindow : MetroWindow
         _controller = await this.ShowProgressAsync("Please wait...", "Repositories are getting migrated.", true, options).ConfigureAwait(true);
         _controller.SetIndeterminate();
         _controller.Canceled += ControllerCanceled;
-        RunRepositoryMigration();
+        await Task.Run(RunRepositoryMigration).ConfigureAwait(true);
         TaskCompleted();
     }
 
@@ -297,7 +391,7 @@ public partial class MainWindow : MetroWindow
     {
         var repoPaths = new ConcurrentBag<string>();
         var configuration = _configuration;
-        var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs);
+        var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps);
         var gitCommands = new GitCommands();
         var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration);
 
@@ -391,26 +485,29 @@ public partial class MainWindow : MetroWindow
     /// </summary>
     private void RefreshMigrationRepos()
     {
-        _migrationFailedRepos.Clear();
-        _migrationSuccessRepos.Clear();
-
-        GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs && !attribute.MigrationSuccessful)
-                                         .ToList()
-                                         .ForEach(repo => _migrationFailedRepos.Add(repo));
-
-        GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToVsTs && attribute.MigrationSuccessful)
-                                         .ToList()
-                                         .ForEach(repo => _migrationSuccessRepos.Add(repo));
-
-        if (_migrationFailedRepos.Any())
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            MigrationFailedTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
-        }
+            _migrationFailedRepos.Clear();
+            _migrationSuccessRepos.Clear();
 
-        if (_migrationSuccessRepos.Any())
-        {
-            SuccessfulTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
-        }
+            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && !attribute.MigrationSuccessful)
+                                             .ToList()
+                                             .ForEach(repo => _migrationFailedRepos.Add(repo));
+
+            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && attribute.MigrationSuccessful)
+                                             .ToList()
+                                             .ForEach(repo => _migrationSuccessRepos.Add(repo));
+
+            if (_migrationFailedRepos.Any())
+            {
+                MigrationFailedTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+            }
+
+            if (_migrationSuccessRepos.Any())
+            {
+                SuccessfulTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+            }
+        });
     }
 
     private void TaskCompleted()
@@ -426,6 +523,15 @@ public partial class MainWindow : MetroWindow
         TaskbarItemInfo.SetCurrentValue(TaskbarItemInfo.ProgressStateProperty, TaskbarItemProgressState.Normal);
         TaskbarItemInfo.SetCurrentValue(TaskbarItemInfo.ProgressValueProperty, (double)1);
         SetCurrentValue(CursorProperty, Cursors.Arrow);
+
+        if (_migrationFailedRepos.Any())
+        {
+            MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 4);
+        }
+        else
+        {
+            MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 5);
+        }
     }
 
     private void ControllerCanceled(object sender, EventArgs e)
@@ -441,12 +547,13 @@ public partial class MainWindow : MetroWindow
     private void Load()
     {
         GitUsername.SetCurrentValue(TextBox.TextProperty, _applicationSettings.GitUser);
-        GitPassword.Password = _applicationSettings.GitPassword;
+        GitPersonalAccessToken.Password = _applicationSettings.GitPersonalAccessToken;
         GitSource.SetCurrentValue(TextBox.TextProperty, _applicationSettings.GitSource);
-        VsUsername.SetCurrentValue(TextBox.TextProperty, _applicationSettings.VsUser);
-        VsPassword.Password = _applicationSettings.VsPassword;
-        VsSource.SetCurrentValue(TextBox.TextProperty, _applicationSettings.VsSource);
-        VsProjects.SetCurrentValue(ComboBox.TextProperty, _applicationSettings.VsProject);
+        DevOpsUsername.SetCurrentValue(TextBox.TextProperty, _applicationSettings.DevOpsUser);
+        DevOpsPersonalAccessToken.Password = _applicationSettings.DevOpsPersonalAccessToken;
+        DevOpsSource.SetCurrentValue(TextBox.TextProperty, _applicationSettings.DevOpsSource);
+        DevOpsProjectCollection.SetCurrentValue(TextBox.TextProperty, _applicationSettings.DevOpsProjectCollection);
+        DevOpsProjects.SetCurrentValue(ComboBox.TextProperty, _applicationSettings.DevOpsProject);
         LoggingPath.SetCurrentValue(TextBox.TextProperty, _applicationSettings.LoggingPath);
         TempPath.SetCurrentValue(TextBox.TextProperty, _applicationSettings.TempPath);
         GitBinPath.SetCurrentValue(TextBox.TextProperty, _applicationSettings.GitBinPath);

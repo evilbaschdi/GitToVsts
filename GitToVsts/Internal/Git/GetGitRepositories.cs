@@ -38,27 +38,30 @@ public partial class GetGitRepositories : IGitRepositories
                               };
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("authorization",
-                    $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
+                    $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPersonalAccessToken}"))}");
 
                 var response = client.ExecuteAsync<List<GitRepository>>(request).Result;
                 var gitRepositories = response.Data;
 
-                if (response.Headers != null && response.Headers.Any(header => header.Name == "Link"))
+                if (response.Headers != null && response.Headers.Any(header => string.Equals(header.Name, "Link", StringComparison.OrdinalIgnoreCase)))
                 {
                     var currentPage = 1;
-                    var value = response.Headers.First(header => header.Name is "Link").Value;
-                    {
-                        var pageCount =
-                            int.Parse(LastLink().Match(value).Groups[1].Value);
+                    var linkHeader = response.Headers.First(header => string.Equals(header.Name, "Link", StringComparison.OrdinalIgnoreCase)).Value?.ToString();
 
-                        while (currentPage < pageCount)
+                    if (!string.IsNullOrWhiteSpace(linkHeader))
+                    {
+                        var match = LastLink().Match(linkHeader);
+                        if (match.Success && int.TryParse(match.Groups[1].Value, out var pageCount))
                         {
-                            url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}";
-                            client = new RestClient(url);
-                            response = client.ExecuteAsync<List<GitRepository>>(request).Result;
-                            if (gitRepositories != null && response.Data != null)
+                            while (currentPage < pageCount)
                             {
-                                gitRepositories.AddRange(response.Data);
+                                url = $"{api}/{_applicationSettings.GitSourceType}/{_applicationSettings.GitSource}/repos?page={++currentPage}";
+                                client = new RestClient(url);
+                                response = client.ExecuteAsync<List<GitRepository>>(request).Result;
+                                if (gitRepositories != null && response.Data != null)
+                                {
+                                    gitRepositories.AddRange(response.Data);
+                                }
                             }
                         }
                     }
@@ -76,6 +79,10 @@ public partial class GetGitRepositories : IGitRepositories
         }
     }
 
-    [GeneratedRegex("page=([0-9]+)>{} rel=\"last\"")]
-    private static partial Regex LastLink();
-}
+        [GeneratedRegex("page=([0-9]+)>; rel=\"last\"")]
+
+        private static partial Regex LastLink();
+
+    }
+
+    

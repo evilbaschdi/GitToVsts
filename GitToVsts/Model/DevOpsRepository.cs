@@ -1,38 +1,35 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace GitToVsts.Model;
 
 /// <summary>
-///     Visual Studio Team Services project.
+///     Azure DevOps repository.
 /// </summary>
 [DataContract]
-public class VsTsProject
+public class DevOpsRepository
 {
     /// <summary>
-    /// </summary>
-    [DataMember]
-    public string Description { get; set; }
-
-    /// <summary>
-    ///     Id of the project.
     /// </summary>
     [DataMember]
     public string Id { get; set; }
 
     /// <summary>
+    ///     Name of the repository.
     /// </summary>
     [DataMember]
     public string Name { get; set; }
 
     /// <summary>
+    ///     Project the repository belongs to.
     /// </summary>
     [DataMember]
-    public int Revision { get; set; }
+    public DevOpsProject Project { get; set; }
 
     /// <summary>
+    ///     RemoteUrl for pushing / pulling.
     /// </summary>
     [DataMember]
-    public string State { get; set; }
+    public string RemoteUrl { get; set; }
 
     /// <summary>
     /// </summary>

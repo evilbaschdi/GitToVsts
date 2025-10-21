@@ -1,4 +1,4 @@
-﻿namespace GitToVsts.Core;
+namespace GitToVsts.Core;
 
 /// <summary>
 ///     Wrapper around Default Settings.
@@ -15,7 +15,7 @@ public interface IApplicationSettings
 
     /// <summary>
     /// </summary>
-    string GitPassword { get; set; }
+    string GitPersonalAccessToken { get; set; }
 
     /// <summary>
     /// </summary>
@@ -39,17 +39,21 @@ public interface IApplicationSettings
 
     /// <summary>
     /// </summary>
-    string VsPassword { get; set; }
+    string DevOpsPersonalAccessToken { get; set; }
 
     /// <summary>
     /// </summary>
-    string VsProject { get; set; }
+    string DevOpsProjectCollection { get; set; }
 
     /// <summary>
     /// </summary>
-    string VsSource { get; set; }
+    string DevOpsProject { get; set; }
 
     /// <summary>
     /// </summary>
-    string VsUser { get; set; }
+    string DevOpsSource { get; set; }
+
+    /// <summary>
+    /// </summary>
+    string DevOpsUser { get; set; }
 }

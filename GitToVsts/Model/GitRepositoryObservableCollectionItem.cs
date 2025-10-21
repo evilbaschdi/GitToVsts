@@ -15,15 +15,13 @@ public class GitRepositoryObservableCollectionItem
     public string DisplayName { get; set; }
 
     /// <summary>
-    ///     True if the GitRepository should be migrated to VsTs.
+    ///     True if the GitRepository should be migrated to DevOps.
     /// </summary>
-    [DataMember]
-    public bool MigrateToVsTs { get; set; }
+    public bool MigrateToDevOps { get; set; }
 
     /// <summary>
-    ///     True if the GitRepository was successfully migrated to VsTs.
+    ///     True if the GitRepository was successfully migrated to DevOps.
     /// </summary>
-    [DataMember]
     public bool MigrationSuccessful { get; set; }
 
     /// <summary>

@@ -6,36 +6,36 @@ using RestSharp;
 namespace GitToVsts.Internal.TeamServices;
 
 /// <summary>
-///     Creates project through visualstudio.com API.
+///     Creates project through Azure DevOps API.
 /// </summary>
 public class CreateProject : ICreateProject
 {
     private readonly IApplicationSettings _applicationSettings;
     private readonly GitRepository _repository;
-    private readonly VsTsProcessTemplate _vsTsProcessTemplate;
+    private readonly DevOpsProcessTemplate _devOpsProcessTemplate;
 
     /// <summary>
     ///     Constructor
     /// </summary>
     /// <param name="applicationSettings"></param>
     /// <param name="repository"></param>
-    /// <param name="vsTsProcessTemplate"></param>
-    public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, VsTsProcessTemplate vsTsProcessTemplate)
+    /// <param name="devOpsProcessTemplate"></param>
+    public CreateProject(IApplicationSettings applicationSettings, GitRepository repository, DevOpsProcessTemplate devOpsProcessTemplate)
     {
         _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _vsTsProcessTemplate = vsTsProcessTemplate ?? throw new ArgumentNullException(nameof(vsTsProcessTemplate));
+        _devOpsProcessTemplate = devOpsProcessTemplate ?? throw new ArgumentNullException(nameof(devOpsProcessTemplate));
     }
 
     /// <summary>
     ///     Value.
     /// </summary>
-    public VsTsCreateResponse Value
+    public DevOpsCreateResponse Value
     {
         get
         {
             // ReSharper disable once StringLiteralTypo
-            var client = new RestClient($"https://{_applicationSettings.VsSource}/defaultcollection/_apis/projects?api-version=2.0-preview");
+            var client = new RestClient($"https://{_applicationSettings.DevOpsSource}/defaultcollection/_apis/projects?api-version=7.1");
             var request = new RestRequest
                           {
                               Method = Method.Post
@@ -45,18 +45,20 @@ public class CreateProject : ICreateProject
             json.Append($@"{{  ""name"": ""{_repository.Name}"",  ""description"": ""{_repository.Description}"",  ");
             // ReSharper disable once StringLiteralTypo
             json.Append(@"""capabilities"": {    ""versioncontrol"": {      ""sourceControlType"": ""Git""    },    ");
-            json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_vsTsProcessTemplate.Id}""      }}}}");
+            json.Append($@"""processTemplate"": {{      ""templateTypeId"": ""{_devOpsProcessTemplate.Id}""      }}}}");
 
             request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");
             // ReSharper disable once StringLiteralTypo
             request.AddHeader("projecttocreate", $@"""{_repository.Name}""");
-            var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
+            var username = !string.IsNullOrWhiteSpace(_applicationSettings.DevOpsUser) ? Uri.EscapeDataString(_applicationSettings.DevOpsUser) : "pat";
+            var devOpsToken = Uri.EscapeDataString(_applicationSettings.DevOpsPersonalAccessToken);
+            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{devOpsToken}"))}");
             request.AddParameter("application/json", json.ToString(), ParameterType.RequestBody);
 
-            var responseItem = client.ExecuteAsync<VsTsCreateResponse>(request).Result.Data;
+            var responseItem = client.ExecuteAsync<DevOpsCreateResponse>(request).Result.Data;
             return responseItem;
         }
     }
 }
+

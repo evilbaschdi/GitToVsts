@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace GitToVsts.Internal.TeamServices;
 
 /// <summary>
-///     Migrates a github repository to visualstudio team services.
+///     Migrates a github repository to Azure DevOps.
 /// </summary>
 public class MigrateRepository : IMigrateRepository
 {
@@ -57,18 +57,21 @@ public class MigrateRepository : IMigrateRepository
 
             IGitProcess getGitProcess = new GetGitProcess(gitInfo);
             //clone --mirror
-            getGitProcess.Run(
-                $"{_gitCommands.Clone} {repository.Clone_Url.Replace("https://", $"https://{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}@")}", workingDir);
+            var gitUser = Uri.EscapeDataString(_applicationSettings.GitUser);
+            var gitToken = Uri.EscapeDataString(_applicationSettings.GitPersonalAccessToken);
+            var cloneUrl = repository.Clone_Url.Replace("https://", $"https://{gitUser}:{gitToken}@");
+
+            getGitProcess.Run($"{_gitCommands.Clone} {cloneUrl}", workingDir);
 
             var dirInfo = new DirectoryInfo(cloneDir);
             dirInfo.RenameTo(".git");
             //config --local --bool core.bare false
             getGitProcess.Run(_gitCommands.Config, workingDir);
 
-            VsTsProject vsTsProject;
-            if (_migrationConfiguration.VsProject.Contains("(default)"))
+            DevOpsProject devOpsProject;
+            if (_migrationConfiguration.DevOpsProject.Contains("(default)"))
             {
-                var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _migrationConfiguration.VsTemplate));
+                var createProject = new CreateProject(_applicationSettings, repository, _templates.Value.Value.First(item => item.Name == _migrationConfiguration.DevOpsTemplate));
                 Console.Write(createProject.Value.Id);
 
                 var projects = new GetProjects(_applicationSettings).Value.Value;
@@ -78,14 +81,14 @@ public class MigrateRepository : IMigrateRepository
                     projects = new GetProjects(_applicationSettings).Value.Value;
                 }
 
-                vsTsProject = projects.First(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                devOpsProject = projects.First(item => string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
             }
             else
             {
-                vsTsProject = _projects.Value.Value.First(item => item.Name == _migrationConfiguration.VsProject);
+                devOpsProject = _projects.Value.Value.First(item => item.Name == _migrationConfiguration.DevOpsProject);
             }
 
-            var createRepository = new CreateRepository(_applicationSettings, vsTsProject, repository.Name);
+            var createRepository = new CreateRepository(_applicationSettings, devOpsProject, repository.Name);
             Console.Write(createRepository.Value.Id);
 
             var repositories = new GetRepositories(_applicationSettings).Value.Value;
@@ -93,7 +96,7 @@ public class MigrateRepository : IMigrateRepository
             while (
                 !repositories.Any(item =>
                                       string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                                      string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
+                                      string.Equals(item.Project.Id.Trim(), devOpsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase)))
             {
                 repositories = new GetRepositories(_applicationSettings).Value.Value;
             }
@@ -101,15 +104,19 @@ public class MigrateRepository : IMigrateRepository
             var currentRepository =
                 repositories.First(item =>
                                        string.Equals(item.Name.Trim(), repository.Name.Trim(), StringComparison.CurrentCultureIgnoreCase) &&
-                                       string.Equals(item.Project.Id.Trim(), vsTsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                                       string.Equals(item.Project.Id.Trim(), devOpsProject.Id.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
-            //add remote vsts {currentRepository.RemoteUrl}
-            getGitProcess.Run($"{_gitCommands.RemoteAdd} {currentRepository.RemoteUrl}", workingDir);
+            //add remote devops {currentRepository.RemoteUrl}
+            var devOpsUser = !string.IsNullOrWhiteSpace(_applicationSettings.DevOpsUser) ? Uri.EscapeDataString(_applicationSettings.DevOpsUser) : "pat";
+            var devOpsToken = Uri.EscapeDataString(_applicationSettings.DevOpsPersonalAccessToken);
+            var devOpsRemoteUrl = currentRepository.RemoteUrl.Replace("https://", $"https://{devOpsUser}:{devOpsToken}@");
 
-            //push --all vsts
+            getGitProcess.Run($"{_gitCommands.RemoteAdd} {devOpsRemoteUrl}", workingDir);
+
+            //push --all devops
             getGitProcess.Run(_gitCommands.PushAll, workingDir);
 
-            //push --tags vsts
+            //push --tags devops
             getGitProcess.Run(_gitCommands.PushTags, workingDir);
 
             return new()

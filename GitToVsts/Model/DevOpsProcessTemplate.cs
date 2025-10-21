@@ -3,33 +3,34 @@ using System.Runtime.Serialization;
 namespace GitToVsts.Model;
 
 /// <summary>
-///     Visual Studio Team Services repository.
 /// </summary>
 [DataContract]
-public class VsTsRepository
+public class DevOpsProcessTemplate
 {
+    /// <summary>
+    /// </summary>
+    [DataMember]
+    public string Description { get; set; }
+
     /// <summary>
     /// </summary>
     [DataMember]
     public string Id { get; set; }
 
     /// <summary>
-    ///     Name of the repository.
+    /// </summary>
+    [DataMember]
+    public bool IsDefault { get; set; }
+
+    /// <summary>
     /// </summary>
     [DataMember]
     public string Name { get; set; }
 
     /// <summary>
-    ///     Project the repository belongs to.
     /// </summary>
     [DataMember]
-    public VsTsProject Project { get; set; }
-
-    /// <summary>
-    ///     RemoteUrl for pushing / pulling.
-    /// </summary>
-    [DataMember]
-    public string RemoteUrl { get; set; }
+    public string Type { get; set; }
 
     /// <summary>
     /// </summary>

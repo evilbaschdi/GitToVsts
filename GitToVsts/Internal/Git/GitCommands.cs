@@ -15,13 +15,13 @@ public class GitCommands : IGitCommands
 
     /// <summary>
     /// </summary>
-    public string RemoteAdd { get; } = "remote add vsts";
+    public string RemoteAdd { get; } = "remote add devops";
 
     /// <summary>
     /// </summary>
-    public string PushAll { get; } = "push --all vsts";
+    public string PushAll { get; } = "push --all devops";
 
     /// <summary>
     /// </summary>
-    public string PushTags { get; } = "push --tags vsts";
+    public string PushTags { get; } = "push --tags devops";
 }

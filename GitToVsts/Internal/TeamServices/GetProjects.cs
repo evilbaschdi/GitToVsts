@@ -22,24 +22,26 @@ public class GetProjects : IProjects
     }
 
     /// <summary>
-    ///     VsTs projects
+    ///     DevOps projects
     /// </summary>
-    public VsTsProjects Value
-    {
-        get
+        public DevOpsProjects Value
         {
-            var client = new RestClient($"https://{_applicationSettings.VsSource}/DefaultCollection/_apis/projects");
-            var request = new RestRequest
-                          {
-                              Method = Method.Get
-                          };
-            request.AddHeader("cache-control", "no-cache");
-
-            var username = !string.IsNullOrWhiteSpace(_applicationSettings.VsUser) ? _applicationSettings.VsUser + ":" : string.Empty;
-            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{_applicationSettings.VsPassword}"))}");
-
-            var projects = client.ExecuteAsync<VsTsProjects>(request).Result.Data;
-            return projects;
+            get
+            {
+                var client = new RestClient($"https://{_applicationSettings.DevOpsSource}/DefaultCollection/_apis/projects");
+                var request = new RestRequest
+                              {
+                                  Method = Method.Get
+                              };
+                request.AddHeader("cache-control", "no-cache");
+    
+                var username = !string.IsNullOrWhiteSpace(_applicationSettings.DevOpsUser) ? Uri.EscapeDataString(_applicationSettings.DevOpsUser) : "pat";
+                var devOpsToken = Uri.EscapeDataString(_applicationSettings.DevOpsPersonalAccessToken);
+                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{devOpsToken}"))}");
+    
+                var projects = client.ExecuteAsync<DevOpsProjects>(request).Result.Data;
+                return projects;
+            }
         }
     }
-}
+    

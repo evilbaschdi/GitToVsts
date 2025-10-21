@@ -35,7 +35,7 @@ public class GetGitUser : IGitUser
                           };
             request.AddHeader("cache-control", "no-cache");
             request.AddHeader("authorization",
-                $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPassword}"))}");
+                $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_applicationSettings.GitUser}:{_applicationSettings.GitPersonalAccessToken}"))}");
 
             var gitUser = client.ExecuteAsync<GitUser>(request).Result.Data;
             return gitUser;

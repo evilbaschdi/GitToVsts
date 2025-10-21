@@ -5,7 +5,7 @@
 - .NET Core 3.1
 - a current version of git for windows
 - a current version of git credential manager for windows (maybe included in git for windows)
-- you maybe have to have been connected with the target vsts once to get git credential manager working fine
+- you maybe have to have been connected with the target Azure DevOps once to get git credential manager working fine
 
 ## open items ##
 

@@ -1,11 +1,12 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace GitToVsts.Model;
 
 /// <summary>
+///     Azure DevOps project.
 /// </summary>
 [DataContract]
-public class VsTsProcessTemplate
+public class DevOpsProject
 {
     /// <summary>
     /// </summary>
@@ -13,14 +14,10 @@ public class VsTsProcessTemplate
     public string Description { get; set; }
 
     /// <summary>
+    ///     Id of the project.
     /// </summary>
     [DataMember]
     public string Id { get; set; }
-
-    /// <summary>
-    /// </summary>
-    [DataMember]
-    public bool IsDefault { get; set; }
 
     /// <summary>
     /// </summary>
@@ -30,7 +27,12 @@ public class VsTsProcessTemplate
     /// <summary>
     /// </summary>
     [DataMember]
-    public string Type { get; set; }
+    public int Revision { get; set; }
+
+    /// <summary>
+    /// </summary>
+    [DataMember]
+    public string State { get; set; }
 
     /// <summary>
     /// </summary>

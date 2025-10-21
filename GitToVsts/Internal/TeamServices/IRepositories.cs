@@ -4,6 +4,6 @@ using GitToVsts.Model;
 namespace GitToVsts.Internal.TeamServices;
 
 /// <summary>
-///     Interface for requesting Vsts Repositories.
+///     Interface for requesting DevOps Repositories.
 /// </summary>
-public interface IRepositories : IValue<VsTsRepositories>;
+public interface IRepositories : IValue<DevOpsRepositories>;

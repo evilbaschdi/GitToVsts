@@ -1,11 +1,11 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace GitToVsts.Model;
 
 /// <summary>
 /// </summary>
 [DataContract]
-public class VsTsRepositories
+public class DevOpsRepositories
 {
     /// <summary>
     /// </summary>
@@ -15,5 +15,5 @@ public class VsTsRepositories
     /// <summary>
     /// </summary>
     [DataMember]
-    public List<VsTsRepository> Value { get; set; }
+    public List<DevOpsRepository> Value { get; set; }
 }
