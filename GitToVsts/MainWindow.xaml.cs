@@ -98,12 +98,12 @@ public partial class MainWindow : MetroWindow
     {
         var collection = GetGitRepositoryObservableCollection();
         Application.Current.Dispatcher.Invoke(() =>
-        {
-            GitRepositoryObservableCollection = collection;
-            GitRepositoryObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, GitRepositoryObservableCollection);
-            GitRepositoryMigrationFailedObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationFailedRepos);
-            GitRepositoryMigrationSuccessObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationSuccessRepos);
-        });
+                                              {
+                                                  GitRepositoryObservableCollection = collection;
+                                                  GitRepositoryObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, GitRepositoryObservableCollection);
+                                                  GitRepositoryMigrationFailedObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationFailedRepos);
+                                                  GitRepositoryMigrationSuccessObservableCollectionBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _migrationSuccessRepos);
+                                              });
     }
 
     private ObservableCollection<GitRepositoryObservableCollectionItem> GetGitRepositoryObservableCollection()
@@ -249,64 +249,56 @@ public partial class MainWindow : MetroWindow
         try
         {
             await Task.Run(() =>
-            {
-                var projects = projectsFetcher.Value;
-                var templates = templatesFetcher.Value;
+                           {
+                               var projects = projectsFetcher.Value;
+                               var templates = templatesFetcher.Value;
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    _projects = projectsFetcher;
-                    _templates = templatesFetcher;
+                               Application.Current.Dispatcher.Invoke(() =>
+                                                                     {
+                                                                         _projects = projectsFetcher;
+                                                                         _templates = templatesFetcher;
 
-                    DevOpsProjects.Items.Clear();
-                    DevOpsProjects.Items.Add("one project per repo (default)");
-                    if (projects?.Value != null)
-                    {
-                        foreach (var project in projects.Value)
-                        {
-                            DevOpsProjects.Items.Add(project.Name);
-                        }
-                    }
+                                                                         DevOpsProjects.Items.Clear();
+                                                                         DevOpsProjects.Items.Add("one project per repo (default)");
+                                                                         if (projects?.Value != null)
+                                                                         {
+                                                                             foreach (var project in projects.Value)
+                                                                             {
+                                                                                 DevOpsProjects.Items.Add(project.Name);
+                                                                             }
+                                                                         }
 
-                    DevOpsTemplates.Items.Clear();
-                    if (templates?.Value != null)
-                    {
-                        string defaultTemplateName = null;
-                        foreach (var template in templates.Value)
-                        {
-                            DevOpsTemplates.Items.Add(template.Name);
-                            if (template.IsDefault)
-                            {
-                                defaultTemplateName = template.Name;
-                            }
-                        }
+                                                                         DevOpsTemplates.Items.Clear();
+                                                                         if (templates?.Value != null)
+                                                                         {
+                                                                             string defaultTemplateName = null;
+                                                                             foreach (var template in templates.Value)
+                                                                             {
+                                                                                 DevOpsTemplates.Items.Add(template.Name);
+                                                                                 if (template.IsDefault)
+                                                                                 {
+                                                                                     defaultTemplateName = template.Name;
+                                                                                 }
+                                                                             }
 
-                        if (!string.IsNullOrWhiteSpace(defaultTemplateName))
-                        {
-                            DevOpsTemplates.SetCurrentValue(ComboBox.TextProperty, defaultTemplateName);
-                        }
-                        else if (DevOpsTemplates.Items.Count > 0)
-                        {
-                            DevOpsTemplates.SetCurrentValue(Selector.SelectedIndexProperty, 0);
-                        }
-                    }
+                                                                             if (!string.IsNullOrWhiteSpace(defaultTemplateName))
+                                                                             {
+                                                                                 DevOpsTemplates.SetCurrentValue(ComboBox.TextProperty, defaultTemplateName);
+                                                                             }
+                                                                             else if (DevOpsTemplates.Items.Count > 0)
+                                                                             {
+                                                                                 DevOpsTemplates.SetCurrentValue(Selector.SelectedIndexProperty, 0);
+                                                                             }
+                                                                         }
 
-                                    DevOpsProjects.SetCurrentValue(IsEnabledProperty, true);
-
-                                    DevOpsTemplates.SetCurrentValue(IsEnabledProperty, true);
-
-                                    MigrationFailedTab.SetCurrentValue(IsEnabledProperty, true);
-
-                                    SuccessfulTab.SetCurrentValue(IsEnabledProperty, true);
-
-                                    DevOpsLogin.SetCurrentValue(IsEnabledProperty, false);
-
-                                    MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 2);
-
-                                });
-
-                    
-            }).ConfigureAwait(true);
+                                                                         DevOpsProjects.SetCurrentValue(IsEnabledProperty, true);
+                                                                         DevOpsTemplates.SetCurrentValue(IsEnabledProperty, true);
+                                                                         MigrationFailedTab.SetCurrentValue(IsEnabledProperty, true);
+                                                                         SuccessfulTab.SetCurrentValue(IsEnabledProperty, true);
+                                                                         DevOpsLogin.SetCurrentValue(IsEnabledProperty, false);
+                                                                         MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 2);
+                                                                     });
+                           }).ConfigureAwait(true);
         }
         catch (Exception ex)
         {
@@ -347,7 +339,7 @@ public partial class MainWindow : MetroWindow
     private void ValidateDevOpsTextBoxesOnTextChanged(object sender, RoutedEventArgs e)
     {
         DevOpsLogin.SetCurrentValue(IsEnabledProperty, !string.IsNullOrWhiteSpace(DevOpsPersonalAccessToken.Password) &&
-                                                   !string.IsNullOrWhiteSpace(DevOpsSource.Text));
+                                                       !string.IsNullOrWhiteSpace(DevOpsSource.Text));
     }
 
     #endregion DevOpsTab
@@ -486,28 +478,28 @@ public partial class MainWindow : MetroWindow
     private void RefreshMigrationRepos()
     {
         Application.Current.Dispatcher.Invoke(() =>
-        {
-            _migrationFailedRepos.Clear();
-            _migrationSuccessRepos.Clear();
+                                              {
+                                                  _migrationFailedRepos.Clear();
+                                                  _migrationSuccessRepos.Clear();
 
-            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && !attribute.MigrationSuccessful)
-                                             .ToList()
-                                             .ForEach(repo => _migrationFailedRepos.Add(repo));
+                                                  GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && !attribute.MigrationSuccessful)
+                                                                                   .ToList()
+                                                                                   .ForEach(repo => _migrationFailedRepos.Add(repo));
 
-            GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && attribute.MigrationSuccessful)
-                                             .ToList()
-                                             .ForEach(repo => _migrationSuccessRepos.Add(repo));
+                                                  GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps && attribute.MigrationSuccessful)
+                                                                                   .ToList()
+                                                                                   .ForEach(repo => _migrationSuccessRepos.Add(repo));
 
-            if (_migrationFailedRepos.Any())
-            {
-                MigrationFailedTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
-            }
+                                                  if (_migrationFailedRepos.Any())
+                                                  {
+                                                      MigrationFailedTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+                                                  }
 
-            if (_migrationSuccessRepos.Any())
-            {
-                SuccessfulTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
-            }
-        });
+                                                  if (_migrationSuccessRepos.Any())
+                                                  {
+                                                      SuccessfulTab.SetCurrentValue(BackgroundProperty, _accentColorBrush);
+                                                  }
+                                              });
     }
 
     private void TaskCompleted()
@@ -524,14 +516,7 @@ public partial class MainWindow : MetroWindow
         TaskbarItemInfo.SetCurrentValue(TaskbarItemInfo.ProgressValueProperty, (double)1);
         SetCurrentValue(CursorProperty, Cursors.Arrow);
 
-        if (_migrationFailedRepos.Any())
-        {
-            MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 4);
-        }
-        else
-        {
-            MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, 5);
-        }
+        MainTabControl.SetCurrentValue(Selector.SelectedIndexProperty, _migrationFailedRepos.Any() ? 4 : 5);
     }
 
     private void ControllerCanceled(object sender, EventArgs e)

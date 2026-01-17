@@ -46,7 +46,7 @@ public partial class GetGitRepositories : IGitRepositories
                 if (response.Headers != null && response.Headers.Any(header => string.Equals(header.Name, "Link", StringComparison.OrdinalIgnoreCase)))
                 {
                     var currentPage = 1;
-                    var linkHeader = response.Headers.First(header => string.Equals(header.Name, "Link", StringComparison.OrdinalIgnoreCase)).Value?.ToString();
+                    var linkHeader = response.Headers.First(header => string.Equals(header.Name, "Link", StringComparison.OrdinalIgnoreCase)).Value.ToString();
 
                     if (!string.IsNullOrWhiteSpace(linkHeader))
                     {
@@ -79,10 +79,6 @@ public partial class GetGitRepositories : IGitRepositories
         }
     }
 
-        [GeneratedRegex("page=([0-9]+)>; rel=\"last\"")]
-
-        private static partial Regex LastLink();
-
-    }
-
-    
+    [GeneratedRegex("page=([0-9]+)>; rel=\"last\"")]
+    private static partial Regex LastLink();
+}
