@@ -9,18 +9,9 @@ namespace GitToVsts.Internal.Git;
 /// <summary>
 ///     Class that returns a list of GitRepositories via github API.
 /// </summary>
-public partial class GetGitRepositories : IGitRepositories
+public partial class GetGitRepositories(IApplicationSettings applicationSettings) : IGitRepositories
 {
-    private readonly IApplicationSettings _applicationSettings;
-
-    /// <summary>
-    ///     Constructor
-    /// </summary>
-    /// <param name="applicationSettings"></param>
-    public GetGitRepositories(IApplicationSettings applicationSettings)
-    {
-        _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
-    }
+    private readonly IApplicationSettings _applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
 
     /// <exception cref="InvalidOperationException">Accessing repos throws an error.</exception>
     public List<GitRepository> Value

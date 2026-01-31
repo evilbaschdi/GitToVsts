@@ -454,10 +454,7 @@ public partial class MainWindow : MetroWindow
 
     private static void CleanUpDirectory([NotNull] string path)
     {
-        if (path == null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
+        ArgumentNullException.ThrowIfNull(path);
 
         var dir = new DirectoryInfo(path);
 
