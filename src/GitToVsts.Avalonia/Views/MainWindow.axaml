@@ -19,7 +19,8 @@
         <SplitView IsPaneOpen="{Binding SettingsFlyoutIsOpen, Mode=TwoWay}"
                    DisplayMode="Overlay"
                    PanePlacement="Right"
-                   OpenPaneLength="350">
+                   OpenPaneLength="350"
+                   Margin="0,30,0,0">
             
             <!-- Settings Pane (Flyout equivalent) -->
             <SplitView.Pane>
@@ -195,7 +196,7 @@
         </SplitView>
 
         <!-- Loading / Progress Overlay -->
-        <Grid Background="#A0000000" IsVisible="{Binding IsBusy}" RowDefinitions="*,Auto,Auto,*">
+        <Grid Background="#A0000000" IsVisible="{Binding IsBusy}" RowDefinitions="*,Auto,Auto,*" Margin="0,30,0,0">
             <ProgressBar Grid.Row="1" IsIndeterminate="True" Width="200" Height="10" HorizontalAlignment="Center" />
             <TextBlock Grid.Row="2" Text="{Binding BusyMessage}" Foreground="White" FontSize="16" FontWeight="Medium" Margin="0,15,0,0" HorizontalAlignment="Center" />
         </Grid>
