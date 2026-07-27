@@ -1,0 +1,203 @@
+<windowing:FAAppWindow xmlns="https://github.com/avaloniaui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+                       xmlns:viewModels="clr-namespace:GitToVsts.Avalonia.ViewModels"
+                       xmlns:models="clr-namespace:GitToVsts.Model;assembly=GitToVsts.Core"
+                       xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+                       xmlns:evilBaschdi="clr-namespace:EvilBaschdi.Core.Avalonia.Controls;assembly=EvilBaschdi.Core.Avalonia"
+                       x:Class="GitToVsts.Avalonia.Views.MainWindow"
+                       x:DataType="viewModels:MainWindowViewModel" mc:Ignorable="d"
+                       d:DesignWidth="850" d:DesignHeight="500" Width="850" Height="500"
+                       Title="Git to Azure DevOps">
+
+    <Panel>
+        <!-- Custom TitleBar Control -->
+        <evilBaschdi:TitleBarControl Icon="/Assets/b.ico" Name="TitleBarControl" />
+
+        <SplitView IsPaneOpen="{Binding SettingsFlyoutIsOpen, Mode=TwoWay}"
+                   DisplayMode="Overlay"
+                   PanePlacement="Right"
+                   OpenPaneLength="350">
+            
+            <!-- Settings Pane (Flyout equivalent) -->
+            <SplitView.Pane>
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="15" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource SystemControlElevationBorderBrush}">
+                    <StackPanel Spacing="15">
+                        <TextBlock Text="Settings" FontSize="20" FontWeight="SemiBold" Margin="0,15,0,10" />
+                        
+                        <TextBlock Text="Logging" FontSize="14" FontWeight="Medium" />
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                            <TextBox Grid.Column="0" Text="{Binding LoggingPath}" PlaceholderText="log path" VerticalAlignment="Center"/>
+                            <Button Grid.Column="1" Command="{Binding BrowseLoggingPathCommand}" Width="40" Margin="5,0,0,0" VerticalAlignment="Center">
+                                <controls:FASymbolIcon Symbol="Folder" />
+                            </Button>
+                        </Grid>
+                        
+                        <Button Content="Close" Command="{Binding ToggleSettingsFlyoutCommand}" HorizontalAlignment="Right" Margin="0,20,0,0" />
+                    </StackPanel>
+                </Border>
+            </SplitView.Pane>
+
+            <!-- Main Content Area -->
+            <Panel Margin="0,30,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Top Toolbar for About and Settings -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Height="45" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+                        <TextBlock Grid.Column="0" Text="Git to Azure DevOps" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Margin="10,0,0,0" />
+                        
+                        <!-- About Button -->
+                        <Button Grid.Column="1" Command="{Binding AboutWindowCommand}" Width="40" Height="32" Margin="5,0" ToolTip.Tip="About">
+                            <controls:FASymbolIcon Symbol="Help" FontSize="18" />
+                        </Button>
+                        <!-- Settings Button -->
+                        <Button Grid.Column="2" Command="{Binding ToggleSettingsFlyoutCommand}" Width="40" Height="32" Margin="5,0,10,0" ToolTip.Tip="Settings">
+                            <controls:FASymbolIcon Symbol="Settings" FontSize="18" />
+                        </Button>
+                    </Grid>
+
+                    <!-- Tabs -->
+                    <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" TabStripPlacement="Left">
+                        
+                        <!-- Git Settings Tab -->
+                        <TabItem Header="Git Settings">
+                            <ScrollViewer>
+                                <Grid Margin="15" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="100,*">
+                                    <!-- Username -->
+                                    <Label Grid.Row="0" Grid.Column="0" Content="User" VerticalAlignment="Center" Margin="0,5" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding GitUsername}" PlaceholderText="username or mail address" Margin="0,5" />
+
+                                    <!-- PAT -->
+                                    <Label Grid.Row="1" Grid.Column="0" Content="PAT" VerticalAlignment="Center" Margin="0,5" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GitPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token" Margin="0,5" />
+
+                                    <!-- Source -->
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Source" VerticalAlignment="Center" Margin="0,5" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding GitSource}" PlaceholderText="name of the user or organization you try to access" Margin="0,5" />
+
+                                    <!-- Source Type Toggle -->
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Source Type" VerticalAlignment="Center" Margin="0,5" />
+                                    <ToggleSwitch Grid.Row="3" Grid.Column="1" IsChecked="{Binding GitSourceTypeSwitch}" OnContent="Org" OffContent="User" Margin="0,5" />
+
+                                    <!-- Git Login Button and Avatar -->
+                                    <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0,15">
+                                        <Button Content="login" Command="{Binding GitLoginCommand}" IsEnabled="{Binding GitLoginIsEnabled}" IsVisible="{Binding GitLoginIsVisible}" Width="120" Height="40" />
+                                        <Image Source="{Binding GitAvatarSource}" IsVisible="{Binding GitAvatarIsVisible}" Width="60" Height="60" />
+                                    </StackPanel>
+
+                                    <!-- Divider -->
+                                    <Separator Grid.Row="5" Grid.ColumnSpan="2" Height="1" Background="{DynamicResource SystemControlElevationBorderBrush}" Margin="0,15" />
+
+                                    <!-- Temp/Working Paths and Git Path -->
+                                    <Grid Grid.Row="6" Grid.ColumnSpan="2" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="100,*,Auto" Margin="0,5">
+                                        <Label Grid.Row="0" Grid.Column="0" Content="Working" VerticalAlignment="Center" Margin="0,5" />
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TempPath}" PlaceholderText="temporary repositories clone path" Margin="0,5" />
+                                        <Button Grid.Row="0" Grid.Column="2" Command="{Binding BrowseTempPathCommand}" Content="browse" Margin="5,5,0,5" />
+
+                                        <Label Grid.Row="1" Grid.Column="0" Content="Git Path" VerticalAlignment="Center" Margin="0,5" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GitBinPath}" PlaceholderText="bin path of your git installation" Margin="0,5" />
+                                        <Button Grid.Row="1" Grid.Column="2" Command="{Binding BrowseGitPathCommand}" Content="browse" Margin="5,5,0,5" />
+
+                                        <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding DeleteTempRepos}" OnContent="Delete temp Repos" OffContent="Keep temp repos" Margin="0,10,0,0" />
+                                    </Grid>
+                                </Grid>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <!-- Repositories Tab -->
+                        <TabItem Header="Repositories" IsEnabled="{Binding RepoTabIsEnabled}">
+                            <Grid RowDefinitions="Auto,*" Margin="15">
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="20" Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding RepoLabelText}" VerticalAlignment="Center" FontSize="14" FontWeight="Medium" />
+                                    <Button Content="Check all" Command="{Binding CheckAllReposCommand}" />
+                                </StackPanel>
+                                <ListBox Grid.Row="1" ItemsSource="{Binding GitRepositoriesCollection}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                            <CheckBox IsChecked="{Binding MigrateToDevOps}" 
+                                                      Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).UpdateCheckedReposCountCommand}">
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Azure DevOps Tab -->
+                        <TabItem Header="Azure DevOps" IsEnabled="{Binding DevOpsTabIsEnabled}">
+                            <Grid Margin="15" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="100,*">
+                                <Label Grid.Row="0" Grid.Column="0" Content="User" VerticalAlignment="Center" Margin="0,5" />
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DevOpsUsername}" PlaceholderText="if alternative credentials are used" Margin="0,5" />
+
+                                <Label Grid.Row="1" Grid.Column="0" Content="PAT" VerticalAlignment="Center" Margin="0,5" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DevOpsPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token" Margin="0,5" />
+
+                                <Label Grid.Row="2" Grid.Column="0" Content="Target" VerticalAlignment="Center" Margin="0,5" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DevOpsSource}" PlaceholderText="target.visualstudio.com | myOnPremiseTfsServer" Margin="0,5" />
+
+                                <Label Grid.Row="3" Grid.Column="0" Content="Collection" VerticalAlignment="Center" Margin="0,5" />
+                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DevOpsProjectCollection}" PlaceholderText="DefaultCollection (optional)" Margin="0,5" />
+
+                                <Label Grid.Row="4" Grid.Column="0" Content="Project" VerticalAlignment="Center" Margin="0,5" />
+                                <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding DevOpsProjects}" SelectedItem="{Binding SelectedDevOpsProject}" HorizontalAlignment="Stretch" Margin="0,5" />
+
+                                <Label Grid.Row="5" Grid.Column="0" Content="Template" VerticalAlignment="Center" Margin="0,5" />
+                                <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding DevOpsTemplates}" SelectedItem="{Binding SelectedDevOpsTemplate}" HorizontalAlignment="Stretch" Margin="0,5" />
+
+                                <Button Grid.Row="6" Grid.Column="1" Content="login" Command="{Binding DevOpsLoginCommand}" IsEnabled="{Binding DevOpsLoginIsEnabled}" Width="120" Height="40" Margin="0,15" />
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Run Tab -->
+                        <TabItem Header="Run" IsEnabled="{Binding RunTabIsEnabled}">
+                            <Grid Margin="15">
+                                <Button Command="{Binding RunMigrationCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <StackPanel Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <controls:FASymbolIcon Symbol="Upload" FontSize="72" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Click to migrate the chosen git repositories to Azure DevOps" FontSize="16" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Failed Tab -->
+                        <TabItem Header="Failed" IsEnabled="{Binding MigrationFailedTabIsEnabled}">
+                            <Grid RowDefinitions="Auto,*" Margin="15">
+                                <TextBlock Grid.Row="0" Text="Failed migrations" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                <ListBox Grid.Row="1" ItemsSource="{Binding MigrationFailedRepos}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Successful Tab -->
+                        <TabItem Header="Successful" IsEnabled="{Binding SuccessfulTabIsEnabled}">
+                            <Grid RowDefinitions="Auto,*" Margin="15">
+                                <TextBlock Grid.Row="0" Text="Successful migrations" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                <ListBox Grid.Row="1" ItemsSource="{Binding MigrationSuccessRepos}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Panel>
+        </SplitView>
+
+        <!-- Loading / Progress Overlay -->
+        <Grid Background="#A0000000" IsVisible="{Binding IsBusy}" RowDefinitions="*,Auto,Auto,*">
+            <ProgressBar Grid.Row="1" IsIndeterminate="True" Width="200" Height="10" HorizontalAlignment="Center" />
+            <TextBlock Grid.Row="2" Text="{Binding BusyMessage}" Foreground="White" FontSize="16" FontWeight="Medium" Margin="0,15,0,0" HorizontalAlignment="Center" />
+        </Grid>
+    </Panel>
+</windowing:FAAppWindow>

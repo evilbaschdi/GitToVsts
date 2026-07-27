@@ -1,0 +1,10 @@
+{
+    "dotnet.unitTests.runSettingsPath": ".runsettings",
+    "chat.tools.terminal.autoApprove": {
+        "dotnet restore": true,
+        "dotnet build": true,
+        "dotnet test": true,
+        "dotnet list": true,
+        "dotnet sln": true
+    }
+}

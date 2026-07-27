@@ -1,6 +1,4 @@
-using System.IO;
 using System.Net.Http;
-using System.Windows.Media.Imaging;
 using GitToVsts.Model;
 
 namespace GitToVsts.Internal.Git;
@@ -22,31 +20,25 @@ public class ConvertGitAvatar : IGitAvatar
     }
 
     /// <summary>
-    ///     Contains a BitmapImage for given GitUser.
+    ///     Contains a byte array for given GitUser.
     /// </summary>
     /// <param name="gitUser">GitUser to extract avatar for.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"><paramref name="gitUser" /> is <see langword="null" />.</exception>
-    public async Task<BitmapImage> ValueFor(GitUser gitUser)
+    public async Task<byte[]> ValueFor(GitUser gitUser)
     {
         ArgumentNullException.ThrowIfNull(gitUser);
 
-        var image = new BitmapImage();
-
         if (string.IsNullOrWhiteSpace(gitUser.Avatar_Url))
         {
-            return image;
+            return Array.Empty<byte>();
         }
 
         var pictureUri = new Uri(gitUser.Avatar_Url, UriKind.Absolute);
 
         using var httpClient = _httpClientFactory.CreateClient();
-        var imageBytes = await httpClient.GetByteArrayAsync(pictureUri);
+        var imageBytes = await httpClient.GetByteArrayAsync(pictureUri).ConfigureAwait(false);
 
-        image.BeginInit();
-        image.StreamSource = new MemoryStream(imageBytes);
-
-        image.EndInit();
-        return image;
+        return imageBytes;
     }
 }

@@ -1,0 +1,90 @@
+<Project>
+
+	<PropertyGroup>
+		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+		<Authors>Sebastian Walter</Authors>
+		<Company>evilbaschdi (Sebastian Walter)</Company>
+		<Copyright>Copyright © 2016 - $([System.DateTime]::UtcNow.ToString(yyyy)) evilbaschdi</Copyright>
+		<Description>Git to Azure DevOps</Description>
+		<!-- ReSharper disable once UnknownProperty -->
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+		<PackageProjectUrl>https://github.com/evilbaschdi/GitToVsts</PackageProjectUrl>
+		<Product>Git to Azure DevOps</Product>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<PublishSingleFile>true</PublishSingleFile>
+		<RepositoryUrl>https://github.com/evilbaschdi/GitToVsts</RepositoryUrl>
+		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+		<TargetFramework>net10.0</TargetFramework>
+		<Version>$([System.DateTime]::UtcNow.ToString(yyyy.M.d.H))-develop</Version>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<NoWarn>1701;1702</NoWarn>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="EvilBaschdi.Core" />
+		<Using Include="EvilBaschdi.Core.AppHelpers" />
+		<Using Include="EvilBaschdi.Core.DependencyInjection" />
+		<Using Include="EvilBaschdi.Core.Settings" />
+		<Using Include="JetBrains.Annotations" />
+		<Using Include="Microsoft.Extensions.DependencyInjection" />
+		<Using Include="System.Linq" />
+		<Using Include="GitToVsts.Core" />
+		<Using Include="GitToVsts.Core.DependencyInjection" />
+		<Using Include="GitToVsts.Internal.Git" />
+		<Using Include="GitToVsts.Internal.TeamServices" />
+		<Using Include="GitToVsts.Model" />
+	</ItemGroup>
+
+	<!-- ReSharper disable once UnknownProperty -->
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Avalonia'))">
+		<Using Include="EvilBaschdi.Core.Avalonia.Controls" />
+		<Using Include="EvilBaschdi.Core.Avalonia.Lifetime" />
+		<Using Include="EvilBaschdi.Core.Avalonia.Mvvm" />
+	</ItemGroup>
+
+	<!-- ReSharper disable once UnknownProperty -->
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+		<Using Include="AutoFixture.Idioms" />
+		<Using Include="AutoFixture.Xunit3" />
+		<Using Include="EvilBaschdi.Testing" />
+		<Using Include="FluentAssertions" />
+		<Using Include="EvilBaschdi.Testing.FluentAssertions.Microsoft.Extensions.DependencyInjection" />
+		<Using Include="NSubstitute" />
+		<Using Include="NSubstitute.ReturnsExtensions" />
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Avalonia.Tests'))">
+		<Using Include="Avalonia.Controls" />
+		<Using Include="Avalonia.Headless" />
+		<Using Include="EvilBaschdi.Testing.Avalonia" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="EvilBaschdi.Core" />
+		<PackageReference Include="EvilBaschdi.Core.DependencyInjection" />
+		<PackageReference Include="EvilBaschdi.Core.Logging" />
+		<PackageReference Include="EvilBaschdi.Core.Settings" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Avalonia'))">
+		<PackageReference Include="Avalonia.AvaloniaEdit" />
+		<PackageReference Include="AvaloniaEdit.TextMate" />
+	</ItemGroup>
+
+	<!-- ReSharper disable once UnknownProperty -->
+	<!-- Production projects reference Core -->
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Core')) != 'true' and $(MSBuildProjectName.EndsWith('.Tests')) != 'true'">
+		<ProjectReference Include="..\GitToVsts.Core\GitToVsts.Core.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,31 @@
+<Project>
+
+	<ItemGroup>
+		<Compile Remove="TestResults\**" />
+		<EmbeddedResource Remove="TestResults\**" />
+		<None Remove="TestResults\**" />
+	</ItemGroup>
+
+	<Choose>
+		<!-- Core production project -->
+		<When Condition="$(MSBuildProjectName) == 'GitToVsts.Core'">
+			<ItemGroup>
+				<Compile Update="**\*.cs">
+					<DependentUpon>$([System.String]::Copy(I%(Filename).cs).Replace('Cached',''))</DependentUpon>
+				</Compile>
+			</ItemGroup>
+		</When>
+		<!-- Avalonia production project -->
+		<When Condition="$(MSBuildProjectName) == 'GitToVsts.Avalonia'">
+			<ItemGroup>
+				<Compile Update="ViewModels\*.cs">
+					<DependentUpon>$([System.String]::Copy(I%(Filename).cs).Replace('Cached',''))</DependentUpon>
+				</Compile>
+				<Compile Update="ViewModels\*\*.cs">
+					<DependentUpon>$([System.String]::Copy(I%(Filename).cs).Replace('Cached',''))</DependentUpon>
+				</Compile>
+			</ItemGroup>
+		</When>
+	</Choose>
+
+</Project>
