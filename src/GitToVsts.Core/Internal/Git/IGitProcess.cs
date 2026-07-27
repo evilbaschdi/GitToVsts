@@ -1,4 +1,4 @@
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
 ///     Interface for git process class.

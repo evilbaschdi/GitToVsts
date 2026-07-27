@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 // ReSharper disable InconsistentNaming
 
-namespace GitToVsts.Model;
+namespace GitToVsts.Core.Model;
 
 /// <summary>
 /// </summary>

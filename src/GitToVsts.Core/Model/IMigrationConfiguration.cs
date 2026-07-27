@@ -1,4 +1,4 @@
-namespace GitToVsts.Model;
+namespace GitToVsts.Core.Model;
 
 /// <summary>
 ///     Interface for migration configuration.

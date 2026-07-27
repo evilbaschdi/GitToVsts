@@ -1,4 +1,4 @@
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
 ///     Interface for classes that extract the a git avatar by GitUser.

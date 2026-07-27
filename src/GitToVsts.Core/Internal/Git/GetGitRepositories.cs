@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using RestSharp;
 
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
 ///     Class that returns a list of GitRepositories via github API.

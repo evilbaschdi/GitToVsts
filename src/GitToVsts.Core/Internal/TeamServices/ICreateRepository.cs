@@ -1,4 +1,4 @@
-namespace GitToVsts.Internal.TeamServices;
+namespace GitToVsts.Core.Internal.TeamServices;
 
 /// <summary>
 ///     Creates repository through visualstudio.com api.

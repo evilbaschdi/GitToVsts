@@ -1,7 +1,7 @@
 using System.Text;
 using RestSharp;
 
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
 ///     Class that requests an user from github API.

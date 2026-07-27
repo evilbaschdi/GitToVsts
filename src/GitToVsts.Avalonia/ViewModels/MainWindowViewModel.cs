@@ -1,25 +1,19 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Net.Http;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using EvilBaschdi.About.Avalonia;
 using EvilBaschdi.Core.Logging;
-using GitToVsts.Core;
-using GitToVsts.Internal.Git;
-using GitToVsts.Internal.TeamServices;
-using GitToVsts.Model;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
 namespace GitToVsts.Avalonia.ViewModels;
 
 /// <summary>
-///     Main window view model class containing all properties, bindings, and commands for the Git to Azure DevOps migration UI.
+///     Main window view model class containing all properties, bindings, and commands for the Git to Azure DevOps
+///     migration UI.
 /// </summary>
 public class MainWindowViewModel : ViewModelBase
 {
@@ -30,7 +24,6 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IProjects _projects;
     private readonly ITemplates _templates;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IMainWindowByApplicationLifetime _mainWindowLifetime;
 
     private string _gitUsername;
@@ -78,8 +71,6 @@ public class MainWindowViewModel : ViewModelBase
         _templates = templates ?? throw new ArgumentNullException(nameof(templates));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _mainWindowLifetime = mainWindowLifetime ?? throw new ArgumentNullException(nameof(mainWindowLifetime));
-
-        _httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
 
         // Commands
         GitLoginCommand = ReactiveCommand.CreateFromTask(GitLoginAsync);
@@ -629,10 +620,10 @@ public class MainWindowViewModel : ViewModelBase
         foreach (var repo in repos)
         {
             collection.Add(new GitRepositoryObservableCollectionItem
-            {
-                DisplayName = $"{i++}_{repo.Name}",
-                Repository = repo
-            });
+                           {
+                               DisplayName = $"{i++}_{repo.Name}",
+                               Repository = repo
+                           });
         }
 
         GitRepositoriesCollection = collection;
@@ -648,48 +639,48 @@ public class MainWindowViewModel : ViewModelBase
         try
         {
             await Task.Run(() =>
-            {
-                var projects = _projects.Value;
-                var templates = _templates.Value;
+                           {
+                               var projects = _projects.Value;
+                               var templates = _templates.Value;
 
-                DevOpsProjects.Clear();
-                DevOpsProjects.Add("one project per repo (default)");
-                if (projects?.Value != null)
-                {
-                    foreach (var project in projects.Value)
-                    {
-                        DevOpsProjects.Add(project.Name);
-                    }
-                }
+                               DevOpsProjects.Clear();
+                               DevOpsProjects.Add("one project per repo (default)");
+                               if (projects?.Value != null)
+                               {
+                                   foreach (var project in projects.Value)
+                                   {
+                                       DevOpsProjects.Add(project.Name);
+                                   }
+                               }
 
-                DevOpsTemplates.Clear();
-                if (templates?.Value != null)
-                {
-                    string defaultTemplateName = null;
-                    foreach (var template in templates.Value)
-                    {
-                        DevOpsTemplates.Add(template.Name);
-                        if (template.IsDefault)
-                        {
-                            defaultTemplateName = template.Name;
-                        }
-                    }
+                               DevOpsTemplates.Clear();
+                               if (templates?.Value != null)
+                               {
+                                   string defaultTemplateName = null;
+                                   foreach (var template in templates.Value)
+                                   {
+                                       DevOpsTemplates.Add(template.Name);
+                                       if (template.IsDefault)
+                                       {
+                                           defaultTemplateName = template.Name;
+                                       }
+                                   }
 
-                    if (!string.IsNullOrWhiteSpace(defaultTemplateName))
-                    {
-                        SelectedDevOpsTemplate = defaultTemplateName;
-                    }
-                    else if (DevOpsTemplates.Count > 0)
-                    {
-                        SelectedDevOpsTemplate = DevOpsTemplates[0];
-                    }
-                }
+                                   if (!string.IsNullOrWhiteSpace(defaultTemplateName))
+                                   {
+                                       SelectedDevOpsTemplate = defaultTemplateName;
+                                   }
+                                   else if (DevOpsTemplates.Count > 0)
+                                   {
+                                       SelectedDevOpsTemplate = DevOpsTemplates[0];
+                                   }
+                               }
 
-                MigrationFailedTabIsEnabled = true;
-                SuccessfulTabIsEnabled = true;
-                DevOpsLoginIsEnabled = false;
-                SelectedIndex = 2;
-            }).ConfigureAwait(true);
+                               MigrationFailedTabIsEnabled = true;
+                               SuccessfulTabIsEnabled = true;
+                               DevOpsLoginIsEnabled = false;
+                               SelectedIndex = 2;
+                           }).ConfigureAwait(true);
         }
         catch (Exception)
         {
@@ -732,14 +723,17 @@ public class MainWindowViewModel : ViewModelBase
         if (window is not null)
         {
             var topLevel = TopLevel.GetTopLevel(window);
-            var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-                                                                               {
-                                                                                   Title = "Select Working Directory",
-                                                                                   AllowMultiple = false
-                                                                               });
-            if (folders.Count > 0)
+            if (topLevel != null)
             {
-                TempPath = folders[0].Path.LocalPath;
+                var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                                                                                   {
+                                                                                       Title = "Select Working Directory",
+                                                                                       AllowMultiple = false
+                                                                                   });
+                if (folders.Count > 0)
+                {
+                    TempPath = folders[0].Path.LocalPath;
+                }
             }
         }
     }
@@ -775,14 +769,17 @@ public class MainWindowViewModel : ViewModelBase
         if (window is not null)
         {
             var topLevel = TopLevel.GetTopLevel(window);
-            var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-                                                                               {
-                                                                                   Title = "Select Logging Directory",
-                                                                                   AllowMultiple = false
-                                                                               });
-            if (folders.Count > 0)
+            if (topLevel != null)
             {
-                LoggingPath = folders[0].Path.LocalPath;
+                var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                                                                                   {
+                                                                                       Title = "Select Logging Directory",
+                                                                                       AllowMultiple = false
+                                                                                   });
+                if (folders.Count > 0)
+                {
+                    LoggingPath = folders[0].Path.LocalPath;
+                }
             }
         }
     }
@@ -860,7 +857,7 @@ public class MainWindowViewModel : ViewModelBase
                                                             if (response.Code != 200)
                                                             {
                                                                 logger.LogInformation("{ResponseValue}", response.Value);
-                                                             }
+                                                            }
                                                             else
                                                             {
                                                                 checkedItem.MigrationSuccessful = true;

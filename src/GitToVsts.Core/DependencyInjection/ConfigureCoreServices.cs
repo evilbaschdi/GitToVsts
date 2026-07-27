@@ -1,4 +1,5 @@
 using EvilBaschdi.Core.Settings.ByMachineAndUser;
+using GetGitRepositories = GitToVsts.Core.Internal.Git.GetGitRepositories;
 
 namespace GitToVsts.Core.DependencyInjection;
 

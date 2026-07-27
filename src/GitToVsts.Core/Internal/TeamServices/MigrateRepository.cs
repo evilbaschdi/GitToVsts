@@ -1,6 +1,6 @@
 using EvilBaschdi.Core.Extensions;
 
-namespace GitToVsts.Internal.TeamServices;
+namespace GitToVsts.Core.Internal.TeamServices;
 
 /// <summary>
 ///     Migrates a github repository to Azure DevOps.

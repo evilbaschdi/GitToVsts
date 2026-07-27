@@ -1,7 +1,7 @@
 using System.Text;
 using RestSharp;
 
-namespace GitToVsts.Internal.TeamServices;
+namespace GitToVsts.Core.Internal.TeamServices;
 
 /// <summary>
 ///     Class for requesting visualstudio team services projects.

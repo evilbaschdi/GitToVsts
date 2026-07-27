@@ -4,9 +4,9 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
                        xmlns:viewModels="clr-namespace:GitToVsts.Avalonia.ViewModels"
-                       xmlns:models="clr-namespace:GitToVsts.Model;assembly=GitToVsts.Core"
                        xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
                        xmlns:evilBaschdi="clr-namespace:EvilBaschdi.Core.Avalonia.Controls;assembly=EvilBaschdi.Core.Avalonia"
+                       xmlns:model="clr-namespace:GitToVsts.Core.Model;assembly=GitToVsts.Core"
                        x:Class="GitToVsts.Avalonia.Views.MainWindow"
                        x:DataType="viewModels:MainWindowViewModel" mc:Ignorable="d"
                        d:DesignWidth="850" d:DesignHeight="500" Width="850" Height="500"
@@ -108,7 +108,7 @@
                                 </StackPanel>
                                 <ListBox Grid.Row="1" ItemsSource="{Binding GitRepositoriesCollection}">
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                        <DataTemplate DataType="model:GitRepositoryObservableCollectionItem">
                                             <CheckBox IsChecked="{Binding MigrateToDevOps}"
                                                       Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).UpdateCheckedReposCountCommand}">
                                                 <TextBlock Text="{Binding DisplayName}" />
@@ -166,7 +166,7 @@
                                 <TextBlock Grid.Row="0" Text="Failed migrations" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10" />
                                 <ListBox Grid.Row="1" ItemsSource="{Binding MigrationFailedRepos}">
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                        <DataTemplate DataType="model:GitRepositoryObservableCollectionItem">
                                             <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -180,7 +180,7 @@
                                 <TextBlock Grid.Row="0" Text="Successful migrations" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10" />
                                 <ListBox Grid.Row="1" ItemsSource="{Binding MigrationSuccessRepos}">
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
+                                        <DataTemplate DataType="model:GitRepositoryObservableCollectionItem">
                                             <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>

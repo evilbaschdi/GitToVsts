@@ -1,7 +1,7 @@
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
-///     Class that extracts the a git avatar by GitUser.
+///     Class that extracts the avatar for a git user.
 /// </summary>
 public class ConvertGitAvatar : IGitAvatar
 {

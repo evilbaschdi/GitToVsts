@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace GitToVsts.Internal.Git;
+namespace GitToVsts.Core.Internal.Git;
 
 /// <summary>
 ///     Class for ProcessStartInfo of git.exe.

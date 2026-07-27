@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace GitToVsts.Model;
+namespace GitToVsts.Core.Model;
 
 /// <summary>
 ///     Owner of a git repository.

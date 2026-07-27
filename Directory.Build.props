@@ -40,9 +40,9 @@
 		<Using Include="System.Linq" />
 		<Using Include="GitToVsts.Core" />
 		<Using Include="GitToVsts.Core.DependencyInjection" />
-		<Using Include="GitToVsts.Internal.Git" />
-		<Using Include="GitToVsts.Internal.TeamServices" />
-		<Using Include="GitToVsts.Model" />
+		<Using Include="GitToVsts.Core.Internal.Git" />
+		<Using Include="GitToVsts.Core.Internal.TeamServices" />
+		<Using Include="GitToVsts.Core.Model" />
 	</ItemGroup>
 
 	<!-- ReSharper disable once UnknownProperty -->
