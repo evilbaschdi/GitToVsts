@@ -1,9 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using EvilBaschdi.Core.Settings.ByMachineAndUser;
-using GitToVsts.Core;
-using GitToVsts.Internal.Git;
-using GitToVsts.Internal.TeamServices;
 
 namespace GitToVsts.Core.DependencyInjection;
 

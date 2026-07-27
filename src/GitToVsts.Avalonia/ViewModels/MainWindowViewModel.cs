@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using EvilBaschdi.About.Avalonia;
-using EvilBaschdi.Core.Avalonia.DependencyInjection;
 using EvilBaschdi.Core.Logging;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
@@ -19,6 +18,9 @@ using ReactiveUI;
 
 namespace GitToVsts.Avalonia.ViewModels;
 
+/// <summary>
+///     Main window view model class containing all properties, bindings, and commands for the Git to Azure DevOps migration UI.
+/// </summary>
 public class MainWindowViewModel : ViewModelBase
 {
     private readonly IApplicationSettings _applicationSettings;
@@ -43,36 +45,21 @@ public class MainWindowViewModel : ViewModelBase
     private string _devOpsPersonalAccessToken;
     private string _devOpsSource;
     private string _devOpsProjectCollection;
-    private string _selectedDevOpsProject;
-    private string _selectedDevOpsTemplate;
 
     private string _loggingPath;
 
-    private ObservableCollection<GitRepositoryObservableCollectionItem> _gitRepositoriesCollection = [];
-    private ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = [];
-    private ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = [];
-    private ObservableCollection<string> _devOpsProjects = [];
-    private ObservableCollection<string> _devOpsTemplates = [];
-
-    private bool _repoTabIsEnabled;
-    private bool _devOpsTabIsEnabled;
-    private bool _runTabIsEnabled;
-    private bool _migrationFailedTabIsEnabled;
-    private bool _successfulTabIsEnabled;
-
-    private bool _gitLoginIsEnabled;
-    private bool _devOpsLoginIsEnabled;
-
-    private Bitmap _gitAvatarSource;
-    private bool _gitAvatarIsVisible;
-    private bool _gitLoginIsVisible = true;
-
-    private int _selectedIndex;
-    private bool _isBusy;
-    private string _busyMessage;
-    private bool _settingsFlyoutIsOpen;
-    private string _repoLabelText = "Choose repositories to migrate";
-
+    /// <summary>
+    ///     Constructor for the MainWindowViewModel, injecting core dependencies.
+    /// </summary>
+    /// <param name="applicationSettings">Application settings provider.</param>
+    /// <param name="gitAvatar">Git avatar downloader service.</param>
+    /// <param name="gitRepositories">Git repositories retriever service.</param>
+    /// <param name="gitUser">Git user details retriever service.</param>
+    /// <param name="projects">Azure DevOps projects service.</param>
+    /// <param name="templates">Azure DevOps process templates service.</param>
+    /// <param name="serviceProvider">Dependency injection service provider.</param>
+    /// <param name="mainWindowLifetime">Application lifetime window retriever.</param>
+    /// <exception cref="ArgumentNullException">Thrown if any dependency is null.</exception>
     public MainWindowViewModel(
         IApplicationSettings applicationSettings,
         IGitAvatar gitAvatar,
@@ -111,6 +98,9 @@ public class MainWindowViewModel : ViewModelBase
 
     #region Properties
 
+    /// <summary>
+    ///     Gets or sets the Git username.
+    /// </summary>
     public string GitUsername
     {
         get => _gitUsername;
@@ -122,6 +112,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Git personal access token (PAT).
+    /// </summary>
     public string GitPersonalAccessToken
     {
         get => _gitPersonalAccessToken;
@@ -133,6 +126,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Git source name (user or organization).
+    /// </summary>
     public string GitSource
     {
         get => _gitSource;
@@ -144,6 +140,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets whether the Git source type is an Organization (true) or User (false).
+    /// </summary>
     public bool GitSourceTypeSwitch
     {
         get => _gitSourceTypeSwitch;
@@ -154,6 +153,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the temporary path used for cloning repositories.
+    /// </summary>
     public string TempPath
     {
         get => _tempPath;
@@ -167,6 +169,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the bin path of the local git installation.
+    /// </summary>
     public string GitBinPath
     {
         get => _gitBinPath;
@@ -180,6 +185,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether cloned repositories should be cleaned up after migration.
+    /// </summary>
     public bool DeleteTempRepos
     {
         get => _deleteTempRepos;
@@ -190,6 +198,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Azure DevOps username.
+    /// </summary>
     public string DevOpsUsername
     {
         get => _devOpsUsername;
@@ -201,6 +212,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Azure DevOps personal access token (PAT).
+    /// </summary>
     public string DevOpsPersonalAccessToken
     {
         get => _devOpsPersonalAccessToken;
@@ -212,6 +226,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Azure DevOps target server/source URI.
+    /// </summary>
     public string DevOpsSource
     {
         get => _devOpsSource;
@@ -223,6 +240,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the Azure DevOps project collection name.
+    /// </summary>
     public string DevOpsProjectCollection
     {
         get => _devOpsProjectCollection;
@@ -233,12 +253,15 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the selected Azure DevOps target project.
+    /// </summary>
     public string SelectedDevOpsProject
     {
-        get => _selectedDevOpsProject;
+        get => field;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedDevOpsProject, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             if (value != null)
             {
                 _applicationSettings.DevOpsProject = value;
@@ -247,12 +270,15 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the selected Azure DevOps process template.
+    /// </summary>
     public string SelectedDevOpsTemplate
     {
-        get => _selectedDevOpsTemplate;
+        get => field;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedDevOpsTemplate, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             if (value != null)
             {
                 ValidateRunInput();
@@ -260,6 +286,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the output folder path for log files.
+    /// </summary>
     public string LoggingPath
     {
         get => _loggingPath;
@@ -273,139 +302,238 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Gets or sets the text displaying how many repositories are chosen to migrate.
+    /// </summary>
     public string RepoLabelText
     {
-        get => _repoLabelText;
-        set => this.RaiseAndSetIfChanged(ref _repoLabelText, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "Choose repositories to migrate";
 
+    /// <summary>
+    ///     Gets or sets the collection of available Git repositories.
+    /// </summary>
     public ObservableCollection<GitRepositoryObservableCollectionItem> GitRepositoriesCollection
     {
-        get => _gitRepositoriesCollection;
-        set => this.RaiseAndSetIfChanged(ref _gitRepositoriesCollection, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = [];
 
+    /// <summary>
+    ///     Gets or sets the collection of repositories whose migration failed.
+    /// </summary>
     public ObservableCollection<GitRepositoryObservableCollectionItem> MigrationFailedRepos
     {
-        get => _migrationFailedRepos;
-        set => this.RaiseAndSetIfChanged(ref _migrationFailedRepos, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = [];
 
+    /// <summary>
+    ///     Gets or sets the collection of repositories whose migration succeeded.
+    /// </summary>
     public ObservableCollection<GitRepositoryObservableCollectionItem> MigrationSuccessRepos
     {
-        get => _migrationSuccessRepos;
-        set => this.RaiseAndSetIfChanged(ref _migrationSuccessRepos, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = [];
 
+    /// <summary>
+    ///     Gets or sets the list of Azure DevOps projects available for migration.
+    /// </summary>
     public ObservableCollection<string> DevOpsProjects
     {
-        get => _devOpsProjects;
-        set => this.RaiseAndSetIfChanged(ref _devOpsProjects, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = [];
 
+    /// <summary>
+    ///     Gets or sets the list of Azure DevOps process templates available.
+    /// </summary>
     public ObservableCollection<string> DevOpsTemplates
     {
-        get => _devOpsTemplates;
-        set => this.RaiseAndSetIfChanged(ref _devOpsTemplates, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = [];
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Repositories tab is enabled.
+    /// </summary>
     public bool RepoTabIsEnabled
     {
-        get => _repoTabIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _repoTabIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Azure DevOps tab is enabled.
+    /// </summary>
     public bool DevOpsTabIsEnabled
     {
-        get => _devOpsTabIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _devOpsTabIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Run tab is enabled.
+    /// </summary>
     public bool RunTabIsEnabled
     {
-        get => _runTabIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _runTabIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Failed tab is enabled.
+    /// </summary>
     public bool MigrationFailedTabIsEnabled
     {
-        get => _migrationFailedTabIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _migrationFailedTabIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Successful tab is enabled.
+    /// </summary>
     public bool SuccessfulTabIsEnabled
     {
-        get => _successfulTabIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _successfulTabIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Git Login button is enabled.
+    /// </summary>
     public bool GitLoginIsEnabled
     {
-        get => _gitLoginIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _gitLoginIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the DevOps Login button is enabled.
+    /// </summary>
     public bool DevOpsLoginIsEnabled
     {
-        get => _devOpsLoginIsEnabled;
-        set => this.RaiseAndSetIfChanged(ref _devOpsLoginIsEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets the Git user avatar image source bitmap.
+    /// </summary>
     public Bitmap GitAvatarSource
     {
-        get => _gitAvatarSource;
-        set => this.RaiseAndSetIfChanged(ref _gitAvatarSource, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Git avatar is visible.
+    /// </summary>
     public bool GitAvatarIsVisible
     {
-        get => _gitAvatarIsVisible;
-        set => this.RaiseAndSetIfChanged(ref _gitAvatarIsVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the Git Login form/button is visible.
+    /// </summary>
     public bool GitLoginIsVisible
     {
-        get => _gitLoginIsVisible;
-        set => this.RaiseAndSetIfChanged(ref _gitLoginIsVisible, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = true;
 
+    /// <summary>
+    ///     Gets or sets the selected tab index of the main TabControl.
+    /// </summary>
     public int SelectedIndex
     {
-        get => _selectedIndex;
-        set => this.RaiseAndSetIfChanged(ref _selectedIndex, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the view model is performing a long-running background operation.
+    /// </summary>
     public bool IsBusy
     {
-        get => _isBusy;
-        set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets the message to display on the progress overlay.
+    /// </summary>
     public string BusyMessage
     {
-        get => _busyMessage;
-        set => this.RaiseAndSetIfChanged(ref _busyMessage, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the settings flyout pane is currently open.
+    /// </summary>
     public bool SettingsFlyoutIsOpen
     {
-        get => _settingsFlyoutIsOpen;
-        set => this.RaiseAndSetIfChanged(ref _settingsFlyoutIsOpen, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #endregion Properties
 
     #region Commands Decl
 
+    /// <summary>
+    ///     Gets the command to trigger Git authentication.
+    /// </summary>
     public ICommand GitLoginCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to trigger DevOps projects and templates retrieval.
+    /// </summary>
     public ICommand DevOpsLoginCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to run the migration process.
+    /// </summary>
     public ICommand RunMigrationCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to open a folder dialog for the temporary clone directory.
+    /// </summary>
     public ICommand BrowseTempPathCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to open a folder dialog for the local Git binary directory.
+    /// </summary>
     public ICommand BrowseGitPathCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to open a folder dialog for the logging output directory.
+    /// </summary>
     public ICommand BrowseLoggingPathCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to check all repositories in the list.
+    /// </summary>
     public ICommand CheckAllReposCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to trigger recalculation of selected repositories.
+    /// </summary>
     public ICommand UpdateCheckedReposCountCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to show the custom About Window dialog.
+    /// </summary>
     public ICommand AboutWindowCommand { get; }
+
+    /// <summary>
+    ///     Gets the command to toggle the visibility of the Settings flyout panel.
+    /// </summary>
     public ICommand ToggleSettingsFlyoutCommand { get; }
 
     #endregion Commands Decl
@@ -465,7 +593,7 @@ public class MainWindowViewModel : ViewModelBase
                 await Task.Run(LoadGitRepositoryList).ConfigureAwait(true);
 
                 var avatarBytes = await _gitAvatar.ValueFor(user).ConfigureAwait(true);
-                if (avatarBytes != null && avatarBytes.Length > 0)
+                if (avatarBytes is { Length: > 0 })
                 {
                     using var ms = new MemoryStream(avatarBytes);
                     GitAvatarSource = new Bitmap(ms);
@@ -480,7 +608,6 @@ public class MainWindowViewModel : ViewModelBase
             {
                 GitUsername = "";
                 GitPersonalAccessToken = "";
-                // Show message box if needed, or update text
             }
         }
         catch (Exception)
@@ -589,6 +716,9 @@ public class MainWindowViewModel : ViewModelBase
         UpdateCheckedReposCount();
     }
 
+    /// <summary>
+    ///     Updates the count of checked repositories and enables/disables the DevOps tab accordingly.
+    /// </summary>
     public void UpdateCheckedReposCount()
     {
         var checkedItemsCount = GitRepositoriesCollection.Count(attribute => attribute.MigrateToDevOps);
@@ -603,10 +733,10 @@ public class MainWindowViewModel : ViewModelBase
         {
             var topLevel = TopLevel.GetTopLevel(window);
             var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-            {
-                Title = "Select Working Directory",
-                AllowMultiple = false
-            });
+                                                                               {
+                                                                                   Title = "Select Working Directory",
+                                                                                   AllowMultiple = false
+                                                                               });
             if (folders.Count > 0)
             {
                 TempPath = folders[0].Path.LocalPath;
@@ -620,17 +750,20 @@ public class MainWindowViewModel : ViewModelBase
         if (window is not null)
         {
             var topLevel = TopLevel.GetTopLevel(window);
-            var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            if (topLevel != null)
             {
-                Title = "Select Git Bin Directory",
-                AllowMultiple = false
-            });
-            if (folders.Count > 0)
-            {
-                var path = folders[0].Path.LocalPath;
-                if (System.IO.File.Exists(Path.Combine(path, "git.exe")))
+                var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                                                                                   {
+                                                                                       Title = "Select Git Bin Directory",
+                                                                                       AllowMultiple = false
+                                                                                   });
+                if (folders.Count > 0)
                 {
-                    GitBinPath = path;
+                    var path = folders[0].Path.LocalPath;
+                    if (File.Exists(Path.Combine(path, "git.exe")))
+                    {
+                        GitBinPath = path;
+                    }
                 }
             }
         }
@@ -643,10 +776,10 @@ public class MainWindowViewModel : ViewModelBase
         {
             var topLevel = TopLevel.GetTopLevel(window);
             var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-            {
-                Title = "Select Logging Directory",
-                AllowMultiple = false
-            });
+                                                                               {
+                                                                                   Title = "Select Logging Directory",
+                                                                                   AllowMultiple = false
+                                                                               });
             if (folders.Count > 0)
             {
                 LoggingPath = folders[0].Path.LocalPath;
@@ -692,10 +825,10 @@ public class MainWindowViewModel : ViewModelBase
         ILogger logger = new SimpleFileLogger(logPath, LogLevel.Information, new object(), "GitToVsts Log");
         var repoPaths = new ConcurrentBag<string>();
         var configuration = new Configuration
-        {
-            DevOpsTemplate = SelectedDevOpsTemplate,
-            DevOpsProject = SelectedDevOpsProject
-        };
+                            {
+                                DevOpsTemplate = SelectedDevOpsTemplate,
+                                DevOpsProject = SelectedDevOpsProject
+                            };
         var checkedItems = GitRepositoriesCollection.Where(attribute => attribute.MigrateToDevOps);
         var gitCommands = new GitCommands();
         var migrate = new MigrateRepository(_applicationSettings, _templates, _projects, gitCommands, configuration);
@@ -708,32 +841,32 @@ public class MainWindowViewModel : ViewModelBase
             repositoriesToMigrate.Take(5)
                                  .ToList()
                                  .ForEach(checkedItem =>
-                                 {
-                                     var response = migrate.ValueFor(checkedItem.Repository);
-                                     if (response.Code != 200)
-                                     {
-                                         logger.LogInformation("{ResponseValue}", response.Value);
-                                     }
-                                     else
-                                     {
-                                         checkedItem.MigrationSuccessful = true;
-                                         repoPaths.Add(response.Value);
-                                     }
-                                 });
+                                          {
+                                              var response = migrate.ValueFor(checkedItem.Repository);
+                                              if (response.Code != 200)
+                                              {
+                                                  logger.LogInformation("{ResponseValue}", response.Value);
+                                              }
+                                              else
+                                              {
+                                                  checkedItem.MigrationSuccessful = true;
+                                                  repoPaths.Add(response.Value);
+                                              }
+                                          });
             var restRepositoriesToMigrate = repositoriesToMigrate.Skip(5).ToList();
             Parallel.ForEach(restRepositoriesToMigrate, checkedItem =>
-            {
-                var response = migrate.ValueFor(checkedItem.Repository);
-                if (response.Code != 200)
-                {
-                    logger.LogInformation("{ResponseValue}", response.Value);
-                }
-                else
-                {
-                    checkedItem.MigrationSuccessful = true;
-                    repoPaths.Add(response.Value);
-                }
-            });
+                                                        {
+                                                            var response = migrate.ValueFor(checkedItem.Repository);
+                                                            if (response.Code != 200)
+                                                            {
+                                                                logger.LogInformation("{ResponseValue}", response.Value);
+                                                             }
+                                                            else
+                                                            {
+                                                                checkedItem.MigrationSuccessful = true;
+                                                                repoPaths.Add(response.Value);
+                                                            }
+                                                        });
         }
         catch (Exception ex)
         {

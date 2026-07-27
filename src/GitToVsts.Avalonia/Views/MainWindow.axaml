@@ -14,6 +14,7 @@
 
     <Panel>
         <!-- Custom TitleBar Control -->
+        <!-- ReSharper disable once Xaml.PathError -->
         <evilBaschdi:TitleBarControl Icon="/Assets/b.ico" Name="TitleBarControl" />
 
         <SplitView IsPaneOpen="{Binding SettingsFlyoutIsOpen, Mode=TwoWay}"
@@ -21,32 +22,33 @@
                    PanePlacement="Right"
                    OpenPaneLength="350"
                    Margin="0,30,0,0">
-            
+
             <!-- Settings Pane (Flyout equivalent) -->
             <SplitView.Pane>
-                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="15" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource SystemControlElevationBorderBrush}">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="15" BorderThickness="1,0,0,0"
+                        BorderBrush="{DynamicResource SystemControlElevationBorderBrush}">
                     <StackPanel Spacing="15">
                         <TextBlock Text="Settings" FontSize="20" FontWeight="SemiBold" Margin="0,15,0,10" />
-                        
+
                         <TextBlock Text="Logging" FontSize="14" FontWeight="Medium" />
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
-                            <TextBox Grid.Column="0" Text="{Binding LoggingPath}" PlaceholderText="log path" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="0" Text="{Binding LoggingPath}" PlaceholderText="log path" VerticalAlignment="Center" />
                             <Button Grid.Column="1" Command="{Binding BrowseLoggingPathCommand}" Width="40" Margin="5,0,0,0" VerticalAlignment="Center">
                                 <controls:FASymbolIcon Symbol="Folder" />
                             </Button>
                         </Grid>
-                        
+
                         <Button Content="Close" Command="{Binding ToggleSettingsFlyoutCommand}" HorizontalAlignment="Right" Margin="0,20,0,0" />
                     </StackPanel>
                 </Border>
             </SplitView.Pane>
 
             <!-- Main Content Area -->
-            <Panel Margin="0,30,0,0">
+            <Panel Margin="0,0,0,0">
                 <Grid RowDefinitions="*,Auto">
                     <!-- Tabs -->
                     <TabControl Grid.Row="0" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" TabStripPlacement="Left">
-                        
+
                         <!-- Git Settings Tab -->
                         <TabItem Header="Git Settings">
                             <ScrollViewer>
@@ -57,11 +59,13 @@
 
                                     <!-- PAT -->
                                     <Label Grid.Row="1" Grid.Column="0" Content="PAT" VerticalAlignment="Center" Margin="0,5" />
-                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GitPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token" Margin="0,5" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GitPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token"
+                                             Margin="0,5" />
 
                                     <!-- Source -->
                                     <Label Grid.Row="2" Grid.Column="0" Content="Source" VerticalAlignment="Center" Margin="0,5" />
-                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding GitSource}" PlaceholderText="name of the user or organization you try to access" Margin="0,5" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding GitSource}" PlaceholderText="name of the user or organization you try to access"
+                                             Margin="0,5" />
 
                                     <!-- Source Type Toggle -->
                                     <Label Grid.Row="3" Grid.Column="0" Content="Source Type" VerticalAlignment="Center" Margin="0,5" />
@@ -69,15 +73,17 @@
 
                                     <!-- Git Login Button and Avatar -->
                                     <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0,15">
-                                        <Button Content="login" Command="{Binding GitLoginCommand}" IsEnabled="{Binding GitLoginIsEnabled}" IsVisible="{Binding GitLoginIsVisible}" Width="120" Height="40" />
+                                        <Button Content="login" Command="{Binding GitLoginCommand}" IsEnabled="{Binding GitLoginIsEnabled}" IsVisible="{Binding GitLoginIsVisible}"
+                                                Width="120" Height="40" />
                                         <Image Source="{Binding GitAvatarSource}" IsVisible="{Binding GitAvatarIsVisible}" Width="60" Height="60" />
                                     </StackPanel>
 
                                     <!-- Divider -->
-                                    <Separator Grid.Row="5" Grid.ColumnSpan="2" Height="1" Background="{DynamicResource SystemControlElevationBorderBrush}" Margin="0,15" />
+                                    <Separator Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Height="1" Background="{DynamicResource SystemControlElevationBorderBrush}"
+                                               Margin="0,15" />
 
                                     <!-- Temp/Working Paths and Git Path -->
-                                    <Grid Grid.Row="6" Grid.ColumnSpan="2" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="100,*,Auto" Margin="0,5">
+                                    <Grid Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="100,*,Auto" Margin="0,5">
                                         <Label Grid.Row="0" Grid.Column="0" Content="Working" VerticalAlignment="Center" Margin="0,5" />
                                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TempPath}" PlaceholderText="temporary repositories clone path" Margin="0,5" />
                                         <Button Grid.Row="0" Grid.Column="2" Command="{Binding BrowseTempPathCommand}" Content="browse" Margin="5,5,0,5" />
@@ -86,7 +92,8 @@
                                         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GitBinPath}" PlaceholderText="bin path of your git installation" Margin="0,5" />
                                         <Button Grid.Row="1" Grid.Column="2" Command="{Binding BrowseGitPathCommand}" Content="browse" Margin="5,5,0,5" />
 
-                                        <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding DeleteTempRepos}" OnContent="Delete temp Repos" OffContent="Keep temp repos" Margin="0,10,0,0" />
+                                        <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding DeleteTempRepos}" OnContent="Delete temp Repos" OffContent="Keep temp repos"
+                                                      Margin="0,10,0,0" />
                                     </Grid>
                                 </Grid>
                             </ScrollViewer>
@@ -102,7 +109,7 @@
                                 <ListBox Grid.Row="1" ItemsSource="{Binding GitRepositoriesCollection}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
-                                            <CheckBox IsChecked="{Binding MigrateToDevOps}" 
+                                            <CheckBox IsChecked="{Binding MigrateToDevOps}"
                                                       Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).UpdateCheckedReposCountCommand}">
                                                 <TextBlock Text="{Binding DisplayName}" />
                                             </CheckBox>
@@ -119,7 +126,8 @@
                                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DevOpsUsername}" PlaceholderText="if alternative credentials are used" Margin="0,5" />
 
                                 <Label Grid.Row="1" Grid.Column="0" Content="PAT" VerticalAlignment="Center" Margin="0,5" />
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DevOpsPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token" Margin="0,5" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DevOpsPersonalAccessToken}" PasswordChar="*" PlaceholderText="personal access token"
+                                         Margin="0,5" />
 
                                 <Label Grid.Row="2" Grid.Column="0" Content="Target" VerticalAlignment="Center" Margin="0,5" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DevOpsSource}" PlaceholderText="target.visualstudio.com | myOnPremiseTfsServer" Margin="0,5" />
@@ -128,12 +136,15 @@
                                 <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DevOpsProjectCollection}" PlaceholderText="DefaultCollection (optional)" Margin="0,5" />
 
                                 <Label Grid.Row="4" Grid.Column="0" Content="Project" VerticalAlignment="Center" Margin="0,5" />
-                                <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding DevOpsProjects}" SelectedItem="{Binding SelectedDevOpsProject}" HorizontalAlignment="Stretch" Margin="0,5" />
+                                <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding DevOpsProjects}" SelectedItem="{Binding SelectedDevOpsProject}"
+                                          HorizontalAlignment="Stretch" Margin="0,5" />
 
                                 <Label Grid.Row="5" Grid.Column="0" Content="Template" VerticalAlignment="Center" Margin="0,5" />
-                                <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding DevOpsTemplates}" SelectedItem="{Binding SelectedDevOpsTemplate}" HorizontalAlignment="Stretch" Margin="0,5" />
+                                <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding DevOpsTemplates}" SelectedItem="{Binding SelectedDevOpsTemplate}"
+                                          HorizontalAlignment="Stretch" Margin="0,5" />
 
-                                <Button Grid.Row="6" Grid.Column="1" Content="login" Command="{Binding DevOpsLoginCommand}" IsEnabled="{Binding DevOpsLoginIsEnabled}" Width="120" Height="40" Margin="0,15" />
+                                <Button Grid.Row="6" Grid.Column="1" Content="login" Command="{Binding DevOpsLoginCommand}" IsEnabled="{Binding DevOpsLoginIsEnabled}" Width="120"
+                                        Height="40" Margin="0,15" />
                             </Grid>
                         </TabItem>
 
@@ -156,7 +167,7 @@
                                 <ListBox Grid.Row="1" ItemsSource="{Binding MigrationFailedRepos}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
-                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
@@ -170,7 +181,7 @@
                                 <ListBox Grid.Row="1" ItemsSource="{Binding MigrationSuccessRepos}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="models:GitRepositoryObservableCollectionItem">
-                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>

@@ -1,6 +1,4 @@
 using System.Text;
-using GitToVsts.Core;
-using GitToVsts.Model;
 using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices;
@@ -24,24 +22,23 @@ public class GetProjects : IProjects
     /// <summary>
     ///     DevOps projects
     /// </summary>
-        public DevOpsProjects Value
+    public DevOpsProjects Value
+    {
+        get
         {
-            get
-            {
-                var client = new RestClient($"https://{_applicationSettings.DevOpsSource}/DefaultCollection/_apis/projects");
-                var request = new RestRequest
-                              {
-                                  Method = Method.Get
-                              };
-                request.AddHeader("cache-control", "no-cache");
-    
-                var username = !string.IsNullOrWhiteSpace(_applicationSettings.DevOpsUser) ? Uri.EscapeDataString(_applicationSettings.DevOpsUser) : "pat";
-                var devOpsToken = Uri.EscapeDataString(_applicationSettings.DevOpsPersonalAccessToken);
-                request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{devOpsToken}"))}");
-    
-                var projects = client.ExecuteAsync<DevOpsProjects>(request).Result.Data;
-                return projects;
-            }
+            var client = new RestClient($"https://{_applicationSettings.DevOpsSource}/DefaultCollection/_apis/projects");
+            var request = new RestRequest
+                          {
+                              Method = Method.Get
+                          };
+            request.AddHeader("cache-control", "no-cache");
+
+            var username = !string.IsNullOrWhiteSpace(_applicationSettings.DevOpsUser) ? Uri.EscapeDataString(_applicationSettings.DevOpsUser) : "pat";
+            var devOpsToken = Uri.EscapeDataString(_applicationSettings.DevOpsPersonalAccessToken);
+            request.AddHeader("authorization", $"Basic {Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{devOpsToken}"))}");
+
+            var projects = client.ExecuteAsync<DevOpsProjects>(request).Result.Data;
+            return projects;
         }
     }
-    
+}

@@ -4,9 +4,11 @@ using GitToVsts.Avalonia.ViewModels;
 
 namespace GitToVsts.Avalonia;
 
+/// <inheritdoc />
 public class ViewLocator : IDataTemplate
 {
-    public Control? Build(object? data)
+    /// <inheritdoc />
+    public Control Build(object data)
     {
         if (data is null)
         {
@@ -25,5 +27,6 @@ public class ViewLocator : IDataTemplate
         return new TextBlock { Text = "Not Found: " + name };
     }
 
-    public bool Match(object? data) => data is ViewModelBase;
+    /// <inheritdoc />
+    public bool Match(object data) => data is ViewModelBase;
 }

@@ -1,5 +1,4 @@
 using EvilBaschdi.Core.Settings.ByMachineAndUser;
-using JetBrains.Annotations;
 
 namespace GitToVsts.Core;
 

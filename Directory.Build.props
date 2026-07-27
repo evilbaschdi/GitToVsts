@@ -11,6 +11,7 @@
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>preview</LangVersion>
+		<Nullable>disable</Nullable>
 		<PackageProjectUrl>https://github.com/evilbaschdi/GitToVsts</PackageProjectUrl>
 		<Product>Git to Azure DevOps</Product>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>

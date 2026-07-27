@@ -1,6 +1,4 @@
 using System.Text;
-using GitToVsts.Core;
-using GitToVsts.Model;
 using RestSharp;
 
 namespace GitToVsts.Internal.TeamServices;
@@ -61,4 +59,3 @@ public class CreateProject : ICreateProject
         }
     }
 }
-

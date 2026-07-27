@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using EvilBaschdi.Core;
 
 namespace GitToVsts.Internal.Git;
 

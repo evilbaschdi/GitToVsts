@@ -1,6 +1,3 @@
-using System.Net.Http;
-using GitToVsts.Model;
-
 namespace GitToVsts.Internal.Git;
 
 /// <summary>

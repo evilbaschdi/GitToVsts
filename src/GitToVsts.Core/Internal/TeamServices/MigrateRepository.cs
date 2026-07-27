@@ -1,9 +1,4 @@
-using System.IO;
 using EvilBaschdi.Core.Extensions;
-using GitToVsts.Core;
-using GitToVsts.Internal.Git;
-using GitToVsts.Model;
-using JetBrains.Annotations;
 
 namespace GitToVsts.Internal.TeamServices;
 

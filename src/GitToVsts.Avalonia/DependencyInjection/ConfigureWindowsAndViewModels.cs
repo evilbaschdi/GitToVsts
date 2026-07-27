@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using GitToVsts.Avalonia.ViewModels;
 
 namespace GitToVsts.Avalonia.DependencyInjection;

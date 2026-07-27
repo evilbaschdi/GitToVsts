@@ -1,7 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using GitToVsts.Core;
-using GitToVsts.Model;
 using RestSharp;
 
 namespace GitToVsts.Internal.Git;
