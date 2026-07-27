@@ -43,23 +43,9 @@
 
             <!-- Main Content Area -->
             <Panel Margin="0,30,0,0">
-                <Grid RowDefinitions="Auto,*">
-                    <!-- Top Toolbar for About and Settings -->
-                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Height="45" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
-                        <TextBlock Grid.Column="0" Text="Git to Azure DevOps" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Margin="10,0,0,0" />
-                        
-                        <!-- About Button -->
-                        <Button Grid.Column="1" Command="{Binding AboutWindowCommand}" Width="40" Height="32" Margin="5,0" ToolTip.Tip="About">
-                            <controls:FASymbolIcon Symbol="Help" FontSize="18" />
-                        </Button>
-                        <!-- Settings Button -->
-                        <Button Grid.Column="2" Command="{Binding ToggleSettingsFlyoutCommand}" Width="40" Height="32" Margin="5,0,10,0" ToolTip.Tip="Settings">
-                            <controls:FASymbolIcon Symbol="Settings" FontSize="18" />
-                        </Button>
-                    </Grid>
-
+                <Grid RowDefinitions="*,Auto">
                     <!-- Tabs -->
-                    <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" TabStripPlacement="Left">
+                    <TabControl Grid.Row="0" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" TabStripPlacement="Left">
                         
                         <!-- Git Settings Tab -->
                         <TabItem Header="Git Settings">
@@ -191,6 +177,29 @@
                             </Grid>
                         </TabItem>
                     </TabControl>
+
+                    <!-- Footer Command Bar -->
+                    <controls:FACommandBar Grid.Row="1" Margin="7" HorizontalAlignment="Center">
+                        <controls:FACommandBar.PrimaryCommands>
+                            <!-- Settings -->
+                            <controls:FACommandBarElementContainer>
+                                <Button VerticalAlignment="Top" HorizontalAlignment="Left" Command="{Binding ToggleSettingsFlyoutCommand}" ToolTip.Tip="Settings">
+                                    <StackPanel Orientation="Horizontal">
+                                        <controls:FASymbolIcon Symbol="Settings" FontSize="18" />
+                                    </StackPanel>
+                                </Button>
+                            </controls:FACommandBarElementContainer>
+                            <!-- About -->
+                            <controls:FACommandBarSeparator />
+                            <controls:FACommandBarElementContainer>
+                                <Button VerticalAlignment="Top" HorizontalAlignment="Left" Command="{Binding AboutWindowCommand}" ToolTip.Tip="About">
+                                    <StackPanel Orientation="Horizontal">
+                                        <controls:FASymbolIcon Symbol="More" FontSize="18" />
+                                    </StackPanel>
+                                </Button>
+                            </controls:FACommandBarElementContainer>
+                        </controls:FACommandBar.PrimaryCommands>
+                    </controls:FACommandBar>
                 </Grid>
             </Panel>
         </SplitView>
