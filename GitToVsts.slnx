@@ -1,4 +1,4 @@
-<Solution>
+﻿<Solution>
   <Folder Name="/Solution Items/">
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
@@ -6,5 +6,7 @@
     <File Path="NuGet.config" />
     <File Path="readme.md" />
   </Folder>
-  <Project Path="GitToVsts/GitToVsts.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/GitToVsts/GitToVsts.csproj" />
+  </Folder>
 </Solution>

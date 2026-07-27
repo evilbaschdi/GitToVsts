@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -16,6 +17,7 @@ using EvilBaschdi.Core.Settings.ByMachineAndUser;
 using EvilBaschdi.Core.Wpf;
 using EvilBaschdi.Core.Wpf.Browsers;
 using EvilBaschdi.Core.Wpf.FlyOut;
+using EvilBaschdi.Core.Logging;
 using GitToVsts.Core;
 using GitToVsts.Internal.Git;
 using GitToVsts.Internal.TeamServices;
@@ -23,6 +25,8 @@ using GitToVsts.Model;
 using JetBrains.Annotations;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GitToVsts;
 
@@ -38,6 +42,7 @@ public partial class MainWindow : MetroWindow
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationFailedRepos = [];
     private readonly ObservableCollection<GitRepositoryObservableCollectionItem> _migrationSuccessRepos = [];
     private readonly IToggleFlyOut _toggleFlyOut;
+    private readonly ILogFilePathWithInterval _logFilePathWithInterval;
 
     private IMigrationConfiguration _configuration;
     private ProgressDialogController _controller;
@@ -49,6 +54,10 @@ public partial class MainWindow : MetroWindow
     private IProjects _projects;
     private KeyValuePair<string, string> _result;
     private ITemplates _templates;
+
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     /// <summary>
     ///     MainWindow
@@ -63,10 +72,18 @@ public partial class MainWindow : MetroWindow
 
         IApplicationStyle applicationStyle = new ApplicationStyle();
         IApplicationLayout applicationLayout = new ApplicationLayout();
+
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddHttpClient();
+
+        _serviceProvider = serviceCollection.BuildServiceProvider();
+        _httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
+
         applicationStyle.Run();
         applicationLayout.RunFor((true, false));
         _currentFlyOuts = new CurrentFlyOuts();
         _toggleFlyOut = new ToggleFlyOut();
+        _logFilePathWithInterval = new LogFilePathWithInterval();
 
         var accentColor = WindowsThemeHelper.GetWindowsAccentColor();
         if (accentColor.HasValue)
@@ -149,7 +166,7 @@ public partial class MainWindow : MetroWindow
             _gitRepositories = new GetGitRepositories(_applicationSettings);
             await Task.Run(LoadGitRepositoryList).ConfigureAwait(true);
 
-            var convertGitAvatar = new ConvertGitAvatar();
+            var convertGitAvatar = new ConvertGitAvatar(_httpClientFactory);
             var avatar = await convertGitAvatar.ValueFor(user).ConfigureAwait(true);
             GitAvatar.SetCurrentValue(Image.SourceProperty, avatar);
             GitAvatar.SetCurrentValue(VisibilityProperty, Visibility.Visible);
@@ -381,6 +398,8 @@ public partial class MainWindow : MetroWindow
     /// <returns></returns>
     private void RunRepositoryMigration()
     {
+        var logPath = _logFilePathWithInterval.ValueFor(_applicationSettings.LoggingPath, "GitToVsts", LoggingFileInterval.None, DateTime.Now, "txt");
+        ILogger logger = new SimpleFileLogger(logPath, LogLevel.Information, new object(), "GitToVsts Log");
         var repoPaths = new ConcurrentBag<string>();
         var configuration = _configuration;
         var checkedItems = GitRepositoryObservableCollection.Where(attribute => attribute.MigrateToDevOps);
@@ -399,7 +418,7 @@ public partial class MainWindow : MetroWindow
                                               var response = migrate.ValueFor(checkedItem.Repository);
                                               if (response.Code != 200)
                                               {
-                                                  File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{response.Value}{Environment.NewLine}");
+                                                  logger.LogInformation("{ResponseValue}", response.Value);
                                               }
                                               else
                                               {
@@ -413,7 +432,7 @@ public partial class MainWindow : MetroWindow
                                                             var response = migrate.ValueFor(checkedItem.Repository);
                                                             if (response.Code != 200)
                                                             {
-                                                                File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{response.Value}{Environment.NewLine}");
+                                                                logger.LogInformation("{ResponseValue}", response.Value);
                                                             }
                                                             else
                                                             {
@@ -424,7 +443,7 @@ public partial class MainWindow : MetroWindow
         }
         catch (Exception ex)
         {
-            File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+            logger.LogError(ex, "Error during migration");
         }
         finally
         {
@@ -443,7 +462,7 @@ public partial class MainWindow : MetroWindow
                     }
                     catch (Exception ex)
                     {
-                        File.AppendAllText("C:/temp/GitAzureDevOpsMigration.txt", $@"{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                        logger.LogError(ex, "Error during cleanup");
                     }
                 }
             }

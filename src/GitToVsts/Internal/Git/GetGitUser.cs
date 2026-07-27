@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using GitToVsts.Core;
 using GitToVsts.Model;
 using RestSharp;

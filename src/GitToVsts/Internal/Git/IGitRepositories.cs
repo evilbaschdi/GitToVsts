@@ -1,4 +1,4 @@
-﻿using EvilBaschdi.Core;
+using EvilBaschdi.Core;
 using GitToVsts.Model;
 
 namespace GitToVsts.Internal.Git;

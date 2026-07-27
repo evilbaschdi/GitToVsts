@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Net.Http;
 using System.Windows.Media.Imaging;
 using GitToVsts.Model;
@@ -10,6 +10,17 @@ namespace GitToVsts.Internal.Git;
 /// </summary>
 public class ConvertGitAvatar : IGitAvatar
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    /// <summary>
+    ///     Constructor
+    /// </summary>
+    /// <param name="httpClientFactory"></param>
+    public ConvertGitAvatar(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
+
     /// <summary>
     ///     Contains a BitmapImage for given GitUser.
     /// </summary>
@@ -29,7 +40,7 @@ public class ConvertGitAvatar : IGitAvatar
 
         var pictureUri = new Uri(gitUser.Avatar_Url, UriKind.Absolute);
 
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         var imageBytes = await httpClient.GetByteArrayAsync(pictureUri);
 
         image.BeginInit();

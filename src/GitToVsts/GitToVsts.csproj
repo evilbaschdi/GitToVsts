@@ -18,11 +18,14 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="EvilBaschdi.Core" />
+		<PackageReference Include="EvilBaschdi.Core.DependencyInjection" />
 		<PackageReference Include="EvilBaschdi.Core.Wpf" />
 		<PackageReference Include="EvilBaschdi.About.Wpf" />
+		<PackageReference Include="EvilBaschdi.Core.Logging" />
 		<PackageReference Include="EvilBaschdi.Core.Settings" />
 		<PackageReference Include="MahApps.Metro.IconPacks.Material" />
 		<PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="RestSharp" />
 		<PackageReference Include="WpfAnalyzers">
 			<PrivateAssets>all</PrivateAssets>
@@ -48,7 +51,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Settings\App.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
